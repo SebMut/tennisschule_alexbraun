@@ -1,508 +1,268 @@
 {
-  "site": {
-    "name": "Tennisschule Alex Braun",
-    "tagline": "Deine Tennisschule im Münchner Osten.",
-    "hero_copy": "Lass dich von unserem jungen, engagierten Team inspirieren und bringe dein Tennis auf ein neues Level.",
-    "hero_image": "/assets/media/header_bild.webp",
-    "logo": "/assets/media/logo.png",
-    "hero_title": "Tennisschule Alex Braun",
-    "hero_title_mobile": "Tennisschule\nAlex Braun",
-    "hero_primary_button": "Anmeldung",
-    "hero_secondary_button": "Kontakt",
-    "navigation": {
-      "home": "Home",
-      "offers": "Angebote",
-      "trainers": "Trainerteam",
-      "locations": "Standorte",
-      "locations_overview": "Übersicht",
-      "shop": "Shop",
-      "contact": "Kontakt",
-      "shop_url": "https://shop.tennisschule-alexbraun.de/"
-    },
-    "footer": {
-      "name": "Tennisschule Alex Braun",
-      "legal_label": "Impressum & Datenschutzerklärung",
-      "copyright_name": "Tennisschule Alex Braun",
-      "phone": "+49 172 2104 303",
-      "email": "info@tennisschule-alexbraun.de",
-      "instagram": "https://www.instagram.com/tennisschule_alexbraun",
-      "links": [
-        {
-          "label": "Angebote",
-          "url": "/angebote/"
+    "site": {
+        "name": "Tennisschule Alex Braun",
+        "tagline": "Deine Tennisschule im Münchner Osten.",
+        "hero_copy": "Lass dich von unserem jungen, engagierten Team inspirieren und bringe dein Tennis auf ein neues Level.",
+        "hero_image": "/assets/media/header_bild.jpg",
+        "logo": "/assets/media/logo.png",
+        "hero_title": "Tennisschule Alex Braun",
+        "hero_title_mobile": "Tennisschule\nAlex Braun",
+        "hero_primary_button": "Anmeldung",
+        "hero_secondary_button": "Kontakt",
+        "navigation": {
+            "home": "Home",
+            "offers": "Angebote",
+            "trainers": "Trainerteam",
+            "locations": "Standorte",
+            "locations_overview": "Übersicht",
+            "shop": "Shop",
+            "contact": "Kontakt",
+            "shop_url": "https://shop.tennisschule-alexbraun.de/"
         },
-        {
-          "label": "TSV Feldkirchen",
-          "url": "/tsv-feldkirchen/"
+        "footer": {
+            "name": "Tennisschule Alex Braun",
+            "legal_label": "Impressum & Datenschutzerklärung",
+            "copyright_name": "Tennisschule Alex Braun",
+            "phone": "+49 172 2104 303",
+            "email": "info@tennisschule-alexbraun.de",
+            "instagram": "https://www.instagram.com/tennisschule_alexbraun"
         },
-        {
-          "label": "SV Heimstetten",
-          "url": "/sv-heimstetten/"
+        "hero_primary_url": "/angebote/",
+        "hero_secondary_url": "/kontakt/"
+    },
+    "home": {
+        "about_title": "Über uns",
+        "about_paragraphs": [
+            "Die Tennisschule Alex Braun steht für professionelles, zeitgemäßes Tennistraining und eine ganzheitliche sportliche Ausbildung. Seit unserer Gründung im Jahr 2023 stehen wir für qualitativ hochwertiges Tennistraining und eine enge Zusammenarbeit mit Vereinen, Eltern und Spielern. Aktuell betreuen wir die Tennisabteilungen des TSV Feldkirchen und des SV Heimstetten.",
+            "Unser Fokus liegt auf individueller Förderung – vom ersten Kontakt mit dem Tennissport bis hin zum leistungsorientierten Wettkampftraining. Kinder, Jugendliche und Erwachsene profitieren von strukturierten Trainingskonzepten, persönlicher Betreuung und einem jungen, motivierten Trainerteam, das mit Leidenschaft und Kompetenz arbeitet.",
+            "Geleitet wird die Tennisschule von Alex Braun, ehemaligem Weltranglisten-Spieler und 2. Bundesliga-Akteur des MTTC Iphitos. Er ist zertifizierter PTR Professional sowie GPTCA B Level Coach. Seine langjährige Erfahrung aus dem nationalen und internationalen Tennis, kombiniert mit seiner Tätigkeit in verschiedenen Vereinen und Organisationen, bildet die Grundlage für ein modernes, praxisnahes Trainingskonzept."
+        ],
+        "about_image": "/assets/media/startseite_1.jpg",
+        "offers_title": "Unser Angebot",
+        "offers_intro": "In unserer Tennisschule bieten wir ein umfassendes Programm für Spieler jeden Alters und Niveaus an. Von Gruppentraining über Einzelstunden bis hin zu spezialisierten Kursen – wir haben für jeden etwas dabei. Unser hochmotiviertes Trainerteam steht bereit, um deine Technik zu verfeinern, deine Fitness zu steigern und dir dabei zu helfen, deine Ziele zu erreichen.",
+        "team_title": "Unser Trainerteam",
+        "team_intro": "Unser junges, engagiertes Trainerteam ist voller Leidenschaft und Motivation, um dich auf dem Tennisplatz zu unterstützen. Mit unserer dynamischen Herangehensweise und individuellen Betreuung bringen wir Spieler jeden Alters und Könnens auf ein höheres Niveau.",
+        "offer_link_text": "Zur Anmeldung",
+        "team_image": "/assets/media/trainerteam_2024.jpeg",
+        "team_button_text": "Zur TrainerÜbersicht",
+        "locations_title": "Unsere Standorte",
+        "popup_image": "/assets/media/popup_wintertraining_2026_2027-2.png",
+        "popup_link": "/angebote/",
+        "map_route_label": "Route berechnen",
+        "offer_link_url": "/angebote/",
+        "team_button_url": "/trainerteam/",
+        "popup_enabled": true,
+        "popup_frequency_days": 7,
+        "popup_delay_seconds": 1,
+        "popup_close_delay_seconds": 2,
+        "popup_alt": "Wintertennistraining"
+    },
+    "offers": {
+        "intro": "Unser Tennistraining bietet eine erstklassige Gelegenheit, um dein Spiel zu verbessern und die Leidenschaft für Tennis zu entfachen. Durch individuelle Betreuung, professionelle Anleitung und innovative Trainingsmethoden helfen wir Spielern jeden Levels, ihre Ziele zu erreichen. Für weitere Informationen kontaktiere uns gerne.",
+        "items": [
+            {
+                "id": "sommer",
+                "title": "Sommertraining",
+                "button": "Anmeldung Sommertraining",
+                "home_text": "Im Sommertraining arbeiten wir gezielt an Schlagtechnik, Kondition und Spieltaktik. Ob Anfänger oder Fortgeschrittener – unser Training ist für alle Alters- und Leistungsstufen geeignet.",
+                "image": "/assets/media/startseite_3.jpg",
+                "details": [
+                    "13 Trainingswochen",
+                    "Anfang Mai bis Ende September",
+                    "TSV Feldkirchen und SV Heimstetten",
+                    "ab 43€ pro Monat"
+                ],
+                "unavailable_message": "Ab ca. 10.03.2027 buchbar."
+            },
+            {
+                "id": "winter",
+                "title": "Wintertraining",
+                "button": "Anmeldung Wintertraining",
+                "home_text": "Unser Wintertraining ermöglicht es dir, in den kalten Monaten an Technik und Fitness zu arbeiten. In der Halle bieten wir gezieltes Training für einen optimalen Start in die Saison.",
+                "image": "/assets/media/startseite_4.jpg",
+                "details": [
+                    "24 Trainingswochen",
+                    "Anfang Oktober bis Ende April",
+                    "Tennishalle Kirchheim und Sporttraum Heimstetten",
+                    "ab 43€ pro Monat"
+                ],
+                "unavailable_message": "Ab ca. 28.08.2026 buchbar.",
+                "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true"
+            },
+            {
+                "id": "camps",
+                "title": "Tenniscamps",
+                "button": "Anmeldung Tenniscamps",
+                "home_text": "Unsere Tenniscamps verbinden intensives Training mit gemeinschaftlichen Aktivitäten. Hier kannst du schnelle Fortschritte machen und den Spaß am Tennis mit anderen teilen.",
+                "image": "/assets/media/startseite_2.jpg",
+                "details": [
+                    "Oster-, Pfingst- und Sommerferien",
+                    "Täglich von 9:30 bis 15:00 Uhr",
+                    "TSV Feldkirchen und SV Heimstetten",
+                    "ab 239 €"
+                ],
+                "unavailable_message": "Ab ca. 10.03.2027 buchbar.",
+                "button_feldkirchen": "Anmeldung Tenniscamps\nTSV Feldkirchen",
+                "button_heimstetten": "Anmeldung Tenniscamps\nSV Heimstetten"
+            }
+        ],
+        "page_title": "Unser Angebot",
+        "hover_text": "Jetzt anmelden!",
+        "gallery": [
+            "/assets/media/angebote_1.jpg",
+            "/assets/media/angebote_2.jpg",
+            "/assets/media/angebote_3.jpg",
+            "/assets/media/angebote_4.jpg",
+            "/assets/media/angebote_5.jpg",
+            "/assets/media/angebote_6.jpg"
+        ]
+    },
+    "trainers": {
+        "intro": "Entdecke unser junges, motiviertes Trainerteam! Komm vorbei und lerne uns persönlich kennen. Wir freuen uns darauf, deine Tennisreise zu unterstützen und gemeinsam an deinen Zielen zu arbeiten!",
+        "items": [
+            {
+                "name": "Alex Braun",
+                "role": "Leiter der Tennisschule",
+                "image": "/assets/media/Braun.jpg"
+            },
+            {
+                "name": "Lena Gruber",
+                "role": "Trainerin",
+                "image": "/assets/media/Gruber.jpg"
+            },
+            {
+                "name": "Felix Kellerer",
+                "role": "Trainer",
+                "image": "/assets/media/Kellerer.jpg"
+            },
+            {
+                "name": "Alexa Pirok",
+                "role": "Trainerin",
+                "image": "/assets/media/Pirok.jpg"
+            },
+            {
+                "name": "Christoph Konitz",
+                "role": "Trainer",
+                "image": "/assets/media/Konitz.jpg"
+            },
+            {
+                "name": "Felix Fauth",
+                "role": "Trainer",
+                "image": "/assets/media/Fauth.jpg"
+            },
+            {
+                "name": "Niclas Hargasser",
+                "role": "Trainer",
+                "image": "/assets/media/Hargasser.jpg"
+            },
+            {
+                "name": "Tobias Schumacher",
+                "role": "Trainer",
+                "image": "/assets/media/Schumacher.jpg"
+            },
+            {
+                "name": "Julius Brand",
+                "role": "Trainer",
+                "image": "/assets/media/logo.png"
+            },
+            {
+                "name": "test",
+                "role": "test",
+                "image": "/assets/media/logo.png"
+            }
+        ],
+        "page_title": "Trainerteam"
+    },
+    "locations": {
+        "feldkirchen": {
+            "name": "TSV Feldkirchen",
+            "description": "Der TSV Feldkirchen ist ein traditionsreicher Sportverein im Münchner Osten und verfügt über eine moderne Tennisanlage mit 8 Plätzen. Hier können Tennisspieler aller Altersklassen und Spielstärken ihrem Sport nachgehen und von einem breiten Angebot profitieren. Ob im Freizeit- oder Mannschaftsbereich – Training, Turniere und Vereinsleben werden aktiv gefördert. Eine offene, herzliche Vereinsatmosphäre sorgt dafür, dass sich neue wie langjährige Mitglieder gleichermaßen wohlfühlen.",
+            "logo": "/assets/media/tsv-feldkirchen.png",
+            "website": "https://tennis-tsvfeldkirchen.de/",
+            "membership": "https://tsvfeldkirchen.de/wp-content/uploads/2026/05/TSV-Mitgliedsantrag-NEU.pdf",
+            "map_query": "TSV Feldkirchen bei München",
+            "button_website": "WEBSITE TSV Feldkirchen",
+            "button_membership": "Mitgliedsantrag als PDF",
+            "marker_image": "/assets/media/mapbox-tsv.png",
+            "marker_link": "https://maps.app.goo.gl/5F42TkRamtwv8FSdA"
         },
-        {
-          "label": "Kontakt",
-          "url": "/kontakt/"
-        }
-      ]
+        "heimstetten": {
+            "name": "SV Heimstetten",
+            "description": "Seit 1970 ist die Tennisabteilung des SV Heimstetten eine feste Größe im Vereinsleben und verfügt über eine moderne Anlage mit optimalen Trainings- und Wettkampfbedingungen. Hier finden Spielerinnen und Spieler aller Alters- und Leistungsstufen – vom Nachwuchs bis zum ambitionierten Mannschaftsspieler – ein vielseitiges Angebot.",
+            "description_2": "Engagierte Vereinsarbeit, Fairplay und eine starke Gemeinschaft machen die Tennisabteilung des SV Heimstetten zu einem beliebten Treffpunkt für Tennisbegeisterte in der Region.",
+            "logo": "/assets/media/sv-heimstetten.png",
+            "website": "https://sv-heimstetten.com/tennis/",
+            "membership": "https://sv-heimstetten.com/service/mitglieder/",
+            "map_query": "SV Heimstetten",
+            "button_website": "WEBSITE SV Heimstetten",
+            "button_membership": "Zum Mitgliedsantrag",
+            "marker_image": "/assets/media/mapbox-svh.png",
+            "marker_link": "https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9"
+        },
+        "page_title": "Unsere Standorte",
+        "map_consent_text": "Google Maps wird erst nach deiner Zustimmung geladen. Dabei können Daten an Google übertragen werden.",
+        "map_consent_button": "Karte laden"
     },
-    "hero_primary_url": "/angebote/",
-    "hero_secondary_url": "/kontakt/"
-  },
-  "home": {
-    "about_title": "Über uns",
-    "about_paragraphs": [
-      "Die Tennisschule Alex Braun steht seit 2023 für professionelles, zeitgemäßes Tennistraining im Münchner Osten. Wir betreuen die Tennisabteilungen des TSV Feldkirchen und des SV Heimstetten und arbeiten eng mit Vereinen, Eltern und Spielern zusammen.",
-      "Kinder, Jugendliche und Erwachsene trainieren bei uns vom Einstieg bis zum leistungsorientierten Wettkampftraining. Im Mittelpunkt stehen individuelle Förderung, strukturierte Trainingskonzepte und persönliche Betreuung.",
-      "Geleitet wird die Tennisschule von Alex Braun, ehemaligem Weltranglisten-Spieler und 2. Bundesliga-Akteur des MTTC Iphitos. Er ist PTR Professional sowie GPTCA B Level Coach."
-    ],
-    "about_image": "/assets/media/startseite_1.webp",
-    "offers_title": "Unser Angebot",
-    "offers_intro": "In unserer Tennisschule bieten wir ein umfassendes Programm für Spieler jeden Alters und Niveaus an. Von Gruppentraining über Einzelstunden bis hin zu spezialisierten Kursen – wir haben für jeden etwas dabei. Unser hochmotiviertes Trainerteam steht bereit, um deine Technik zu verfeinern, deine Fitness zu steigern und dir dabei zu helfen, deine Ziele zu erreichen.",
-    "team_title": "Unser Trainerteam",
-    "team_intro": "Unser junges, engagiertes Trainerteam ist voller Leidenschaft und Motivation, um dich auf dem Tennisplatz zu unterstützen. Mit unserer dynamischen Herangehensweise und individuellen Betreuung bringen wir Spieler jeden Alters und Könnens auf ein höheres Niveau.",
-    "offer_link_text": "Zur Anmeldung",
-    "team_image": "/assets/media/trainerteam_2024.webp",
-    "team_button_text": "Zur TrainerÜbersicht",
-    "locations_title": "Unsere Standorte",
-    "popup_image": "/assets/media/popup_wintertraining_2026_2027-2.png",
-    "popup_link": "/angebote/",
-    "map_route_label": "Route berechnen",
-    "offer_link_url": "/angebote/",
-    "team_button_url": "/trainerteam/",
-    "popup_enabled": true,
-    "popup_frequency_days": 7,
-    "popup_delay_seconds": 1,
-    "popup_close_delay_seconds": 2,
-    "popup_alt": "Wintertennistraining",
-    "trust_enabled": true,
-    "trust_items": [
-      "TSV Feldkirchen",
-      "SV Heimstetten",
-      "Kinder · Jugend · Erwachsene",
-      "Anfänger bis Wettkampf",
-      "PTR Professional · GPTCA B Level Coach"
-    ],
-    "popup_mode": "html",
-    "popup_heading": "Wintertraining 2026/2027",
-    "popup_text": "Die Anmeldung zum Wintertraining ist geöffnet.",
-    "popup_button_text": "Zum Wintertraining",
-    "why_enabled": true,
-    "why_title": "Warum Tennisschule Alex Braun?",
-    "why_items": [
-      {
-        "title": "Individuelle Förderung",
-        "text": "Vom ersten Kontakt mit Tennis bis zum leistungsorientierten Wettkampftraining."
-      },
-      {
-        "title": "Erfahrenes Trainerteam",
-        "text": "Persönliche Betreuung mit strukturierten, modernen Trainingskonzepten."
-      },
-      {
-        "title": "Zwei Standorte",
-        "text": "Training beim TSV Feldkirchen und beim SV Heimstetten."
-      },
-      {
-        "title": "Ganzjähriges Training",
-        "text": "Sommertraining, Wintertraining und Camps ergänzen sich über das Jahr."
-      }
-    ]
-  },
-  "offers": {
-    "intro": "Unser Tennistraining bietet eine erstklassige Gelegenheit, um dein Spiel zu verbessern und die Leidenschaft für Tennis zu entfachen. Durch individuelle Betreuung, professionelle Anleitung und innovative Trainingsmethoden helfen wir Spielern jeden Levels, ihre Ziele zu erreichen. Für weitere Informationen kontaktiere uns gerne.",
-    "items": [
-      {
-        "id": "sommer",
-        "title": "Sommertraining",
-        "button": "Anmeldung Sommertraining",
-        "home_text": "Im Sommertraining arbeiten wir gezielt an Schlagtechnik, Kondition und Spieltaktik. Ob Anfänger oder Fortgeschrittener – unser Training ist für alle Alters- und Leistungsstufen geeignet.",
-        "image": "/assets/media/startseite_3.webp",
-        "details": [
-          "13 Trainingswochen",
-          "Anfang Mai bis Ende September",
-          "TSV Feldkirchen und SV Heimstetten",
-          "ab 43€ pro Monat"
-        ],
-        "unavailable_message": "Ab ca. 10.03.2027 buchbar.",
-        "target_group": "Anfänger bis Fortgeschrittene · alle Altersstufen",
-        "focus": "Schlagtechnik · Kondition · Spieltaktik",
-        "training_scope": "13 Trainingswochen",
-        "period": "Anfang Mai bis Ende September",
-        "location": "TSV Feldkirchen und SV Heimstetten",
-        "price": "ab 43€ pro Monat",
-        "status": "Ab ca. 10.03.2027 buchbar",
-        "status_kind": "upcoming",
-        "featured": false,
-        "home_cta_label": "Sommertraining ansehen",
-        "home_cta_url": "/angebote/#sommertraining"
-      },
-      {
-        "id": "winter",
-        "title": "Wintertraining",
-        "button": "Anmeldung Wintertraining",
-        "home_text": "Unser Wintertraining ermöglicht es dir, in den kalten Monaten an Technik und Fitness zu arbeiten. In der Halle bieten wir gezieltes Training für einen optimalen Start in die Saison.",
-        "image": "/assets/media/startseite_4.webp",
-        "details": [
-          "24 Trainingswochen",
-          "Anfang Oktober bis Ende April",
-          "Tennishalle Kirchheim und Sporttraum Heimstetten",
-          "ab 43€ pro Monat"
-        ],
-        "unavailable_message": "Ab ca. 28.08.2026 buchbar.",
-        "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true",
-        "target_group": "",
-        "focus": "Technik · Fitness · Hallentraining",
-        "training_scope": "24 Trainingswochen",
-        "period": "Anfang Oktober bis Ende April",
-        "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
-        "price": "ab 43€ pro Monat",
-        "status": "Anmeldung geöffnet",
-        "status_kind": "open",
-        "featured": true,
-        "home_cta_label": "Jetzt Wintertraining anmelden",
-        "home_cta_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true"
-      },
-      {
-        "id": "camps",
-        "title": "Tenniscamps",
-        "button": "Anmeldung Tenniscamps",
-        "home_text": "Unsere Tenniscamps verbinden intensives Training mit gemeinschaftlichen Aktivitäten. Hier kannst du schnelle Fortschritte machen und den Spaß am Tennis mit anderen teilen.",
-        "image": "/assets/media/startseite_2.webp",
-        "details": [
-          "Oster-, Pfingst- und Sommerferien",
-          "Täglich von 9:30 bis 15:00 Uhr",
-          "TSV Feldkirchen und SV Heimstetten",
-          "ab 239 €"
-        ],
-        "unavailable_message": "Ab ca. 10.03.2027 buchbar.",
-        "button_feldkirchen": "Anmeldung Tenniscamps\nTSV Feldkirchen",
-        "button_heimstetten": "Anmeldung Tenniscamps\nSV Heimstetten",
-        "target_group": "",
-        "focus": "Intensives Training · Gemeinschaft · schnelle Fortschritte",
-        "training_scope": "Täglich 9:30 bis 15:00 Uhr",
-        "period": "Oster-, Pfingst- und Sommerferien",
-        "location": "TSV Feldkirchen und SV Heimstetten",
-        "price": "ab 239 €",
-        "status": "Ab ca. 10.03.2027 buchbar",
-        "status_kind": "upcoming",
-        "featured": false,
-        "home_cta_label": "Tenniscamps ansehen",
-        "home_cta_url": "/angebote/#tenniscamps"
-      }
-    ],
-    "page_title": "Unser Angebot",
-    "hover_text": "Jetzt anmelden!",
-    "gallery": [
-      "/assets/media/angebote_1.webp",
-      "/assets/media/angebote_2.webp",
-      "/assets/media/angebote_3.webp",
-      "/assets/media/angebote_4.webp",
-      "/assets/media/angebote_5.webp",
-      "/assets/media/angebote_6.webp"
-    ],
-    "featured_label": "Aktuell",
-    "seasonal_highlight_enabled": true,
-    "seasonal_heading": "Aktuell im Fokus"
-  },
-  "trainers": {
-    "intro": "Entdecke unser junges, motiviertes Trainerteam! Komm vorbei und lerne uns persönlich kennen. Wir freuen uns darauf, deine Tennisreise zu unterstützen und gemeinsam an deinen Zielen zu arbeiten!",
-    "items": [
-      {
-        "name": "Alex Braun",
-        "role": "Leiter der Tennisschule",
-        "image": "/assets/media/Braun.webp",
-        "qualifications": "PTR Professional · GPTCA B Level Coach",
-        "experience": "Ehemaliger Weltranglisten-Spieler · 2. Bundesliga-Akteur des MTTC Iphitos",
-        "focus": "Moderne, praxisnahe Trainingskonzepte · individuelle Förderung",
-        "bio": "Alex Braun verbindet Erfahrung aus nationalem und internationalem Tennis mit langjähriger Tätigkeit in Vereinen und Organisationen."
-      },
-      {
-        "name": "Lena Gruber",
-        "role": "Trainerin",
-        "image": "/assets/media/Gruber.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Felix Kellerer",
-        "role": "Trainer",
-        "image": "/assets/media/Kellerer.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Alexa Pirok",
-        "role": "Trainerin",
-        "image": "/assets/media/Pirok.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Christoph Konitz",
-        "role": "Trainer",
-        "image": "/assets/media/Konitz.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Felix Fauth",
-        "role": "Trainer",
-        "image": "/assets/media/Fauth.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Niclas Hargasser",
-        "role": "Trainer",
-        "image": "/assets/media/Hargasser.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Tobias Schumacher",
-        "role": "Trainer",
-        "image": "/assets/media/Schumacher.webp",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      },
-      {
-        "name": "Julius Brand",
-        "role": "Trainer",
-        "image": "/assets/media/logo.png",
-        "qualifications": "",
-        "experience": "",
-        "focus": "",
-        "bio": ""
-      }
-    ],
-    "page_title": "Trainerteam",
-    "details_enabled": true,
-    "cta_label": "Training anfragen",
-    "cta_url": "/kontakt/"
-  },
-  "locations": {
-    "feldkirchen": {
-      "name": "TSV Feldkirchen",
-      "description": "Der TSV Feldkirchen ist ein traditionsreicher Sportverein im Münchner Osten und verfügt über eine moderne Tennisanlage mit 8 Plätzen. Hier können Tennisspieler aller Altersklassen und Spielstärken ihrem Sport nachgehen und von einem breiten Angebot profitieren. Ob im Freizeit- oder Mannschaftsbereich – Training, Turniere und Vereinsleben werden aktiv gefördert. Eine offene, herzliche Vereinsatmosphäre sorgt dafür, dass sich neue wie langjährige Mitglieder gleichermaßen wohlfühlen.",
-      "logo": "/assets/media/tsv-feldkirchen.png",
-      "website": "https://tennis-tsvfeldkirchen.de/",
-      "membership": "https://tsvfeldkirchen.de/wp-content/uploads/2026/05/TSV-Mitgliedsantrag-NEU.pdf",
-      "map_query": "TSV Feldkirchen bei München",
-      "button_website": "WEBSITE TSV Feldkirchen",
-      "button_membership": "Mitgliedsantrag als PDF",
-      "marker_image": "/assets/media/mapbox-tsv.png",
-      "marker_link": "https://maps.app.goo.gl/5F42TkRamtwv8FSdA",
-      "overview_text": "Moderne Tennisanlage im Münchner Osten mit 8 Plätzen. Training für verschiedene Alters- und Spielstärken.",
-      "fact": "8 Tennisplätze"
+    "contact": {
+        "page_title": "Kontakt",
+        "heading": "Kontakt",
+        "image": "/assets/media/braun_kontakt.jpg",
+        "labels": {
+            "name": "Vorname & Nachname *",
+            "subject": "Betreff *",
+            "phone": "Telefon *",
+            "email": "Email *",
+            "message": "Nachricht *",
+            "submit": "Senden"
+        },
+        "success_message": "Vielen Dank. Deine Nachricht wurde versendet.",
+        "error_message": "Die Nachricht konnte nicht versendet werden. Bitte versuche es erneut oder schreibe direkt an info@tennisschule-alexbraun.de."
     },
-    "heimstetten": {
-      "name": "SV Heimstetten",
-      "description": "Seit 1970 ist die Tennisabteilung des SV Heimstetten eine feste Größe im Vereinsleben und verfügt über eine moderne Anlage mit optimalen Trainings- und Wettkampfbedingungen. Hier finden Spielerinnen und Spieler aller Alters- und Leistungsstufen – vom Nachwuchs bis zum ambitionierten Mannschaftsspieler – ein vielseitiges Angebot.",
-      "description_2": "Engagierte Vereinsarbeit, Fairplay und eine starke Gemeinschaft machen die Tennisabteilung des SV Heimstetten zu einem beliebten Treffpunkt für Tennisbegeisterte in der Region.",
-      "logo": "/assets/media/sv-heimstetten.png",
-      "website": "https://sv-heimstetten.com/tennis/",
-      "membership": "https://sv-heimstetten.com/service/mitglieder/",
-      "map_query": "SV Heimstetten",
-      "button_website": "WEBSITE SV Heimstetten",
-      "button_membership": "Zum Mitgliedsantrag",
-      "marker_image": "/assets/media/mapbox-svh.png",
-      "marker_link": "https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9",
-      "overview_text": "Tennisabteilung seit 1970 mit Trainings- und Wettkampfangeboten für verschiedene Alters- und Leistungsstufen.",
-      "fact": "Tennisabteilung seit 1970"
+    "newsletter": {
+        "page_title": "Anmeldung zum Newsletter",
+        "welcome": "Willkommen beim Newsletter der Tennisschule Alex Braun.",
+        "text": "Über den Newsletter informiere ich vorab, wenn die Anmeldungen zu den jeweiligen Camps starten.\nAuch andere interessante News und Fakten werden über den Newsletter geteilt."
     },
-    "page_title": "Unsere Standorte",
-    "map_consent_text": "Google Maps wird erst nach deiner Zustimmung geladen. Dabei können Daten an Google übertragen werden.",
-    "map_consent_button": "Karte laden",
-    "location_button": "Standort ansehen",
-    "route_button": "Route berechnen",
-    "cta_label": "Training anfragen",
-    "cta_url": "/kontakt/"
-  },
-  "contact": {
-    "page_title": "Kontakt",
-    "heading": "Kontakt",
-    "image": "/assets/media/braun_kontakt.webp",
-    "labels": {
-      "name": "Vorname & Nachname *",
-      "subject": "Betreff *",
-      "phone": "Telefon",
-      "email": "Email *",
-      "message": "Nachricht *",
-      "submit": "Senden",
-      "topic": "Anliegen *"
+    "success": {
+        "page_title": "Nachricht erfolgreich zugestellt",
+        "message": "Vielen Dank für deine Nachricht."
     },
-    "success_message": "Vielen Dank. Deine Nachricht wurde versendet.",
-    "error_message": "Die Nachricht konnte nicht versendet werden. Bitte versuche es erneut oder schreibe direkt an info@tennisschule-alexbraun.de.",
-    "phone_required": false,
-    "topics": [
-      "Sommertraining",
-      "Wintertraining",
-      "Tenniscamp",
-      "Einzeltraining",
-      "Probetraining",
-      "Sonstiges"
-    ]
-  },
-  "newsletter": {
-    "page_title": "Anmeldung zum Newsletter",
-    "welcome": "Willkommen beim Newsletter der Tennisschule Alex Braun.",
-    "text": "Über den Newsletter informiere ich vorab, wenn die Anmeldungen zu den jeweiligen Camps starten.\nAuch andere interessante News und Fakten werden über den Newsletter geteilt."
-  },
-  "success": {
-    "page_title": "Nachricht erfolgreich zugestellt",
-    "message": "Vielen Dank für deine Nachricht."
-  },
-  "legal": {
-    "page_title": "Impressum & Datenschutzerklärung",
-    "intro": "Der Schutz Ihrer Privatsphäre bei der Verarbeitung persönlicher Daten ist für uns ein wichtiges Anliegen. Wir erheben, verarbeiten und nutzen Ihre persönlichen Daten ausschließlich in Übereinstimmung mit den nachfolgend beschriebenen Grundsätzen und unter Beachtung der anwendbaren Datenschutzgesetze.",
-    "sections": [
-      {
-        "title": "VERANTWORTLICHER",
-        "body": "Tennisschule Alex Braun\nAlexander Braun (Geschäftsführer)\nHeilwigstraße 11a\n81825 München\nTel.: +49 172 2104 303\nE-Mail: info@tennisschule-alexbraun.de"
-      },
-      {
-        "title": "ARTEN DER VERARBEITETEN DATEN",
-        "body": "Beim Aufrufen der Website https://tennisschule-alexbraun.de werden durch den auf Ihrem Endgerät zum Einsatz kommenden Browser automatisch Informationen an den Server unserer Website gesendet. Diese Informationen werden temporär in einem sog. Logfile gespeichert. Folgende Informationen werden dabei ohne Ihr Zutun erfasst und bis zur automatisierten Löschung entsprechend den anwendbaren datenschutzrechtlichen Vorschriften gespeichert:\n\nIP-Adresse des anfragenden Rechners,\nDatum und Uhrzeit des Zugriffs,\nName und URL der abgerufenen Datei,\nWebsite, von der aus der Zugriff erfolgt (Referrer-URL),\nverwendeter Browser und ggf. das Betriebssystem Ihres Rechners sowie der Name Ihres Access-Providers.\n\nDie genannten Daten werden durch uns zu folgenden Zwecken verarbeitet:\nGewährleistung eines reibungslosen Verbindungsaufbaus der Website, Gewährleistung einer komfortablen Nutzung unserer Website,\nAuswertung der Systemsicherheit und -stabilität sowie\nzu weiteren administrativen Zwecken. Die Rechtsgrundlage für die Datenverarbeitung ist Art. 6 Abs. 1 lit. f DSGVO.\n\nUnser berechtigtes Interesse folgt aus oben aufgelisteten Zwecken zur Datenerhebung. In keinem Fall verwenden wir die erhobenen Daten zu dem Zweck, Rückschlüsse auf Ihre Person zu ziehen. Darüber hinaus setzen wir beim Besuch unserer Website Cookies sowie Analysedienste ein. Nähere Erläuterungen dazu erhalten Sie unten."
-      },
-      {
-        "title": "WEITERGABE VON DATEN",
-        "body": "Eine Übermittlung Ihrer persönlichen Daten an Dritte zu anderen als den im Folgenden aufgeführten Zwecken findet nicht statt. Wir geben Ihre persönlichen Daten nur an Dritte weiter, wenn:\n\nSie Ihre nach Art. 6 Abs. 1 lit. a DSGVO ausdrückliche Einwilligung dazu erteilt haben,\ndie Weitergabe nach Art. 6 Abs. 1 lit. f DSGVO zur Wahrung unserer berechtigten Interessen oder der berechtigten Interessen eines Dritten erforderlich ist und kein Grund zur Annahme besteht, dass Sie ein überwiegendes schutzwürdiges Interesse an der Nichtweitergabe Ihrer Daten haben,\nfür den Fall, dass für die Weitergabe nach Art. 6 Abs. 1 lit. c DSGVO eine gesetzliche Verpflichtung besteht, sowie\ndies gesetzlich zulässig und nach Art. 6 Abs. 1 lit. b DSGVO für die Abwicklung von Vertragsverhältnissen mit Ihnen erforderlich ist."
-      },
-      {
-        "title": "FOTOHINWEIS VERANSTALTUNGEN",
-        "body": "Während der Veranstaltung werden Foto- und Filmaufnahmen gemacht und diese Aufnahmen im Zusammenhang mit der Veranstaltung für die Öffentlichkeitsarbeit und die Dokumentation, analog und digital, verwendet. Veröffentlicht werden die Bilder auf der Homepage der Tennisschule Alex Braun. Die Aufnahmen werden nur bei Widerruf gelöscht."
-      },
-      {
-        "title": "BETROFFENENRECHTE",
-        "body": "Sie haben das Recht:\ngemäß Art. 15 DSGVO Auskunft über Ihre von uns verarbeiteten personenbezogenen Daten zu verlangen;\ngemäß Art. 16 DSGVO unverzüglich die Berichtigung unrichtiger oder Vervollständigung Ihrer bei uns gespeicherten personenbezogenen Daten zu verlangen;\ngemäß Art. 17 DSGVO die Löschung Ihrer bei uns gespeicherten personenbezogenen Daten zu verlangen;\ngemäß Art. 18 DSGVO die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen;\ngemäß Art. 20 DSGVO Ihre personenbezogenen Daten, die Sie uns bereitgestellt haben, in einem strukturierten, gängigen und maschinenlesebaren Format zu erhalten oder die Übermittlung an einen anderen Verantwortlichen zu verlangen; und\ngemäß Art. 77 DSGVO sich bei einer Aufsichtsbehörde zu beschweren. In der Regel können Sie sich hierfür an die Aufsichtsbehörde Ihres üblichen Aufenthaltsortes oder Arbeitsplatzes oder unseres Geschäftssitzes wenden."
-      },
-      {
-        "title": "WIDERSPRUCHSRECHT",
-        "body": "Sofern Ihre personenbezogenen Daten auf Grundlage von berechtigten Interessen gemäß Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden, haben Sie das Recht, gemäß Art. 21 DSGVO Widerspruch gegen die Verarbeitung Ihrer personenbezogenen Daten einzulegen, soweit dafür Gründe vorliegen, die sich aus Ihrer besonderen Situation ergeben oder sich der Widerspruch gegen Direktwerbung richtet. Im letzteren Fall haben Sie ein generelles Widerspruchsrecht, das ohne Angabe einer besonderen Situation von uns umgesetzt wird.\n\nMöchten Sie von Ihrem Widerrufs- oder Widerspruchsrecht Gebrauch machen, genügt eine E-Mail an info@tennisschule-alexbraun.de."
-      },
-      {
-        "title": "ÄNDERUNGEN DIESER DATENSCHUTZERKLÄRUNG",
-        "body": "Diese Datenschutzerklärung ist aktuell gültig. Durch die Weiterentwicklung unserer Website und Angebote darüber oder aufgrund geänderter gesetzlicher beziehungsweise behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern. Die jeweils aktuelle Datenschutzerklärung kann jederzeit auf der Website unter Datenschutzerklärung von Ihnen abgerufen und ausgedruckt werden."
-      }
-    ]
-  },
-  "analytics": {
-    "enabled": true,
-    "retention_days": 365
-  },
-  "mobile_cta": {
-    "enabled": true,
-    "primary_label": "Training buchen",
-    "primary_url": "/angebote/",
-    "secondary_label": "Kontakt",
-    "secondary_url": "/kontakt/"
-  },
-  "faq": {
-    "enabled": true,
-    "title": "Häufige Fragen",
-    "intro": "Die wichtigsten Informationen zu Training, Standorten und Anmeldung auf einen Blick.",
-    "items": [
-      {
-        "question": "Für wen ist das Training geeignet?",
-        "answer": "Die Tennisschule bietet Training für Kinder, Jugendliche und Erwachsene sowie für unterschiedliche Spielstärken an – vom Einstieg bis zum leistungsorientierten Training."
-      },
-      {
-        "question": "Wo findet das Sommertraining statt?",
-        "answer": "Das Sommertraining findet beim TSV Feldkirchen und beim SV Heimstetten statt."
-      },
-      {
-        "question": "Wann läuft das Sommertraining?",
-        "answer": "Das Sommertraining umfasst 13 Trainingswochen und läuft von Anfang Mai bis Ende September."
-      },
-      {
-        "question": "Wo und wann findet das Wintertraining statt?",
-        "answer": "Das Wintertraining umfasst 24 Trainingswochen von Anfang Oktober bis Ende April. Trainiert wird in der Tennishalle Kirchheim und im Sporttraum Heimstetten."
-      },
-      {
-        "question": "Wann finden die Tenniscamps statt?",
-        "answer": "Tenniscamps werden in den Oster-, Pfingst- und Sommerferien angeboten. Die vorhandenen Campangebote laufen täglich von 9:30 bis 15:00 Uhr."
-      },
-      {
-        "question": "Wie kann ich mich anmelden?",
-        "answer": "Wenn eine Anmeldung geöffnet ist, findest du beim jeweiligen Angebot den direkten Anmeldebutton. Bei Fragen kannst du die Tennisschule über die Kontaktseite erreichen."
-      }
-    ]
-  },
-  "seo": {
-    "base_url": "https://www.tennisschule-alexbraun.de",
-    "default_og_image": "/assets/media/header_bild.webp",
-    "pages": {
-      "home": {
-        "title": "Tennisschule Alex Braun | Tennistraining im Münchner Osten",
-        "description": "Professionelles Tennistraining für Kinder, Jugendliche und Erwachsene beim TSV Feldkirchen und SV Heimstetten.",
-        "path": "/"
-      },
-      "offers": {
-        "title": "Tennistraining & Tenniscamps | Tennisschule Alex Braun",
-        "description": "Sommertraining, Wintertraining und Tenniscamps der Tennisschule Alex Braun im Münchner Osten.",
-        "path": "/angebote/"
-      },
-      "trainers": {
-        "title": "Trainerteam | Tennisschule Alex Braun",
-        "description": "Lerne das Trainerteam der Tennisschule Alex Braun kennen.",
-        "path": "/trainerteam/"
-      },
-      "locations": {
-        "title": "Standorte | Tennisschule Alex Braun",
-        "description": "Tennistraining beim TSV Feldkirchen und SV Heimstetten im Münchner Osten.",
-        "path": "/standorte/"
-      },
-      "feldkirchen": {
-        "title": "Tennistraining TSV Feldkirchen | Tennisschule Alex Braun",
-        "description": "Tennistraining der Tennisschule Alex Braun beim TSV Feldkirchen.",
-        "path": "/tsv-feldkirchen/"
-      },
-      "heimstetten": {
-        "title": "Tennistraining SV Heimstetten | Tennisschule Alex Braun",
-        "description": "Tennistraining der Tennisschule Alex Braun beim SV Heimstetten.",
-        "path": "/sv-heimstetten/"
-      },
-      "contact": {
-        "title": "Kontakt | Tennisschule Alex Braun",
-        "description": "Kontakt zur Tennisschule Alex Braun für Fragen zu Training, Camps und Anmeldung.",
-        "path": "/kontakt/"
-      },
-      "newsletter": {
-        "title": "Newsletter | Tennisschule Alex Braun",
-        "description": "Newsletter der Tennisschule Alex Braun mit Informationen zu Camps und aktuellen Angeboten.",
-        "path": "/newsletter/"
-      },
-      "success": {
-        "title": "Nachricht gesendet | Tennisschule Alex Braun",
-        "description": "Bestätigung der Kontaktanfrage an die Tennisschule Alex Braun.",
-        "path": "/nachricht-erfolgreich-zugestellt/"
-      },
-      "legal": {
-        "title": "Impressum & Datenschutz | Tennisschule Alex Braun",
-        "description": "Impressum und Datenschutzerklärung der Tennisschule Alex Braun.",
-        "path": "/impressum-datenschutzerklaerung/"
-      }
+    "legal": {
+        "page_title": "Impressum & Datenschutzerklärung",
+        "intro": "Der Schutz Ihrer Privatsphäre bei der Verarbeitung persönlicher Daten ist für uns ein wichtiges Anliegen. Wir erheben, verarbeiten und nutzen Ihre persönlichen Daten ausschließlich in Übereinstimmung mit den nachfolgend beschriebenen Grundsätzen und unter Beachtung der anwendbaren Datenschutzgesetze.",
+        "sections": [
+            {
+                "title": "VERANTWORTLICHER",
+                "body": "Tennisschule Alex Braun\nAlexander Braun (Geschäftsführer)\nHeilwigstraße 11a\n81825 München\nTel.: +49 172 2104 303\nE-Mail: info@tennisschule-alexbraun.de"
+            },
+            {
+                "title": "ARTEN DER VERARBEITETEN DATEN",
+                "body": "Beim Aufrufen der Website https://tennisschule-alexbraun.de werden durch den auf Ihrem Endgerät zum Einsatz kommenden Browser automatisch Informationen an den Server unserer Website gesendet. Diese Informationen werden temporär in einem sog. Logfile gespeichert. Folgende Informationen werden dabei ohne Ihr Zutun erfasst und bis zur automatisierten Löschung entsprechend den anwendbaren datenschutzrechtlichen Vorschriften gespeichert:\n\nIP-Adresse des anfragenden Rechners,\nDatum und Uhrzeit des Zugriffs,\nName und URL der abgerufenen Datei,\nWebsite, von der aus der Zugriff erfolgt (Referrer-URL),\nverwendeter Browser und ggf. das Betriebssystem Ihres Rechners sowie der Name Ihres Access-Providers.\n\nDie genannten Daten werden durch uns zu folgenden Zwecken verarbeitet:\nGewährleistung eines reibungslosen Verbindungsaufbaus der Website, Gewährleistung einer komfortablen Nutzung unserer Website,\nAuswertung der Systemsicherheit und -stabilität sowie\nzu weiteren administrativen Zwecken. Die Rechtsgrundlage für die Datenverarbeitung ist Art. 6 Abs. 1 lit. f DSGVO.\n\nUnser berechtigtes Interesse folgt aus oben aufgelisteten Zwecken zur Datenerhebung. In keinem Fall verwenden wir die erhobenen Daten zu dem Zweck, Rückschlüsse auf Ihre Person zu ziehen. Darüber hinaus setzen wir beim Besuch unserer Website Cookies sowie Analysedienste ein. Nähere Erläuterungen dazu erhalten Sie unten."
+            },
+            {
+                "title": "WEITERGABE VON DATEN",
+                "body": "Eine Übermittlung Ihrer persönlichen Daten an Dritte zu anderen als den im Folgenden aufgeführten Zwecken findet nicht statt. Wir geben Ihre persönlichen Daten nur an Dritte weiter, wenn:\n\nSie Ihre nach Art. 6 Abs. 1 lit. a DSGVO ausdrückliche Einwilligung dazu erteilt haben,\ndie Weitergabe nach Art. 6 Abs. 1 lit. f DSGVO zur Wahrung unserer berechtigten Interessen oder der berechtigten Interessen eines Dritten erforderlich ist und kein Grund zur Annahme besteht, dass Sie ein überwiegendes schutzwürdiges Interesse an der Nichtweitergabe Ihrer Daten haben,\nfür den Fall, dass für die Weitergabe nach Art. 6 Abs. 1 lit. c DSGVO eine gesetzliche Verpflichtung besteht, sowie\ndies gesetzlich zulässig und nach Art. 6 Abs. 1 lit. b DSGVO für die Abwicklung von Vertragsverhältnissen mit Ihnen erforderlich ist."
+            },
+            {
+                "title": "FOTOHINWEIS VERANSTALTUNGEN",
+                "body": "Während der Veranstaltung werden Foto- und Filmaufnahmen gemacht und diese Aufnahmen im Zusammenhang mit der Veranstaltung für die Öffentlichkeitsarbeit und die Dokumentation, analog und digital, verwendet. Veröffentlicht werden die Bilder auf der Homepage der Tennisschule Alex Braun. Die Aufnahmen werden nur bei Widerruf gelöscht."
+            },
+            {
+                "title": "BETROFFENENRECHTE",
+                "body": "Sie haben das Recht:\ngemäß Art. 15 DSGVO Auskunft über Ihre von uns verarbeiteten personenbezogenen Daten zu verlangen;\ngemäß Art. 16 DSGVO unverzüglich die Berichtigung unrichtiger oder Vervollständigung Ihrer bei uns gespeicherten personenbezogenen Daten zu verlangen;\ngemäß Art. 17 DSGVO die Löschung Ihrer bei uns gespeicherten personenbezogenen Daten zu verlangen;\ngemäß Art. 18 DSGVO die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen;\ngemäß Art. 20 DSGVO Ihre personenbezogenen Daten, die Sie uns bereitgestellt haben, in einem strukturierten, gängigen und maschinenlesebaren Format zu erhalten oder die Übermittlung an einen anderen Verantwortlichen zu verlangen; und\ngemäß Art. 77 DSGVO sich bei einer Aufsichtsbehörde zu beschweren. In der Regel können Sie sich hierfür an die Aufsichtsbehörde Ihres üblichen Aufenthaltsortes oder Arbeitsplatzes oder unseres Geschäftssitzes wenden."
+            },
+            {
+                "title": "WIDERSPRUCHSRECHT",
+                "body": "Sofern Ihre personenbezogenen Daten auf Grundlage von berechtigten Interessen gemäß Art. 6 Abs. 1 lit. f DSGVO verarbeitet werden, haben Sie das Recht, gemäß Art. 21 DSGVO Widerspruch gegen die Verarbeitung Ihrer personenbezogenen Daten einzulegen, soweit dafür Gründe vorliegen, die sich aus Ihrer besonderen Situation ergeben oder sich der Widerspruch gegen Direktwerbung richtet. Im letzteren Fall haben Sie ein generelles Widerspruchsrecht, das ohne Angabe einer besonderen Situation von uns umgesetzt wird.\n\nMöchten Sie von Ihrem Widerrufs- oder Widerspruchsrecht Gebrauch machen, genügt eine E-Mail an info@tennisschule-alexbraun.de."
+            },
+            {
+                "title": "ÄNDERUNGEN DIESER DATENSCHUTZERKLÄRUNG",
+                "body": "Diese Datenschutzerklärung ist aktuell gültig. Durch die Weiterentwicklung unserer Website und Angebote darüber oder aufgrund geänderter gesetzlicher beziehungsweise behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern. Die jeweils aktuelle Datenschutzerklärung kann jederzeit auf der Website unter Datenschutzerklärung von Ihnen abgerufen und ausgedruckt werden."
+            }
+        ]
+    },
+    "analytics": {
+        "enabled": true,
+        "retention_days": 365
     }
-  },
-  "not_found": {
-    "title": "Seite nicht gefunden",
-    "text": "Die gewünschte Seite ist nicht verfügbar. Du kannst zurück zur Startseite gehen oder direkt unsere Trainingsangebote ansehen.",
-    "primary_label": "Zur Startseite",
-    "primary_url": "/",
-    "secondary_label": "Zu den Angeboten",
-    "secondary_url": "/angebote/"
-  }
 }
