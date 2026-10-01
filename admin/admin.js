@@ -210,7 +210,7 @@
           ${statCard(t.pageviews||0,'Seitenaufrufe')}${statCard(t.sessions||0,'Sitzungen')}${statCard(training,'Trainings-Klicks')}${statCard(contact,'Kontakt-Abschlüsse')}
         </div>
         <div class="stats-cards">
-          ${statCard(popupViews,'Popup-Anzeigen')}${statCard(popupClicks,'Popup-Klicks')}${statCard(popupViews?Math.round(popupClicks/popupViews*100)+'%':'0%','Popup-Klickrate')}${statCard(t.sessions?((t.pageviews||0)/t.sessions).toFixed(1):'0','Seiten / Sitzung')}
+          ${statCard(t.sessions?Math.round(training/t.sessions*100)+'%':'0%','Trainings-Klickrate')}${statCard(t.sessions?Math.round(contact/t.sessions*100)+'%':'0%','Kontakt-Abschlussrate')}${statCard(popupViews?Math.round(popupClicks/popupViews*100)+'%':'0%','Popup-Klickrate')}${statCard(t.sessions?((t.pageviews||0)/t.sessions).toFixed(1):'0','Seiten / Sitzung')}
         </div>
         <div class="stats-box"><h3>Verlauf</h3><div class="daily-bars">${(s.daily||[]).map(x=>`<div class="daily-bar" style="height:${Math.max(2,(x.pageviews||0)/maxDaily*100)}%" data-tip="${esc(x.date+': '+(x.pageviews||0))}"></div>`).join('')}</div></div>
         <div class="stats-grid">
