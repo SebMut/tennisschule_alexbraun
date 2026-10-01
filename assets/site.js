@@ -103,24 +103,66 @@
   try{if(localStorage.getItem('ts_maps_consent')==='yes')loadMaps();}catch(_){}
   document.querySelectorAll('[data-load-map]').forEach(btn=>btn.addEventListener('click',loadMaps));
 
-  const mapboxContainer=document.getElementById('mapbox-container');
-  const mapDataEl=document.getElementById('mapbox-location-data');
-  if(mapboxContainer&&mapDataEl&&typeof window.mapboxgl!=='undefined'){
+  const initMapbox=()=>{
+    const mapboxContainer=document.getElementById('mapbox-container');
+    const mapDataEl=document.getElementById('mapbox-location-data');
+    if(!mapboxContainer||!mapDataEl||typeof window.mapboxgl==='undefined') return;
+
     const token=mapboxContainer.dataset.mapboxToken||'';
     let locations=[]; try{locations=JSON.parse(mapDataEl.textContent||'[]');}catch(_){}
-    if(token&&locations.length){
-      window.mapboxgl.accessToken=token;
-      const map=new window.mapboxgl.Map({container:mapboxContainer,style:'mapbox://styles/mapbox/streets-v12',center:[11.32,48.15],zoom:13,maxZoom:15,scrollZoom:false,dragPan:false,doubleClickZoom:false,touchZoomRotate:false});
-      const bounds=new window.mapboxgl.LngLatBounds();
-      locations.forEach(loc=>{
-        const marker=document.createElement('div');marker.className='custom-marker';
-        const img=document.createElement('img');img.src=loc.logo;img.alt=loc.name;marker.appendChild(img);
-        const label=document.createElement('div');label.className='marker-label';label.textContent=mapboxContainer.dataset.routeLabel||'Route berechnen';marker.appendChild(label);
-        marker.addEventListener('click',()=>{track('map_route','map_route:'+loc.key,loc.name,loc.link);location.href=loc.link;});
-        new window.mapboxgl.Marker(marker,{anchor:'bottom'}).setLngLat([loc.lng,loc.lat]).addTo(map);bounds.extend([loc.lng,loc.lat]);
-      });
-      map.fitBounds(bounds,{padding:80,maxZoom:15});
+    if(!token||!locations.length){
+      mapboxContainer.classList.add('mapbox-error');
+      mapboxContainer.textContent='Karte konnte nicht geladen werden.';
+      return;
     }
+
+    window.mapboxgl.accessToken=token;
+    const map=new window.mapboxgl.Map({
+      container:mapboxContainer,
+      style:'mapbox://styles/mapbox/streets-v12',
+      center:[11.32,48.15],
+      zoom:13,
+      maxZoom:15,
+      scrollZoom:false,
+      dragPan:false,
+      doubleClickZoom:false,
+      touchZoomRotate:false
+    });
+
+    const bounds=new window.mapboxgl.LngLatBounds();
+    locations.forEach(loc=>{
+      const marker=document.createElement('div');
+      marker.className='custom-marker';
+
+      const img=document.createElement('img');
+      img.src=loc.logo;
+      img.alt=loc.name;
+      marker.appendChild(img);
+
+      const label=document.createElement('div');
+      label.className='marker-label';
+      label.textContent=mapboxContainer.dataset.routeLabel||'Route berechnen';
+      marker.appendChild(label);
+
+      marker.addEventListener('click',()=>{
+        track('map_route','map_route:'+loc.key,loc.name,loc.link);
+        location.href=loc.link;
+      });
+
+      new window.mapboxgl.Marker(marker,{anchor:'bottom'})
+        .setLngLat([loc.lng,loc.lat])
+        .addTo(map);
+
+      bounds.extend([loc.lng,loc.lat]);
+    });
+
+    map.fitBounds(bounds,{padding:80,maxZoom:15});
+  };
+
+  if(typeof window.mapboxgl!=='undefined'){
+    initMapbox();
+  }else{
+    window.addEventListener('load',initMapbox,{once:true});
   }
 
   const winterPopup=document.getElementById('winterPopup');
