@@ -6,17 +6,19 @@ site_header('standorte');
 ?>
 <main>
 <?php site_hero(); ?>
-<section class="section"><div class="container">
-<h2>Unsere Standorte</h2>
-<div class="location-cards">
-<?php foreach (['feldkirchen'=>'/tsv-feldkirchen/','heimstetten'=>'/sv-heimstetten/'] as $key=>$url): $loc=$d['locations'][$key] ?? []; ?>
-<a class="location-card" href="<?= h($url) ?>">
-  <img src="<?= h($loc['logo'] ?? '') ?>" alt="<?= h($loc['name'] ?? '') ?>">
-  <h2><?= h($loc['name'] ?? '') ?></h2>
-</a>
-<?php endforeach; ?>
-</div>
-</div></section>
+<section class="locations-page">
+  <div class="container">
+    <h2>Unsere Standorte</h2>
+    <div class="location-cards">
+      <?php foreach (['feldkirchen'=>['/tsv-feldkirchen/','TSV Feldkirchen'],'heimstetten'=>['/sv-heimstetten/','SV Heimstetten']] as $key=>$meta): $loc=$d['locations'][$key] ?? []; ?>
+      <article class="location-card">
+        <img src="<?= h($loc['logo'] ?? '') ?>" alt="<?= h($loc['name'] ?? '') ?>">
+        <a class="kubio-btn" href="<?= h($meta[0]) ?>"><?= h($meta[1]) ?></a>
+      </article>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
 </main>
 <?php site_footer(); ?>
 </body></html>
