@@ -89,3 +89,5 @@ jobs:
           git add assets/media
           git commit -m "Migrate original WordPress media"
           git push
+
+# Trigger migration run
