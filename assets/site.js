@@ -20,4 +20,17 @@
       el.closest('.modal')?.classList.remove('open');
     });
   });
+
+  const loadMaps = () => {
+    document.querySelectorAll('[data-map-src]').forEach(frame => {
+      if (!frame.src) frame.src = frame.dataset.mapSrc;
+      frame.hidden = false;
+      frame.previousElementSibling?.remove();
+    });
+    try { localStorage.setItem('ts_maps_consent','yes'); } catch (_) {}
+  };
+  try {
+    if (localStorage.getItem('ts_maps_consent') === 'yes') loadMaps();
+  } catch (_) {}
+  document.querySelectorAll('[data-load-map]').forEach(btn => btn.addEventListener('click', loadMaps));
 })();
