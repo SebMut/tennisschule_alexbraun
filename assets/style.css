@@ -109,7 +109,7 @@ p{margin:0 0 20px}
 
 .team-teaser{background:#fff;padding:25px 0}
 .team-teaser .section-heading{max-width:790px;width:69.06%}
-.team-visual{position:relative;width:min(551px,100%);min-height:330px;margin:20px auto 0;background:url("/assets/media/trainerteam_2024.jpeg") 53% 84%/cover no-repeat;border:8px solid #fff;border-bottom:0;border-radius:6px 6px 0 0;box-shadow:var(--kubio-soft-shadow);display:flex;align-items:flex-end;justify-content:center}
+.team-visual{position:relative;width:min(551px,100%);min-height:330px;margin:20px auto 0;background-image:var(--team-image,url("/assets/media/trainerteam_2024.jpeg"));background-position:53% 84%;background-size:cover;background-repeat:no-repeat;border:8px solid #fff;border-bottom:0;border-radius:6px 6px 0 0;box-shadow:var(--kubio-soft-shadow);display:flex;align-items:flex-end;justify-content:center}
 .team-visual-action{width:100%;padding:0 0 18px;text-align:center}
 .kubio-btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 24px;background:var(--kubio-orange);border:2px solid var(--kubio-orange);border-radius:5px;color:#fff;font-family:"Open Sans",Arial,sans-serif;font-size:12px;font-weight:600;line-height:1.2;letter-spacing:1px;text-transform:uppercase;text-align:center}
 .kubio-btn:hover{background:var(--kubio-blue-dark);border-color:var(--kubio-blue-dark);color:#fff}
@@ -179,7 +179,7 @@ p{margin:0 0 20px}
 /* Kontakt */
 .contact-section{padding:25px 0;background:#fff}
 .contact-card{display:grid;grid-template-columns:1fr 1fr;margin:0 5%;background:#fff;box-shadow:var(--kubio-shadow)}
-.contact-photo{min-height:560px;background-image:linear-gradient(90deg,rgba(255,255,255,0) 70%,#fff 100%),url("/assets/media/braun_kontakt.jpg");background-size:cover;background-position:59% 32%}
+.contact-photo{min-height:560px;background-image:linear-gradient(90deg,rgba(255,255,255,0) 70%,#fff 100%),var(--contact-image,url("/assets/media/braun_kontakt.jpg"));background-size:cover;background-position:59% 32%}
 .contact-form-col{padding:34px;display:flex;flex-direction:column;justify-content:flex-end}
 .contact-form-col h2{font-size:2em;font-weight:700}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
@@ -266,7 +266,7 @@ textarea{min-height:150px;resize:vertical}
   .location-card img{height:220px}
   .club-content p{text-align:justify}
   .contact-card{margin:0}
-  .contact-photo{min-height:250px;background-position:51.6% 16.9%;background-image:url("/assets/media/braun_kontakt.jpg")}
+  .contact-photo{min-height:250px;background-position:51.6% 16.9%;background-image:var(--contact-image,url("/assets/media/braun_kontakt.jpg"))}
   .contact-form-col{padding:24px}
   .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
   .footer-grid{grid-template-columns:1fr;text-align:center}
