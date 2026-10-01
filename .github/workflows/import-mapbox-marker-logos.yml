@@ -1,0 +1,31 @@
+name: Import Mapbox marker logos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/import-mapbox-marker-logos.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact live marker logos
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 "https://cdn.shopify.com/s/files/1/0927/1735/1290/files/TSVLogo.png?v=1761681235" -o assets/media/mapbox-tsv.png
+          curl -fsSL --retry 3 "https://cdn.shopify.com/s/files/1/0927/1735/1290/files/SVHLogo.png?v=1761681227" -o assets/media/mapbox-svh.png
+      - name: Commit marker logos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/media/mapbox-tsv.png assets/media/mapbox-svh.png
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add exact Mapbox marker logos"
+          git push
