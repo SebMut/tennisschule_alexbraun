@@ -12,6 +12,10 @@ return [
         'branch' => 'main',
     ],
 
+    'mapbox' => [
+        'token' => 'HIER_MAPBOX_PUBLIC_TOKEN',
+    ],
+
     'smtp' => [
         'host' => 'smtps.udag.de',
         'port' => 587,
