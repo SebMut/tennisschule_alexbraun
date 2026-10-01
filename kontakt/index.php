@@ -10,9 +10,9 @@ page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['s
 <form action="/api/contact.php" method="post" accept-charset="UTF-8" data-track-form="contact">
 <div class="form-grid">
 <div class="full"><label for="name"><?=h($labels['name']??'Vorname & Nachname *')?></label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
-<div><label for="subject"><?=h($labels['subject']??'Betreff *')?></label><input id="subject" name="subject" required maxlength="160"></div>
-<div><label for="phone"><?=h($labels['phone']??'Telefon *')?></label><input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="60"></div>
 <div class="full"><label for="email"><?=h($labels['email']??'Email *')?></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="190"></div>
+<div><label for="phone"><?=h($labels['phone']??'Telefon')?></label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="60"<?= !empty($c['phone_required'])?' required':'' ?>></div>
+<div><label for="topic"><?=h($labels['topic']??'Anliegen *')?></label><select id="topic" name="topic" required><option value="">Bitte auswählen</option><?php foreach(($c['topics']??[]) as $topic): ?><option value="<?=h($topic)?>"><?=h($topic)?></option><?php endforeach; ?></select></div>
 <div class="full"><label for="message"><?=h($labels['message']??'Nachricht *')?></label><textarea id="message" name="message" required maxlength="5000"></textarea></div>
 <div class="honeypot" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
 <div class="full"><button class="contact-submit" data-track="contact_submit" type="submit"><?=h($labels['submit']??'Senden')?></button></div>
