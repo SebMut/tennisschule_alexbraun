@@ -125,3 +125,7 @@ textarea{min-height:170px;resize:vertical}
   .footer-inner{flex-direction:column;align-items:flex-start;gap:9px}
   .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
 }
+.honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.form-notice{padding:14px 16px;border-radius:5px;margin:0 0 22px;font-weight:700}
+.form-notice.success{background:#edf8ef;color:#256331;border:1px solid #b9dfc0}
+.form-notice.error{background:#fff1f1;color:#8b2222;border:1px solid #edc1c1}
