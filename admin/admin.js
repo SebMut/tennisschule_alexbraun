@@ -18,6 +18,9 @@
   function checkboxField(label,path,value,note=''){
     return `<label class="field-inline"><input type="checkbox" data-bool-path="${esc(path)}" ${value?'checked':''}><span>${esc(label)}${note?`<span class="field-note">${esc(note)}</span>`:''}</span></label>`;
   }
+  function selectField(label,path,value,options,note=''){
+    return `<label>${esc(label)}<select data-path="${esc(path)}">${options.map(o=>`<option value="${esc(o.value)}" ${o.value===value?'selected':''}>${esc(o.label)}</option>`).join('')}</select>${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
+  }
   function linesField(label,path,value){return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value||[]).join('\n'))}</textarea></label>`;}
   function preview(value,label='Aktuell verwendetes Bild',wide=false){return value?`<div class="current-image${wide?' wide':''}"><span class="current-image-label">${esc(label)}</span><img src="${esc(value)}" alt="" loading="lazy"></div>`:'';}
   function imageField(label,path,value,wide=false){return `<div class="image-row"><div>${textField(label,path,value)}${preview(value,'Aktuell verwendet',wide)}</div><label>Neues Bild<input class="cms-upload" data-upload-path="${esc(path)}" type="file" accept="image/jpeg,image/png,image/webp"></label></div>`;}
@@ -95,15 +98,46 @@
       <h2>Angebote</h2>
       ${textField('Seitenüberschrift','offers.page_title',data.offers?.page_title)}
       ${textField('Einleitung','offers.intro',data.offers?.intro,true)}
-      ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
-      ${offers.map((o,i)=>`<div class="cms-card"><div class="item-head"><strong>${esc(o.title||'Angebot')}</strong></div>
-        <div class="grid2">${textField('Titel',`offers.items.${i}.title`,o.title)}${textField('Buttontext',`offers.items.${i}.button`,o.button)}</div>
-        ${textField('Text auf Startseite',`offers.items.${i}.home_text`,o.home_text,true)}${imageField('Bild',`offers.items.${i}.image`,o.image,true)}
-        ${linesField('Eckdaten – eine Zeile pro Punkt',`offers.items.${i}.details`,o.details)}
+      <div class="grid2">
+        ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
+        ${textField('Kennzeichnung des aktuellen Angebots','offers.featured_label',data.offers?.featured_label)}
+      </div>
+
+      ${offers.map((o,i)=>`<div class="cms-card">
+        <div class="item-head"><strong>${esc(o.title||'Angebot')}</strong>${o.featured?'<span class="offer-admin-current">Aktuell hervorgehoben</span>':''}</div>
+        <div class="grid2">
+          ${textField('Titel',`offers.items.${i}.title`,o.title)}
+          ${textField('Buttontext',`offers.items.${i}.button`,o.button)}
+        </div>
+
+        ${textField('Beschreibung',`offers.items.${i}.home_text`,o.home_text,true)}
+        ${imageField('Bild',`offers.items.${i}.image`,o.image,true)}
+
+        <div class="grid2">
+          ${textField('Zielgruppe / Für wen',`offers.items.${i}.target_group`,o.target_group,'','Leer lassen, wenn keine sichere Angabe vorhanden ist.')}
+          ${textField('Schwerpunkte',`offers.items.${i}.focus`,o.focus)}
+          ${textField('Trainingsumfang',`offers.items.${i}.training_scope`,o.training_scope)}
+          ${textField('Zeitraum',`offers.items.${i}.period`,o.period)}
+          ${textField('Standort',`offers.items.${i}.location`,o.location)}
+          ${textField('Preis',`offers.items.${i}.price`,o.price)}
+        </div>
+
+        <div class="grid2">
+          ${textField('Anmeldestatus',`offers.items.${i}.status`,o.status)}
+          ${selectField('Statusdarstellung',`offers.items.${i}.status_kind`,o.status_kind,[{value:'open',label:'Offen / grün'},{value:'upcoming',label:'Bald buchbar / dunkel'},{value:'closed',label:'Geschlossen / dunkel'}])}
+        </div>
+        ${checkboxField('Als aktuelles Angebot hervorheben',`offers.items.${i}.featured`,o.featured,'Für die aktuelle Saison nur gezielt verwenden.')}
+
+        <div class="grid2">
+          ${textField('Startseite: CTA-Text',`offers.items.${i}.home_cta_label`,o.home_cta_label)}
+          ${textField('Startseite: CTA-Ziel',`offers.items.${i}.home_cta_url`,o.home_cta_url)}
+        </div>
+
         ${textField('Hinweis, wenn nicht buchbar',`offers.items.${i}.unavailable_message`,o.unavailable_message)}
         ${o.id==='winter'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
         ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+'</div>':''}
       </div>`).join('')}
+
       <div class="cms-card"><strong>Galerie</strong>
         ${(data.offers?.gallery||[]).map((img,i)=>imageField('Galeriebild '+(i+1),`offers.gallery.${i}`,img)).join('')}
       </div>
