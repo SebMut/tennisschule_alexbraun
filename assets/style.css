@@ -71,9 +71,11 @@ url("/assets/media/header_bild.jpg") center/cover}
 .site-footer{background:#08152d;color:#fff;padding:24px 0}
 .footer-inner{display:flex;align-items:center;gap:28px;justify-content:space-between;font-size:14px}
 .site-footer a{color:#fff}
-.page-hero{background:#0f2e68;color:#fff;padding:70px 0}
-.page-hero h1{font-size:50px;line-height:1.05;margin:0}
-.page-hero .kicker{margin:0 0 8px;color:var(--yellow);font-weight:700}
+.page-hero{min-height:360px;color:#fff;background:linear-gradient(90deg,rgba(1,21,60,.88) 0%,rgba(5,42,103,.68) 52%,rgba(5,42,103,.10) 100%),url("/assets/media/header_bild.jpg") center/cover}
+.page-hero .hero-content{padding:72px 0}
+.page-hero h1{font-size:58px;line-height:1;margin:0}
+.page-hero h1 span{display:block;font-size:30px;line-height:1.2;font-weight:500}
+.legal-main-title{font-size:42px!important;color:var(--blue);margin-top:0!important}
 .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
 .offer-panel{padding:30px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--yellow);box-shadow:var(--shadow)}
 .offer-panel h2{font-size:28px;margin:0 0 18px}
