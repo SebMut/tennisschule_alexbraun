@@ -1,0 +1,22 @@
+name: PHP and JS lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.php"
+      - "**/*.js"
+      - ".github/workflows/php-lint.yml"
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax check
+        run: find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: JavaScript syntax check
+        run: |
+          node --check assets/site.js
+          node --check admin/admin.js
