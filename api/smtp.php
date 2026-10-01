@@ -42,9 +42,9 @@ function smtp_send(array $mail): void {
     $pass = (string)$cfg['password'];
     $from = (string)$cfg['from'];
     $fromName = (string)$cfg['from_name'];
-    $to = (string)$cfg['to'];
+    $to = trim((string)($mail['to'] ?? $cfg['to']));
 
-    if ($host === '' || $user === '' || $pass === '' || $from === '' || $to === '') {
+    if ($host === '' || $user === '' || $pass === '' || $from === '' || $to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
         throw new RuntimeException('SMTP ist noch nicht vollständig konfiguriert.');
     }
 
