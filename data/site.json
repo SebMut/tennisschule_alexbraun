@@ -3,7 +3,7 @@
     "name": "Tennisschule Alex Braun",
     "tagline": "Deine Tennisschule im Münchner Osten.",
     "hero_copy": "Lass dich von unserem jungen, engagierten Team inspirieren und bringe dein Tennis auf ein neues Level.",
-    "hero_image": "/assets/media/header_bild.jpg",
+    "hero_image": "/assets/media/header_bild.webp",
     "logo": "/assets/media/logo.png",
     "hero_title": "Tennisschule Alex Braun",
     "hero_title_mobile": "Tennisschule\nAlex Braun",
@@ -55,13 +55,13 @@
       "Kinder, Jugendliche und Erwachsene trainieren bei uns vom Einstieg bis zum leistungsorientierten Wettkampftraining. Im Mittelpunkt stehen individuelle Förderung, strukturierte Trainingskonzepte und persönliche Betreuung.",
       "Geleitet wird die Tennisschule von Alex Braun, ehemaligem Weltranglisten-Spieler und 2. Bundesliga-Akteur des MTTC Iphitos. Er ist PTR Professional sowie GPTCA B Level Coach."
     ],
-    "about_image": "/assets/media/startseite_1.jpg",
+    "about_image": "/assets/media/startseite_1.webp",
     "offers_title": "Unser Angebot",
     "offers_intro": "In unserer Tennisschule bieten wir ein umfassendes Programm für Spieler jeden Alters und Niveaus an. Von Gruppentraining über Einzelstunden bis hin zu spezialisierten Kursen – wir haben für jeden etwas dabei. Unser hochmotiviertes Trainerteam steht bereit, um deine Technik zu verfeinern, deine Fitness zu steigern und dir dabei zu helfen, deine Ziele zu erreichen.",
     "team_title": "Unser Trainerteam",
     "team_intro": "Unser junges, engagiertes Trainerteam ist voller Leidenschaft und Motivation, um dich auf dem Tennisplatz zu unterstützen. Mit unserer dynamischen Herangehensweise und individuellen Betreuung bringen wir Spieler jeden Alters und Könnens auf ein höheres Niveau.",
     "offer_link_text": "Zur Anmeldung",
-    "team_image": "/assets/media/trainerteam_2024.jpeg",
+    "team_image": "/assets/media/trainerteam_2024.webp",
     "team_button_text": "Zur TrainerÜbersicht",
     "locations_title": "Unsere Standorte",
     "popup_image": "/assets/media/popup_wintertraining_2026_2027-2.png",
@@ -115,7 +115,7 @@
         "title": "Sommertraining",
         "button": "Anmeldung Sommertraining",
         "home_text": "Im Sommertraining arbeiten wir gezielt an Schlagtechnik, Kondition und Spieltaktik. Ob Anfänger oder Fortgeschrittener – unser Training ist für alle Alters- und Leistungsstufen geeignet.",
-        "image": "/assets/media/startseite_3.jpg",
+        "image": "/assets/media/startseite_3.webp",
         "details": [
           "13 Trainingswochen",
           "Anfang Mai bis Ende September",
@@ -140,7 +140,7 @@
         "title": "Wintertraining",
         "button": "Anmeldung Wintertraining",
         "home_text": "Unser Wintertraining ermöglicht es dir, in den kalten Monaten an Technik und Fitness zu arbeiten. In der Halle bieten wir gezieltes Training für einen optimalen Start in die Saison.",
-        "image": "/assets/media/startseite_4.jpg",
+        "image": "/assets/media/startseite_4.webp",
         "details": [
           "24 Trainingswochen",
           "Anfang Oktober bis Ende April",
@@ -166,7 +166,7 @@
         "title": "Tenniscamps",
         "button": "Anmeldung Tenniscamps",
         "home_text": "Unsere Tenniscamps verbinden intensives Training mit gemeinschaftlichen Aktivitäten. Hier kannst du schnelle Fortschritte machen und den Spaß am Tennis mit anderen teilen.",
-        "image": "/assets/media/startseite_2.jpg",
+        "image": "/assets/media/startseite_2.webp",
         "details": [
           "Oster-, Pfingst- und Sommerferien",
           "Täglich von 9:30 bis 15:00 Uhr",
@@ -192,12 +192,12 @@
     "page_title": "Unser Angebot",
     "hover_text": "Jetzt anmelden!",
     "gallery": [
-      "/assets/media/angebote_1.jpg",
-      "/assets/media/angebote_2.jpg",
-      "/assets/media/angebote_3.jpg",
-      "/assets/media/angebote_4.jpg",
-      "/assets/media/angebote_5.jpg",
-      "/assets/media/angebote_6.jpg"
+      "/assets/media/angebote_1.webp",
+      "/assets/media/angebote_2.webp",
+      "/assets/media/angebote_3.webp",
+      "/assets/media/angebote_4.webp",
+      "/assets/media/angebote_5.webp",
+      "/assets/media/angebote_6.webp"
     ],
     "featured_label": "Aktuell",
     "seasonal_highlight_enabled": true,
@@ -209,7 +209,7 @@
       {
         "name": "Alex Braun",
         "role": "Leiter der Tennisschule",
-        "image": "/assets/media/Braun.jpg",
+        "image": "/assets/media/Braun.webp",
         "qualifications": "PTR Professional · GPTCA B Level Coach",
         "experience": "Ehemaliger Weltranglisten-Spieler · 2. Bundesliga-Akteur des MTTC Iphitos",
         "focus": "Moderne, praxisnahe Trainingskonzepte · individuelle Förderung",
@@ -218,7 +218,7 @@
       {
         "name": "Lena Gruber",
         "role": "Trainerin",
-        "image": "/assets/media/Gruber.jpg",
+        "image": "/assets/media/Gruber.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -227,7 +227,7 @@
       {
         "name": "Felix Kellerer",
         "role": "Trainer",
-        "image": "/assets/media/Kellerer.jpg",
+        "image": "/assets/media/Kellerer.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -236,7 +236,7 @@
       {
         "name": "Alexa Pirok",
         "role": "Trainerin",
-        "image": "/assets/media/Pirok.jpg",
+        "image": "/assets/media/Pirok.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -245,7 +245,7 @@
       {
         "name": "Christoph Konitz",
         "role": "Trainer",
-        "image": "/assets/media/Konitz.jpg",
+        "image": "/assets/media/Konitz.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -254,7 +254,7 @@
       {
         "name": "Felix Fauth",
         "role": "Trainer",
-        "image": "/assets/media/Fauth.jpg",
+        "image": "/assets/media/Fauth.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -263,7 +263,7 @@
       {
         "name": "Niclas Hargasser",
         "role": "Trainer",
-        "image": "/assets/media/Hargasser.jpg",
+        "image": "/assets/media/Hargasser.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -272,7 +272,7 @@
       {
         "name": "Tobias Schumacher",
         "role": "Trainer",
-        "image": "/assets/media/Schumacher.jpg",
+        "image": "/assets/media/Schumacher.webp",
         "qualifications": "",
         "experience": "",
         "focus": "",
@@ -334,7 +334,7 @@
   "contact": {
     "page_title": "Kontakt",
     "heading": "Kontakt",
-    "image": "/assets/media/braun_kontakt.jpg",
+    "image": "/assets/media/braun_kontakt.webp",
     "labels": {
       "name": "Vorname & Nachname *",
       "subject": "Betreff *",
@@ -443,7 +443,7 @@
   },
   "seo": {
     "base_url": "https://www.tennisschule-alexbraun.de",
-    "default_og_image": "/assets/media/header_bild.jpg",
+    "default_og_image": "/assets/media/header_bild.webp",
     "pages": {
       "home": {
         "title": "Tennisschule Alex Braun | Tennistraining im Münchner Osten",
