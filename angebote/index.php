@@ -56,6 +56,28 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
   </div>
 </div></section>
 
+<?php $faq=$d['faq']??[]; if(!empty($faq['enabled']) && !empty($faq['items'])): ?>
+<section class="faq-section"><div class="container narrow">
+  <div class="section-heading"><h2><?=h($faq['title']??'Häufige Fragen')?></h2><p><?=h($faq['intro']??'')?></p></div>
+  <div class="faq-list">
+    <?php foreach($faq['items'] as $i=>$item): ?>
+    <details class="faq-item">
+      <summary><?=h($item['question']??'')?></summary>
+      <div class="faq-answer"><p><?=h($item['answer']??'')?></p></div>
+    </details>
+    <?php endforeach; ?>
+  </div>
+</div></section>
+<?php
+render_json_ld([
+  '@context'=>'https://schema.org','@type'=>'FAQPage',
+  'mainEntity'=>array_map(fn($item)=>[
+    '@type'=>'Question','name'=>$item['question']??'',
+    'acceptedAnswer'=>['@type'=>'Answer','text'=>$item['answer']??'']
+  ],$faq['items'])
+]);
+endif; ?>
+
 <section class="gallery-section"><div class="container gallery-grid">
 <?php $gallery=$o['gallery']??[]; foreach([[0,3],[1,4],[2,5]] as $indexes): ?><div class="gallery-column"><?php foreach($indexes as $idx): if(empty($gallery[$idx])) continue; ?><div class="gallery-item"><img src="<?=h($gallery[$idx])?>" alt="Tennistraining"></div><?php endforeach; ?></div><?php endforeach; ?>
 </div></section>
