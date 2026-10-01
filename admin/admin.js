@@ -61,7 +61,16 @@
         ${textField('Footer-Name','site.footer.name',foot.name)}${textField('Impressum-Linktext','site.footer.legal_label',foot.legal_label)}
         ${textField('Copyright-Name','site.footer.copyright_name',foot.copyright_name)}${textField('Telefon','site.footer.phone',foot.phone)}
         ${textField('E-Mail','site.footer.email',foot.email)}${textField('Instagram-URL','site.footer.instagram',foot.instagram)}
-      </div></div>
+      </div>
+      ${(foot.links||[]).map((l,i)=>`<div class="grid2">${textField('Footer-Link '+(i+1),`site.footer.links.${i}.label`,l.label)}${textField('Ziel',`site.footer.links.${i}.url`,l.url)}</div>`).join('')}
+      </div>
+      <div class="cms-card"><strong>Mobile Schnellaktionen</strong>
+        ${checkboxField('Sticky-CTA auf Mobilgeräten aktiv','mobile_cta.enabled',data.mobile_cta?.enabled)}
+        <div class="grid2">
+          ${textField('Button 1 Text','mobile_cta.primary_label',data.mobile_cta?.primary_label)}${textField('Button 1 Ziel','mobile_cta.primary_url',data.mobile_cta?.primary_url)}
+          ${textField('Button 2 Text','mobile_cta.secondary_label',data.mobile_cta?.secondary_label)}${textField('Button 2 Ziel','mobile_cta.secondary_url',data.mobile_cta?.secondary_url)}
+        </div>
+      </div>
     </section>
 
     <section class="cms-section" data-admin-section="home" hidden>
@@ -69,6 +78,15 @@
       ${textField('Überschrift Über uns','home.about_title',h.about_title)}
       ${(h.about_paragraphs||[]).map((p,i)=>textField('Über uns – Absatz '+(i+1),'home.about_paragraphs.'+i,p,true)).join('')}
       ${imageField('Bild Über uns','home.about_image',h.about_image,true)}
+      <div class="cms-card"><strong>Vertrauenszeile</strong>
+        ${checkboxField('Vertrauenszeile anzeigen','home.trust_enabled',h.trust_enabled)}
+        ${linesField('Punkte – eine Zeile pro Eintrag','home.trust_items',h.trust_items)}
+      </div>
+      <div class="cms-card"><strong>Warum wir?</strong>
+        ${checkboxField('Sektion anzeigen','home.why_enabled',h.why_enabled)}
+        ${textField('Überschrift','home.why_title',h.why_title)}
+        ${(h.why_items||[]).map((w,i)=>`<div class="grid2">${textField('Titel '+(i+1),`home.why_items.${i}.title`,w.title)}${textField('Text '+(i+1),`home.why_items.${i}.text`,w.text,true)}</div>`).join('')}
+      </div>
       <div class="cms-card"><strong>Angebotsbereich</strong>
         ${textField('Überschrift','home.offers_title',h.offers_title)}${textField('Einleitung','home.offers_intro',h.offers_intro,true)}
         <div class="grid2">${textField('Linktext auf Karten','home.offer_link_text',h.offer_link_text)}${textField('Linkziel','home.offer_link_url',h.offer_link_url)}</div>
@@ -89,6 +107,10 @@
           ${numberField('Schließen-X nach Sekunden','home.popup_close_delay_seconds',h.popup_close_delay_seconds,0,30)}
           ${textField('Popup-Ziel','home.popup_link',h.popup_link)}
         </div>
+        ${selectField('Popup-Darstellung','home.popup_mode',h.popup_mode,[{value:'html',label:'Modernes HTML-Popup'},{value:'image',label:'Bild-Fokus'}])}
+        ${textField('Überschrift','home.popup_heading',h.popup_heading)}
+        ${textField('Text','home.popup_text',h.popup_text,true)}
+        ${textField('Buttontext','home.popup_button_text',h.popup_button_text)}
         ${textField('Alternativtext','home.popup_alt',h.popup_alt)}
         ${imageField('Popup-Bild','home.popup_image',h.popup_image,true)}
       </div>
@@ -138,6 +160,12 @@
         ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+'</div>':''}
       </div>`).join('')}
 
+      <div class="cms-card"><strong>FAQ</strong>
+        ${checkboxField('FAQ anzeigen','faq.enabled',data.faq?.enabled)}
+        ${textField('FAQ-Überschrift','faq.title',data.faq?.title)}
+        ${textField('FAQ-Einleitung','faq.intro',data.faq?.intro,true)}
+        ${(data.faq?.items||[]).map((item,i)=>`<div class="legal-section-editor">${textField('Frage',`faq.items.${i}.question`,item.question)}${textField('Antwort',`faq.items.${i}.answer`,item.answer,true)}</div>`).join('')}
+      </div>
       <div class="cms-card"><strong>Galerie</strong>
         ${(data.offers?.gallery||[]).map((img,i)=>imageField('Galeriebild '+(i+1),`offers.gallery.${i}`,img)).join('')}
       </div>
@@ -185,9 +213,14 @@
             ${textField('Rolle',`trainers.items.${i}.role`,t.role)}
           </div>
           ${imageField('Bild',`trainers.items.${i}.image`,t.image)}
+          ${textField('Qualifikationen',`trainers.items.${i}.qualifications`,t.qualifications,true)}
+          ${textField('Erfahrung',`trainers.items.${i}.experience`,t.experience,true)}
+          ${textField('Trainingsschwerpunkte',`trainers.items.${i}.focus`,t.focus,true)}
+          ${textField('Kurzbeschreibung',`trainers.items.${i}.bio`,t.bio,true)}
         </div>`).join('')}
       </div>
 
+      <div class="grid2">${textField('CTA-Text','trainers.cta_label',data.trainers?.cta_label)}${textField('CTA-Ziel','trainers.cta_url',data.trainers?.cta_url)}</div>
       <button type="button" class="secondary add-trainer bottom-add-trainer">+ Trainer hinzufügen</button>
     </section>
 
@@ -196,6 +229,8 @@
       ${textField('Seitenüberschrift','locations.page_title',data.locations?.page_title)}
       ${textField('Karten-Hinweis','locations.map_consent_text',data.locations?.map_consent_text,true)}
       ${textField('Karten-Button','locations.map_consent_button',data.locations?.map_consent_button)}
+      <div class="grid2">${textField('Standort-Button','locations.location_button',data.locations?.location_button)}${textField('Routen-Button','locations.route_button',data.locations?.route_button)}
+      ${textField('CTA-Text','locations.cta_label',data.locations?.cta_label)}${textField('CTA-Ziel','locations.cta_url',data.locations?.cta_url)}</div>
       ${locationEditor('feldkirchen','TSV Feldkirchen',lf)}
       ${locationEditor('heimstetten','SV Heimstetten',lh,true)}
     </section>
@@ -205,10 +240,13 @@
       ${textField('Seitentitel','contact.page_title',contact.page_title)}${textField('Überschrift','contact.heading',contact.heading)}
       ${imageField('Kontaktbild','contact.image',contact.image,true)}
       <div class="cms-card"><strong>Formularbeschriftungen</strong><div class="grid2">
-      ${textField('Name','contact.labels.name',labels.name)}${textField('Betreff','contact.labels.subject',labels.subject)}
-      ${textField('Telefon','contact.labels.phone',labels.phone)}${textField('E-Mail','contact.labels.email',labels.email)}
+      ${textField('Name','contact.labels.name',labels.name)}${textField('E-Mail','contact.labels.email',labels.email)}
+      ${textField('Telefon','contact.labels.phone',labels.phone)}${textField('Anliegen','contact.labels.topic',labels.topic)}
       ${textField('Nachricht','contact.labels.message',labels.message)}${textField('Senden','contact.labels.submit',labels.submit)}
-      </div>${textField('Erfolgsmeldung','contact.success_message',contact.success_message,true)}${textField('Fehlermeldung','contact.error_message',contact.error_message,true)}</div>
+      </div>
+      ${checkboxField('Telefon ist Pflichtfeld','contact.phone_required',contact.phone_required)}
+      ${linesField('Auswahl Anliegen – eine Zeile pro Eintrag','contact.topics',contact.topics)}
+      ${textField('Erfolgsmeldung','contact.success_message',contact.success_message,true)}${textField('Fehlermeldung','contact.error_message',contact.error_message,true)}</div>
     </section>
 
     <section class="cms-section" data-admin-section="weitere" hidden>
@@ -219,6 +257,11 @@
       </div>
       <div class="cms-card"><strong>Erfolgsseite</strong>
         ${textField('Seitentitel','success.page_title',data.success?.page_title)}${textField('Nachricht','success.message',data.success?.message,true)}
+      </div>
+      <div class="cms-card"><strong>SEO & Teilen</strong>
+        ${textField('Basis-URL','seo.base_url',data.seo?.base_url)}
+        ${imageField('Standard Open-Graph-Bild','seo.default_og_image',data.seo?.default_og_image,true)}
+        ${Object.entries(data.seo?.pages||{}).map(([k,m])=>`<div class="legal-section-editor"><strong>${esc(k)}</strong>${textField('Titel',`seo.pages.${k}.title`,m.title)}${textField('Beschreibung',`seo.pages.${k}.description`,m.description,true)}${textField('Pfad',`seo.pages.${k}.path`,m.path)}</div>`).join('')}
       </div>
       <div class="cms-card"><strong>Impressum & Datenschutz</strong>
         ${textField('Seitentitel','legal.page_title',legal.page_title)}${textField('Einleitung','legal.intro',legal.intro,true)}
@@ -242,6 +285,8 @@
     return `<div class="cms-card"><strong>${esc(title)}</strong>
       ${textField('Name',`locations.${key}.name`,l.name)}
       ${textField('Beschreibung',`locations.${key}.description`,l.description,true)}
+      ${textField('Kurztext Übersicht',`locations.${key}.overview_text`,l.overview_text,true)}
+      ${textField('Kurzer Fakt',`locations.${key}.fact`,l.fact)}
       ${second?textField('Zweiter Absatz',`locations.${key}.description_2`,l.description_2,true):''}
       ${imageField('Logo',`locations.${key}.logo`,l.logo)}
       <div class="grid2">${textField('Website',`locations.${key}.website`,l.website)}${textField('Website-Button',`locations.${key}.button_website`,l.button_website)}
@@ -268,7 +313,7 @@
     };
     editor.querySelectorAll('.remove-trainer').forEach(btn=>btn.addEventListener('click',()=>removeTrainer(Number(btn.dataset.index))));
     editor.querySelectorAll('.add-trainer').forEach(btn=>btn.addEventListener('click',()=>{
-      data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png'});
+      data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png',qualifications:'',experience:'',focus:'',bio:''});
       render();
       showTab('trainerteam');
       const newIndex=data.trainers.items.length-1;
