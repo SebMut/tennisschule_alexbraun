@@ -3,35 +3,35 @@
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/mulish/v18/1Ptyg83HX_SGhgqO0yLcmjzUAuWexc1RwaA.ttf) format('truetype');
+  src: url(/assets/fonts/font-01.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Mulish';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/mulish/v18/1Ptyg83HX_SGhgqO0yLcmjzUAuWexZNRwaA.ttf) format('truetype');
+  src: url(/assets/fonts/font-02.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Mulish';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/mulish/v18/1Ptyg83HX_SGhgqO0yLcmjzUAuWexaFRwaA.ttf) format('truetype');
+  src: url(/assets/fonts/font-03.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Mulish';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/mulish/v18/1Ptyg83HX_SGhgqO0yLcmjzUAuWexU1WwaA.ttf) format('truetype');
+  src: url(/assets/fonts/font-04.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Mulish';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/mulish/v18/1Ptyg83HX_SGhgqO0yLcmjzUAuWexXRWwaA.ttf) format('truetype');
+  src: url(/assets/fonts/font-05.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
@@ -39,7 +39,7 @@
   font-weight: 400;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/opensans/v44/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0C4n.ttf) format('truetype');
+  src: url(/assets/fonts/font-06.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Open Sans';
@@ -47,19 +47,19 @@
   font-weight: 600;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/opensans/v44/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsgH1y4n.ttf) format('truetype');
+  src: url(/assets/fonts/font-07.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Syne';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/syne/v24/8vIS7w4qzmVxsWxjBZRjr0FKM_04uT6k.ttf) format('truetype');
+  src: url(/assets/fonts/font-08.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Syne';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/syne/v24/8vIS7w4qzmVxsWxjBZRjr0FKM_3mvj6k.ttf) format('truetype');
+  src: url(/assets/fonts/font-09.ttf) format('truetype');
 }
