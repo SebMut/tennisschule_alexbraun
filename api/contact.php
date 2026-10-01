@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (trim((string)($_POST['website'] ?? '')) !== '') {
-    header('Location: /kontakt/?status=sent', true, 303);
+    header('Location: /nachricht-erfolgreich-zugestellt/', true, 303);
     exit;
 }
 
@@ -52,7 +52,7 @@ try {
         'reply_to' => $email,
         'body' => $mailBody,
     ]);
-    header('Location: /kontakt/?status=sent', true, 303);
+    header('Location: /nachricht-erfolgreich-zugestellt/', true, 303);
 } catch (Throwable $e) {
     error_log('Kontaktformular SMTP: ' . $e->getMessage());
     header('Location: /kontakt/?status=error', true, 303);
