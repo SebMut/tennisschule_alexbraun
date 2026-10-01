@@ -1,0 +1,41 @@
+name: Build download ZIPs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-download-zips.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Komplette Projekt-ZIP bauen
+        run: |
+          zip -r tennisschule_alexbraun_komplett.zip .             -x ".git/*"             -x "tennisschule_alexbraun_komplett.zip"
+
+      - name: Webspace-ZIP bauen
+        run: |
+          mkdir -p /tmp/webspace
+          rsync -a ./ /tmp/webspace/             --exclude ".git"             --exclude ".github"             --exclude "README.md"             --exclude "DEPLOYMENT-UNITED-DOMAINS.md"             --exclude "config.local.php"             --exclude "storage/*"
+          (cd /tmp/webspace && zip -r "$GITHUB_WORKSPACE/tennisschule_alexbraun_webspace.zip" .)
+
+      - name: Projekt-ZIP hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: tennisschule_alexbraun_komplett
+          path: tennisschule_alexbraun_komplett.zip
+          compression-level: 0
+
+      - name: Webspace-ZIP hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: tennisschule_alexbraun_webspace
+          path: tennisschule_alexbraun_webspace.zip
+          compression-level: 0
