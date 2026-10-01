@@ -72,7 +72,18 @@
           "TSV Feldkirchen und SV Heimstetten",
           "ab 43€ pro Monat"
         ],
-        "unavailable_message": "Ab ca. 10.03.2027 buchbar."
+        "unavailable_message": "Ab ca. 10.03.2027 buchbar.",
+        "target_group": "Anfänger bis Fortgeschrittene · alle Altersstufen",
+        "focus": "Schlagtechnik · Kondition · Spieltaktik",
+        "training_scope": "13 Trainingswochen",
+        "period": "Anfang Mai bis Ende September",
+        "location": "TSV Feldkirchen und SV Heimstetten",
+        "price": "ab 43€ pro Monat",
+        "status": "Ab ca. 10.03.2027 buchbar",
+        "status_kind": "upcoming",
+        "featured": false,
+        "home_cta_label": "Sommertraining ansehen",
+        "home_cta_url": "/angebote/#sommertraining"
       },
       {
         "id": "winter",
@@ -87,7 +98,18 @@
           "ab 43€ pro Monat"
         ],
         "unavailable_message": "Ab ca. 28.08.2026 buchbar.",
-        "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true"
+        "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true",
+        "target_group": "",
+        "focus": "Technik · Fitness · Hallentraining",
+        "training_scope": "24 Trainingswochen",
+        "period": "Anfang Oktober bis Ende April",
+        "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
+        "price": "ab 43€ pro Monat",
+        "status": "Anmeldung geöffnet",
+        "status_kind": "open",
+        "featured": true,
+        "home_cta_label": "Jetzt Wintertraining anmelden",
+        "home_cta_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true"
       },
       {
         "id": "camps",
@@ -103,7 +125,18 @@
         ],
         "unavailable_message": "Ab ca. 10.03.2027 buchbar.",
         "button_feldkirchen": "Anmeldung Tenniscamps\nTSV Feldkirchen",
-        "button_heimstetten": "Anmeldung Tenniscamps\nSV Heimstetten"
+        "button_heimstetten": "Anmeldung Tenniscamps\nSV Heimstetten",
+        "target_group": "",
+        "focus": "Intensives Training · Gemeinschaft · schnelle Fortschritte",
+        "training_scope": "Täglich 9:30 bis 15:00 Uhr",
+        "period": "Oster-, Pfingst- und Sommerferien",
+        "location": "TSV Feldkirchen und SV Heimstetten",
+        "price": "ab 239 €",
+        "status": "Ab ca. 10.03.2027 buchbar",
+        "status_kind": "upcoming",
+        "featured": false,
+        "home_cta_label": "Tenniscamps ansehen",
+        "home_cta_url": "/angebote/#tenniscamps"
       }
     ],
     "page_title": "Unser Angebot",
@@ -115,7 +148,8 @@
       "/assets/media/angebote_4.jpg",
       "/assets/media/angebote_5.jpg",
       "/assets/media/angebote_6.jpg"
-    ]
+    ],
+    "featured_label": "Aktuell"
   },
   "trainers": {
     "intro": "Entdecke unser junges, motiviertes Trainerteam! Komm vorbei und lerne uns persönlich kennen. Wir freuen uns darauf, deine Tennisreise zu unterstützen und gemeinsam an deinen Zielen zu arbeiten!",
