@@ -78,8 +78,6 @@ p{margin:0 0 20px}
 .hero-btn-orange:hover{background:var(--kubio-dark);color:#fff}
 .hero-btn-white{background:#fff;color:var(--kubio-dark)}
 .hero-btn-white:hover{background:var(--kubio-blue);color:#fff}
-.hero-down{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);color:#fff;font-size:40px;font-weight:300;line-height:1}
-.hero-down:hover{color:#fff}
 .page-hero{background-position:49% 63%;padding:180px 20px 100px}
 .page-hero .hero-content{width:100%}
 
@@ -126,6 +124,12 @@ p{margin:0 0 20px}
 .home-location a{color:var(--kubio-orange)}
 .home-location a:hover{color:var(--kubio-blue-dark)}
 .home-map-wrap{background:var(--kubio-light-gray);padding:0 0 25px}
+.mapbox-home{width:100%;height:500px;border-radius:10px;overflow:hidden}
+.custom-marker{width:50px;height:50px;border-radius:50%;overflow:visible;position:relative;cursor:pointer;transition:transform .3s ease}
+.custom-marker img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .3s ease}
+.marker-label{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(255,255,255,.25);color:#000;font-size:12px;padding:6px 10px;border-radius:8px;text-align:center;width:max-content;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:.9}
+.custom-marker:hover img{transform:scale(1.18)}
+.custom-marker:hover .marker-label{background:rgba(255,255,255,.7);opacity:1}
 
 /* Angebote */
 .offers-page-section{padding:25px 0 0;background:rgba(255,255,255,.65)}
