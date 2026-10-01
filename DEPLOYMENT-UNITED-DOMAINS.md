@@ -120,3 +120,15 @@ Bilder werden in `assets/media/cms/` gespeichert und ebenfalls nach GitHub commi
 Erst danach in United Domains die Domain `www.tennisschule-alexbraun.de` auf das neue Verzeichnis zeigen lassen.
 
 Die alte WordPress-Installation sollte erst gelöscht werden, wenn die neue Website vollständig abgenommen und ein Backup vorhanden ist.
+
+
+## Testdeployment ohne Admin/SMTP
+
+Für das erste Staging-Deployment sind `TS_ADMIN_PASSWORD` und `TS_SMTP_PASSWORD` optional.
+
+Fehlen sie:
+- die öffentliche Website funktioniert normal;
+- `/admin/` ist noch nicht nutzbar;
+- das Kontaktformular kann noch keine E-Mails versenden.
+
+Sobald die Secrets später ergänzt wurden, genügt ein erneuter manueller Deploy.
