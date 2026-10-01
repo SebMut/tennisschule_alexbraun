@@ -25,7 +25,25 @@
       "copyright_name": "Tennisschule Alex Braun",
       "phone": "+49 172 2104 303",
       "email": "info@tennisschule-alexbraun.de",
-      "instagram": "https://www.instagram.com/tennisschule_alexbraun"
+      "instagram": "https://www.instagram.com/tennisschule_alexbraun",
+      "links": [
+        {
+          "label": "Angebote",
+          "url": "/angebote/"
+        },
+        {
+          "label": "TSV Feldkirchen",
+          "url": "/tsv-feldkirchen/"
+        },
+        {
+          "label": "SV Heimstetten",
+          "url": "/sv-heimstetten/"
+        },
+        {
+          "label": "Kontakt",
+          "url": "/kontakt/"
+        }
+      ]
     },
     "hero_primary_url": "/angebote/",
     "hero_secondary_url": "/kontakt/"
@@ -33,9 +51,9 @@
   "home": {
     "about_title": "Über uns",
     "about_paragraphs": [
-      "Die Tennisschule Alex Braun steht für professionelles, zeitgemäßes Tennistraining und eine ganzheitliche sportliche Ausbildung. Seit unserer Gründung im Jahr 2023 stehen wir für qualitativ hochwertiges Tennistraining und eine enge Zusammenarbeit mit Vereinen, Eltern und Spielern. Aktuell betreuen wir die Tennisabteilungen des TSV Feldkirchen und des SV Heimstetten.",
-      "Unser Fokus liegt auf individueller Förderung – vom ersten Kontakt mit dem Tennissport bis hin zum leistungsorientierten Wettkampftraining. Kinder, Jugendliche und Erwachsene profitieren von strukturierten Trainingskonzepten, persönlicher Betreuung und einem jungen, motivierten Trainerteam, das mit Leidenschaft und Kompetenz arbeitet.",
-      "Geleitet wird die Tennisschule von Alex Braun, ehemaligem Weltranglisten-Spieler und 2. Bundesliga-Akteur des MTTC Iphitos. Er ist zertifizierter PTR Professional sowie GPTCA B Level Coach. Seine langjährige Erfahrung aus dem nationalen und internationalen Tennis, kombiniert mit seiner Tätigkeit in verschiedenen Vereinen und Organisationen, bildet die Grundlage für ein modernes, praxisnahes Trainingskonzept."
+      "Die Tennisschule Alex Braun steht seit 2023 für professionelles, zeitgemäßes Tennistraining im Münchner Osten. Wir betreuen die Tennisabteilungen des TSV Feldkirchen und des SV Heimstetten und arbeiten eng mit Vereinen, Eltern und Spielern zusammen.",
+      "Kinder, Jugendliche und Erwachsene trainieren bei uns vom Einstieg bis zum leistungsorientierten Wettkampftraining. Im Mittelpunkt stehen individuelle Förderung, strukturierte Trainingskonzepte und persönliche Betreuung.",
+      "Geleitet wird die Tennisschule von Alex Braun, ehemaligem Weltranglisten-Spieler und 2. Bundesliga-Akteur des MTTC Iphitos. Er ist PTR Professional sowie GPTCA B Level Coach."
     ],
     "about_image": "/assets/media/startseite_1.jpg",
     "offers_title": "Unser Angebot",
@@ -55,7 +73,39 @@
     "popup_frequency_days": 7,
     "popup_delay_seconds": 1,
     "popup_close_delay_seconds": 2,
-    "popup_alt": "Wintertennistraining"
+    "popup_alt": "Wintertennistraining",
+    "trust_enabled": true,
+    "trust_items": [
+      "TSV Feldkirchen",
+      "SV Heimstetten",
+      "Kinder · Jugend · Erwachsene",
+      "Anfänger bis Wettkampf",
+      "PTR Professional · GPTCA B Level Coach"
+    ],
+    "popup_mode": "html",
+    "popup_heading": "Wintertraining 2026/2027",
+    "popup_text": "Die Anmeldung zum Wintertraining ist geöffnet.",
+    "popup_button_text": "Zum Wintertraining",
+    "why_enabled": true,
+    "why_title": "Warum Tennisschule Alex Braun?",
+    "why_items": [
+      {
+        "title": "Individuelle Förderung",
+        "text": "Vom ersten Kontakt mit Tennis bis zum leistungsorientierten Wettkampftraining."
+      },
+      {
+        "title": "Erfahrenes Trainerteam",
+        "text": "Persönliche Betreuung mit strukturierten, modernen Trainingskonzepten."
+      },
+      {
+        "title": "Zwei Standorte",
+        "text": "Training beim TSV Feldkirchen und beim SV Heimstetten."
+      },
+      {
+        "title": "Ganzjähriges Training",
+        "text": "Sommertraining, Wintertraining und Camps ergänzen sich über das Jahr."
+      }
+    ]
   },
   "offers": {
     "intro": "Unser Tennistraining bietet eine erstklassige Gelegenheit, um dein Spiel zu verbessern und die Leidenschaft für Tennis zu entfachen. Durch individuelle Betreuung, professionelle Anleitung und innovative Trainingsmethoden helfen wir Spielern jeden Levels, ihre Ziele zu erreichen. Für weitere Informationen kontaktiere uns gerne.",
@@ -149,7 +199,9 @@
       "/assets/media/angebote_5.jpg",
       "/assets/media/angebote_6.jpg"
     ],
-    "featured_label": "Aktuell"
+    "featured_label": "Aktuell",
+    "seasonal_highlight_enabled": true,
+    "seasonal_heading": "Aktuell im Fokus"
   },
   "trainers": {
     "intro": "Entdecke unser junges, motiviertes Trainerteam! Komm vorbei und lerne uns persönlich kennen. Wir freuen uns darauf, deine Tennisreise zu unterstützen und gemeinsam an deinen Zielen zu arbeiten!",
@@ -157,50 +209,89 @@
       {
         "name": "Alex Braun",
         "role": "Leiter der Tennisschule",
-        "image": "/assets/media/Braun.jpg"
+        "image": "/assets/media/Braun.jpg",
+        "qualifications": "PTR Professional · GPTCA B Level Coach",
+        "experience": "Ehemaliger Weltranglisten-Spieler · 2. Bundesliga-Akteur des MTTC Iphitos",
+        "focus": "Moderne, praxisnahe Trainingskonzepte · individuelle Förderung",
+        "bio": "Alex Braun verbindet Erfahrung aus nationalem und internationalem Tennis mit langjähriger Tätigkeit in Vereinen und Organisationen."
       },
       {
         "name": "Lena Gruber",
         "role": "Trainerin",
-        "image": "/assets/media/Gruber.jpg"
+        "image": "/assets/media/Gruber.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Felix Kellerer",
         "role": "Trainer",
-        "image": "/assets/media/Kellerer.jpg"
+        "image": "/assets/media/Kellerer.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Alexa Pirok",
         "role": "Trainerin",
-        "image": "/assets/media/Pirok.jpg"
+        "image": "/assets/media/Pirok.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Christoph Konitz",
         "role": "Trainer",
-        "image": "/assets/media/Konitz.jpg"
+        "image": "/assets/media/Konitz.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Felix Fauth",
         "role": "Trainer",
-        "image": "/assets/media/Fauth.jpg"
+        "image": "/assets/media/Fauth.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Niclas Hargasser",
         "role": "Trainer",
-        "image": "/assets/media/Hargasser.jpg"
+        "image": "/assets/media/Hargasser.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Tobias Schumacher",
         "role": "Trainer",
-        "image": "/assets/media/Schumacher.jpg"
+        "image": "/assets/media/Schumacher.jpg",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       },
       {
         "name": "Julius Brand",
         "role": "Trainer",
-        "image": "/assets/media/logo.png"
+        "image": "/assets/media/logo.png",
+        "qualifications": "",
+        "experience": "",
+        "focus": "",
+        "bio": ""
       }
     ],
-    "page_title": "Trainerteam"
+    "page_title": "Trainerteam",
+    "details_enabled": true,
+    "cta_label": "Training anfragen",
+    "cta_url": "/kontakt/"
   },
   "locations": {
     "feldkirchen": {
@@ -213,7 +304,9 @@
       "button_website": "WEBSITE TSV Feldkirchen",
       "button_membership": "Mitgliedsantrag als PDF",
       "marker_image": "/assets/media/mapbox-tsv.png",
-      "marker_link": "https://maps.app.goo.gl/5F42TkRamtwv8FSdA"
+      "marker_link": "https://maps.app.goo.gl/5F42TkRamtwv8FSdA",
+      "overview_text": "Moderne Tennisanlage im Münchner Osten mit 8 Plätzen. Training für verschiedene Alters- und Spielstärken.",
+      "fact": "8 Tennisplätze"
     },
     "heimstetten": {
       "name": "SV Heimstetten",
@@ -226,11 +319,17 @@
       "button_website": "WEBSITE SV Heimstetten",
       "button_membership": "Zum Mitgliedsantrag",
       "marker_image": "/assets/media/mapbox-svh.png",
-      "marker_link": "https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9"
+      "marker_link": "https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9",
+      "overview_text": "Tennisabteilung seit 1970 mit Trainings- und Wettkampfangeboten für verschiedene Alters- und Leistungsstufen.",
+      "fact": "Tennisabteilung seit 1970"
     },
     "page_title": "Unsere Standorte",
     "map_consent_text": "Google Maps wird erst nach deiner Zustimmung geladen. Dabei können Daten an Google übertragen werden.",
-    "map_consent_button": "Karte laden"
+    "map_consent_button": "Karte laden",
+    "location_button": "Standort ansehen",
+    "route_button": "Route berechnen",
+    "cta_label": "Training anfragen",
+    "cta_url": "/kontakt/"
   },
   "contact": {
     "page_title": "Kontakt",
@@ -239,13 +338,23 @@
     "labels": {
       "name": "Vorname & Nachname *",
       "subject": "Betreff *",
-      "phone": "Telefon *",
+      "phone": "Telefon",
       "email": "Email *",
       "message": "Nachricht *",
-      "submit": "Senden"
+      "submit": "Senden",
+      "topic": "Anliegen *"
     },
     "success_message": "Vielen Dank. Deine Nachricht wurde versendet.",
-    "error_message": "Die Nachricht konnte nicht versendet werden. Bitte versuche es erneut oder schreibe direkt an info@tennisschule-alexbraun.de."
+    "error_message": "Die Nachricht konnte nicht versendet werden. Bitte versuche es erneut oder schreibe direkt an info@tennisschule-alexbraun.de.",
+    "phone_required": false,
+    "topics": [
+      "Sommertraining",
+      "Wintertraining",
+      "Tenniscamp",
+      "Einzeltraining",
+      "Probetraining",
+      "Sonstiges"
+    ]
   },
   "newsletter": {
     "page_title": "Anmeldung zum Newsletter",
@@ -293,5 +402,84 @@
   "analytics": {
     "enabled": true,
     "retention_days": 365
+  },
+  "mobile_cta": {
+    "enabled": true,
+    "primary_label": "Training buchen",
+    "primary_url": "/angebote/",
+    "secondary_label": "Kontakt",
+    "secondary_url": "/kontakt/"
+  },
+  "faq": {
+    "enabled": true,
+    "title": "Häufige Fragen",
+    "intro": "Die wichtigsten Informationen zu Training, Standorten und Anmeldung auf einen Blick.",
+    "items": [
+      {
+        "question": "Für wen ist das Training geeignet?",
+        "answer": "Die Tennisschule bietet Training für Kinder, Jugendliche und Erwachsene sowie für unterschiedliche Spielstärken an – vom Einstieg bis zum leistungsorientierten Training."
+      },
+      {
+        "question": "Wo findet das Sommertraining statt?",
+        "answer": "Das Sommertraining findet beim TSV Feldkirchen und beim SV Heimstetten statt."
+      },
+      {
+        "question": "Wann läuft das Sommertraining?",
+        "answer": "Das Sommertraining umfasst 13 Trainingswochen und läuft von Anfang Mai bis Ende September."
+      },
+      {
+        "question": "Wo und wann findet das Wintertraining statt?",
+        "answer": "Das Wintertraining umfasst 24 Trainingswochen von Anfang Oktober bis Ende April. Trainiert wird in der Tennishalle Kirchheim und im Sporttraum Heimstetten."
+      },
+      {
+        "question": "Wann finden die Tenniscamps statt?",
+        "answer": "Tenniscamps werden in den Oster-, Pfingst- und Sommerferien angeboten. Die vorhandenen Campangebote laufen täglich von 9:30 bis 15:00 Uhr."
+      },
+      {
+        "question": "Wie kann ich mich anmelden?",
+        "answer": "Wenn eine Anmeldung geöffnet ist, findest du beim jeweiligen Angebot den direkten Anmeldebutton. Bei Fragen kannst du die Tennisschule über die Kontaktseite erreichen."
+      }
+    ]
+  },
+  "seo": {
+    "base_url": "https://www.tennisschule-alexbraun.de",
+    "default_og_image": "/assets/media/header_bild.jpg",
+    "pages": {
+      "home": {
+        "title": "Tennisschule Alex Braun | Tennistraining im Münchner Osten",
+        "description": "Professionelles Tennistraining für Kinder, Jugendliche und Erwachsene beim TSV Feldkirchen und SV Heimstetten.",
+        "path": "/"
+      },
+      "offers": {
+        "title": "Tennistraining & Tenniscamps | Tennisschule Alex Braun",
+        "description": "Sommertraining, Wintertraining und Tenniscamps der Tennisschule Alex Braun im Münchner Osten.",
+        "path": "/angebote/"
+      },
+      "trainers": {
+        "title": "Trainerteam | Tennisschule Alex Braun",
+        "description": "Lerne das Trainerteam der Tennisschule Alex Braun kennen.",
+        "path": "/trainerteam/"
+      },
+      "locations": {
+        "title": "Standorte | Tennisschule Alex Braun",
+        "description": "Tennistraining beim TSV Feldkirchen und SV Heimstetten im Münchner Osten.",
+        "path": "/standorte/"
+      },
+      "feldkirchen": {
+        "title": "Tennistraining TSV Feldkirchen | Tennisschule Alex Braun",
+        "description": "Tennistraining der Tennisschule Alex Braun beim TSV Feldkirchen.",
+        "path": "/tsv-feldkirchen/"
+      },
+      "heimstetten": {
+        "title": "Tennistraining SV Heimstetten | Tennisschule Alex Braun",
+        "description": "Tennistraining der Tennisschule Alex Braun beim SV Heimstetten.",
+        "path": "/sv-heimstetten/"
+      },
+      "contact": {
+        "title": "Kontakt | Tennisschule Alex Braun",
+        "description": "Kontakt zur Tennisschule Alex Braun für Fragen zu Training, Camps und Anmeldung.",
+        "path": "/kontakt/"
+      }
+    }
   }
 }
