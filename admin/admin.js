@@ -2,7 +2,34 @@
   const $=s=>document.querySelector(s);
   const loginPanel=$('#loginPanel'),editorPanel=$('#editorPanel'),loginForm=$('#loginForm'),loginMessage=$('#loginMessage');
   const logoutBtn=$('#logoutBtn'),saveBtn=$('#saveBtn'),saveMessage=$('#saveMessage'),editor=$('#editor'),adminMenu=$('#adminMenu');
-  let data=null,csrf='',currentTab='allgemein',statsDays=30;
+  const currentSectionTitle=$('#currentSectionTitle'),currentSectionDescription=$('#currentSectionDescription'),dirtyState=$('#dirtyState');
+  let storedTab='allgemein';
+  try{storedTab=sessionStorage.getItem('ts_admin_tab')||'allgemein';}catch(_){}
+  let data=null,csrf='',currentTab=storedTab,statsDays=30,dirty=false;
+
+  const sectionMeta={
+    allgemein:['Allgemein','Grundlegende Website-Einstellungen, Navigation, Hero und Footer.'],
+    home:['Home','Startseite, Vertrauensbereiche, Angebote-Teaser, Trainerteaser, Popup und Bilder.'],
+    angebote:['Angebote','Trainingsangebote, Status, Preise, Anmeldungen, FAQ und Galerie.'],
+    trainerteam:['Trainerteam','Trainer verwalten, hinzufügen, löschen und Detailinformationen bearbeiten.'],
+    standorte:['Standorte','Vereine, Standorttexte, Links, Logos, Karten und Routen bearbeiten.'],
+    kontakt:['Kontakt','Kontaktseite, Formularfelder, Anliegen-Auswahl und Rückmeldungen bearbeiten.'],
+    newsletter:['Newsletter','Anmeldung, Double-Opt-in-Texte und Abonnenten verwalten.'],
+    weitere:['Weitere Seiten','SEO, Erfolgsseite, 404 sowie Impressum und Datenschutz bearbeiten.'],
+    statistik:['Statistik','Seitenaufrufe, Conversions, Klicks und Besucherherkunft auswerten.']
+  };
+
+  function updateDirtyState(state=dirty?'dirty':'saved'){
+    if(!dirtyState)return;
+    dirtyState.className='dirty-state '+state;
+    dirtyState.textContent=state==='saving'?'Wird gespeichert …':state==='dirty'?'Ungespeichert':'Gespeichert';
+    if(saveBtn) saveBtn.textContent=state==='saving'?'Speichert …':'Änderungen speichern';
+  }
+  function markDirty(){
+    if(!data)return;
+    dirty=true;
+    updateDirtyState('dirty');
+  }
 
   const syncAdminHeaderHeight=()=>{
     const header=document.querySelector('.admin-header');
@@ -16,7 +43,7 @@
   }
 
   const esc=(v='')=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
-  const setPath=(obj,path,value)=>{const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++)c=c[p[i]];c[p.at(-1)]=value;};
+  const setPath=(obj,path,value)=>{const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++)c=c[p[i]];c[p.at(-1)]=value;markDirty();};
   async function request(url,options={}){const r=await fetch(url,{credentials:'same-origin',...options});const b=await r.json().catch(()=>({ok:false,error:'Ungültige Serverantwort.'}));if(!r.ok||b.ok===false)throw new Error(b.error||'Fehler');return b;}
   function msg(el,text,type=''){el.textContent=text||'';el.className='message'+(type?' '+type:'');}
 
@@ -37,9 +64,19 @@
   function imageField(label,path,value,wide=false){return `<div class="image-row"><div>${textField(label,path,value)}${preview(value,'Aktuell verwendet',wide)}</div><label>Neues Bild<input class="cms-upload" data-upload-path="${esc(path)}" type="file" accept="image/jpeg,image/png,image/webp"></label></div>`;}
 
   function showTab(tab){
+    if(!sectionMeta[tab])tab='allgemein';
     currentTab=tab;
-    adminMenu?.querySelectorAll('[data-admin-tab]').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===tab));
+    try{sessionStorage.setItem('ts_admin_tab',tab);}catch(_){}
+    adminMenu?.querySelectorAll('[data-admin-tab]').forEach(b=>{
+      const active=b.dataset.adminTab===tab;
+      b.classList.toggle('active',active);
+      if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    });
     editor?.querySelectorAll('[data-admin-section]').forEach(s=>s.hidden=s.dataset.adminSection!==tab);
+    const meta=sectionMeta[tab]||sectionMeta.allgemein;
+    if(currentSectionTitle)currentSectionTitle.textContent=meta[0];
+    if(currentSectionDescription)currentSectionDescription.textContent=meta[1];
+    if(editor)editor.scrollTop=0;
     if(tab==='statistik') loadStats(statsDays);
     if(tab==='newsletter') loadNewsletterAdmin();
   }
@@ -361,6 +398,7 @@
       if(!trainer)return;
       if(confirm((trainer.name||'Trainer')+' wirklich löschen?')){
         data.trainers.items.splice(i,1);
+        markDirty();
         render();
         showTab('trainerteam');
       }
@@ -368,6 +406,7 @@
     editor.querySelectorAll('.remove-trainer').forEach(btn=>btn.addEventListener('click',()=>removeTrainer(Number(btn.dataset.index))));
     editor.querySelectorAll('.add-trainer').forEach(btn=>btn.addEventListener('click',()=>{
       data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png',qualifications:'',experience:'',focus:'',bio:''});
+      markDirty();
       render();
       showTab('trainerteam');
       const newIndex=data.trainers.items.length-1;
@@ -384,7 +423,7 @@
   async function uploadImage(e){
     const input=e.currentTarget,file=input.files?.[0];if(!file)return;msg(saveMessage,'Bild wird hochgeladen …');
     const form=new FormData();form.append('file',file);
-    try{const r=await request('/api/upload.php',{method:'POST',headers:{'X-CSRF-Token':csrf},body:form});setPath(data,input.dataset.uploadPath,r.path);render();msg(saveMessage,r.github?.ok?'Bild hochgeladen und in GitHub gespeichert.':'Bild hochgeladen; GitHub-Sicherung fehlgeschlagen.','success');}
+    try{const r=await request('/api/upload.php',{method:'POST',headers:{'X-CSRF-Token':csrf},body:form});setPath(data,input.dataset.uploadPath,r.path);render();updateDirtyState('dirty');msg(saveMessage,r.github?.ok?'Bild hochgeladen. Bitte Änderungen speichern.':'Bild hochgeladen; GitHub-Sicherung fehlgeschlagen. Bitte Änderungen speichern.','warning');}
     catch(err){msg(saveMessage,err.message,'error');}
   }
 
@@ -464,11 +503,41 @@
   function tableBox(title,obj,label){const rows=Object.entries(obj).slice(0,12);return `<div class="stats-box"><h3>${esc(title)}</h3><table class="stats-table"><thead><tr><th>${esc(label)}</th><th>Anzahl</th></tr></thead><tbody>${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')||'<tr><td colspan="2">Noch keine Daten</td></tr>'}</tbody></table></div>`;}
   function eventsBox(events){const rows=Object.entries(events).slice(0,18);return `<div class="stats-box"><h3>Buttons & Links</h3><table class="stats-table"><thead><tr><th>Aktion</th><th>Klicks</th></tr></thead><tbody>${rows.map(([k,v])=>`<tr><td>${esc(v.label||k)}<br><small>${esc(v.path||'')}</small></td><td>${esc(v.count||0)}</td></tr>`).join('')||'<tr><td colspan="2">Noch keine Daten</td></tr>'}</tbody></table></div>`;}
 
-  async function loadContent(){const r=await request('/api/content.php');data=r.data;csrf=r.csrf;loginPanel.hidden=true;editorPanel.hidden=false;logoutBtn.hidden=false;render();}
+  async function loadContent(){
+    const r=await request('/api/content.php');
+    data=r.data;csrf=r.csrf;dirty=false;
+    loginPanel.hidden=true;editorPanel.hidden=false;logoutBtn.hidden=false;
+    document.body.classList.add('admin-editing');
+    render();updateDirtyState('saved');syncAdminHeaderHeight();
+  }
   async function checkAuth(){try{const r=await request('/api/auth.php');if(r.authenticated){csrf=r.csrf||'';await loadContent();}}catch(_){}}
   loginForm.addEventListener('submit',async e=>{e.preventDefault();msg(loginMessage,'Anmeldung …');try{const r=await request('/api/auth.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#password').value})});csrf=r.csrf||'';$('#password').value='';await loadContent();msg(loginMessage,'');}catch(err){msg(loginMessage,err.message,'error');}});
-  saveBtn.addEventListener('click',async()=>{saveBtn.disabled=true;msg(saveMessage,'Änderungen werden gespeichert …');try{const r=await request('/api/save.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({data})});msg(saveMessage,r.github?.ok?'Gespeichert und in GitHub versioniert.':'Website gespeichert; GitHub-Sicherung fehlgeschlagen: '+(r.github?.warning||''),r.github?.ok?'success':'warning');}catch(err){msg(saveMessage,err.message,'error');}finally{saveBtn.disabled=false;}});
+  async function saveContent(){
+    if(!data||saveBtn.disabled)return;
+    saveBtn.disabled=true;updateDirtyState('saving');msg(saveMessage,'Änderungen werden gespeichert …');
+    try{
+      const r=await request('/api/save.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({data})});
+      dirty=false;updateDirtyState('saved');
+      msg(saveMessage,r.github?.ok?'Gespeichert und in GitHub versioniert.':'Website gespeichert; GitHub-Sicherung fehlgeschlagen: '+(r.github?.warning||''),r.github?.ok?'success':'warning');
+    }catch(err){
+      dirty=true;updateDirtyState('dirty');msg(saveMessage,err.message,'error');
+    }finally{saveBtn.disabled=false;}
+  }
+  saveBtn.addEventListener('click',saveContent);
   logoutBtn.addEventListener('click',async()=>{try{await request('/api/logout.php',{method:'POST',headers:{'X-CSRF-Token':csrf}});}catch(_){}location.reload();});
   adminMenu?.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.adminTab||'allgemein')));
+
+  document.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&!editorPanel.hidden){
+      e.preventDefault();
+      saveContent();
+    }
+  });
+  window.addEventListener('beforeunload',e=>{
+    if(!dirty)return;
+    e.preventDefault();
+    e.returnValue='';
+  });
+
   checkAuth();
 })();
