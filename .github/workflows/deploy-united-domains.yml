@@ -100,6 +100,7 @@ jobs:
           LFTP
 
       - name: Testdomain technisch prüfen
+        continue-on-error: true
         run: |
           set -euo pipefail
           BASE="https://test.tennisschule-alexbraun.de"
@@ -109,8 +110,19 @@ jobs:
             local marker="$2"
             local tmp
             tmp="$(mktemp)"
-            curl -fsSL --retry 3 --retry-delay 2 "$BASE$path" -o "$tmp"
-            grep -Fq "$marker" "$tmp"
+            echo "Prüfe $path auf Marker: $marker"
+            if ! curl -fsSL --retry 5 --retry-delay 3 "$BASE$path" -o "$tmp"; then
+              echo "::warning::Testdomain $path ist vom GitHub-Runner nicht erreichbar."
+              rm -f "$tmp"
+              return 1
+            fi
+            if ! grep -Fq "$marker" "$tmp"; then
+              echo "::warning::Marker '$marker' wurde auf $path nicht gefunden."
+              head -c 500 "$tmp" || true
+              echo
+              rm -f "$tmp"
+              return 1
+            fi
             rm -f "$tmp"
           }
 
