@@ -41,6 +41,7 @@
     adminMenu?.querySelectorAll('[data-admin-tab]').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===tab));
     editor?.querySelectorAll('[data-admin-section]').forEach(s=>s.hidden=s.dataset.adminSection!==tab);
     if(tab==='statistik') loadStats(statsDays);
+    if(tab==='newsletter') loadNewsletterAdmin();
   }
 
   function render(){
@@ -260,12 +261,49 @@
       ${textField('Erfolgsmeldung','contact.success_message',contact.success_message,true)}${textField('Fehlermeldung','contact.error_message',contact.error_message,true)}</div>
     </section>
 
+    <section class="cms-section" data-admin-section="newsletter" hidden>
+      <h2>Newsletter</h2>
+      <div class="cms-card"><strong>Anmeldung</strong>
+        ${checkboxField('Newsletter-Anmeldung aktiv','newsletter.enabled',data.newsletter?.enabled)}
+        ${textField('Seitentitel','newsletter.page_title',data.newsletter?.page_title)}
+        ${textField('Willkommenstext','newsletter.welcome',data.newsletter?.welcome)}
+        ${textField('Überschrift Anmeldung','newsletter.heading',data.newsletter?.heading)}
+        ${textField('Beschreibung','newsletter.signup_text',data.newsletter?.signup_text,true)}
+        <div class="grid2">
+          ${textField('Name-Feld','newsletter.name_label',data.newsletter?.name_label)}
+          ${textField('E-Mail-Feld','newsletter.email_label',data.newsletter?.email_label)}
+        </div>
+        ${textField('Einwilligungstext','newsletter.consent_label',data.newsletter?.consent_label,true)}
+        <div class="grid2">
+          ${textField('Datenschutz-Linktext','newsletter.privacy_label',data.newsletter?.privacy_label)}
+          ${textField('Buttontext','newsletter.submit_label',data.newsletter?.submit_label)}
+        </div>
+      </div>
+      <div class="cms-card"><strong>Double-Opt-in-E-Mails</strong>
+        ${textField('Betreff Bestätigung','newsletter.confirmation_subject',data.newsletter?.confirmation_subject)}
+        ${textField('Text Bestätigung','newsletter.confirmation_intro',data.newsletter?.confirmation_intro,true)}
+        ${textField('Betreff nach Bestätigung','newsletter.welcome_subject',data.newsletter?.welcome_subject)}
+        ${textField('Text nach Bestätigung','newsletter.welcome_text',data.newsletter?.welcome_text,true)}
+        ${textField('Hinweis nach Anmeldung','newsletter.pending_message',data.newsletter?.pending_message,true)}
+        ${textField('Hinweis nach Bestätigung','newsletter.confirmed_message',data.newsletter?.confirmed_message,true)}
+      </div>
+      <div class="cms-card"><strong>Abmeldung</strong>
+        ${textField('Seitentitel','newsletter.unsubscribe_page_title',data.newsletter?.unsubscribe_page_title)}
+        ${textField('Bestätigungstext','newsletter.unsubscribe_confirm_text',data.newsletter?.unsubscribe_confirm_text,true)}
+        ${textField('Abmeldebutton','newsletter.unsubscribe_button',data.newsletter?.unsubscribe_button)}
+        ${textField('Text nach Abmeldung','newsletter.unsubscribed_message',data.newsletter?.unsubscribed_message,true)}
+      </div>
+      <div class="cms-card">
+        <div class="item-head"><strong>Abonnenten</strong><div class="newsletter-admin-toolbar">
+          <button type="button" class="secondary" id="newsletterRefresh">Aktualisieren</button>
+          <a class="admin-download-link" href="/api/newsletter-admin.php?format=csv">CSV exportieren</a>
+        </div></div>
+        <div id="newsletterSubscribers"><p class="muted">Abonnenten werden geladen …</p></div>
+      </div>
+    </section>
+
     <section class="cms-section" data-admin-section="weitere" hidden>
       <h2>Weitere Seiten</h2>
-      <div class="cms-card"><strong>Newsletter</strong>
-        ${textField('Seitentitel','newsletter.page_title',data.newsletter?.page_title)}${textField('Willkommenstext','newsletter.welcome',data.newsletter?.welcome)}
-        ${textField('Newsletter-Text','newsletter.text',data.newsletter?.text,true)}
-      </div>
       <div class="cms-card"><strong>Erfolgsseite</strong>
         ${textField('Seitentitel','success.page_title',data.success?.page_title)}${textField('Nachricht','success.message',data.success?.message,true)}
       </div>
@@ -340,6 +378,7 @@
       editor.querySelector('[data-trainer-editor="'+i+'"]')?.scrollIntoView({behavior:'smooth',block:'start'});
     }));
     editor.querySelectorAll('[data-stats-days]').forEach(btn=>btn.addEventListener('click',()=>{statsDays=Number(btn.dataset.statsDays);editor.querySelectorAll('[data-stats-days]').forEach(b=>b.classList.toggle('active',b===btn));loadStats(statsDays);}));
+    $('#newsletterRefresh')?.addEventListener('click',loadNewsletterAdmin);
   }
 
   async function uploadImage(e){
@@ -347,6 +386,53 @@
     const form=new FormData();form.append('file',file);
     try{const r=await request('/api/upload.php',{method:'POST',headers:{'X-CSRF-Token':csrf},body:form});setPath(data,input.dataset.uploadPath,r.path);render();msg(saveMessage,r.github?.ok?'Bild hochgeladen und in GitHub gespeichert.':'Bild hochgeladen; GitHub-Sicherung fehlgeschlagen.','success');}
     catch(err){msg(saveMessage,err.message,'error');}
+  }
+
+  async function loadNewsletterAdmin(){
+    const box=$('#newsletterSubscribers');
+    if(!box)return;
+    box.innerHTML='<p class="muted">Abonnenten werden geladen …</p>';
+    try{
+      const r=await request('/api/newsletter-admin.php');
+      const counts=r.counts||{},subs=r.subscribers||[];
+      box.innerHTML=`
+        <div class="newsletter-counts">
+          <div class="newsletter-count"><strong>${esc(counts.active||0)}</strong><span>Aktiv</span></div>
+          <div class="newsletter-count"><strong>${esc(counts.pending||0)}</strong><span>Nicht bestätigt</span></div>
+          <div class="newsletter-count"><strong>${esc(counts.unsubscribed||0)}</strong><span>Abgemeldet</span></div>
+          <div class="newsletter-count"><strong>${esc(counts.all||0)}</strong><span>Gesamt</span></div>
+        </div>
+        <div class="newsletter-subscriber-wrap"><table class="newsletter-subscriber-table">
+          <thead><tr><th>Name</th><th>E-Mail</th><th>Status</th><th>Angelegt</th><th>Aktionen</th></tr></thead>
+          <tbody>${subs.map(s=>`<tr>
+            <td>${esc(s.name||'–')}</td>
+            <td>${esc(s.email||'')}</td>
+            <td><span class="newsletter-status ${esc(s.status||'pending')}">${esc(newsletterStatusLabel(s.status))}</span></td>
+            <td>${esc(formatAdminDate(s.created_at))}</td>
+            <td><div class="newsletter-row-actions">
+              ${s.status==='active'?'<button type="button" class="secondary small newsletter-unsubscribe" data-email="'+esc(s.email)+'">Abmelden</button>':''}
+              <button type="button" class="danger small newsletter-delete" data-email="${esc(s.email)}">Löschen</button>
+            </div></td>
+          </tr>`).join('')||'<tr><td colspan="5">Noch keine Newsletter-Anmeldungen.</td></tr>'}</tbody>
+        </table></div>`;
+      box.querySelectorAll('.newsletter-unsubscribe').forEach(btn=>btn.addEventListener('click',()=>newsletterAdminAction('unsubscribe',btn.dataset.email)));
+      box.querySelectorAll('.newsletter-delete').forEach(btn=>btn.addEventListener('click',()=>newsletterAdminAction('delete',btn.dataset.email)));
+    }catch(err){box.innerHTML='<p class="message error">'+esc(err.message)+'</p>';}
+  }
+  function newsletterStatusLabel(status){
+    return status==='active'?'Aktiv':status==='unsubscribed'?'Abgemeldet':'Bestätigung offen';
+  }
+  function formatAdminDate(value){
+    if(!value)return '–';
+    try{return new Intl.DateTimeFormat('de-DE',{dateStyle:'short',timeStyle:'short'}).format(new Date(value));}catch(_){return value;}
+  }
+  async function newsletterAdminAction(action,email){
+    const question=action==='delete'?'Eintrag '+email+' wirklich endgültig löschen?':email+' wirklich vom Newsletter abmelden?';
+    if(!confirm(question))return;
+    try{
+      await request('/api/newsletter-admin.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({action,email})});
+      await loadNewsletterAdmin();
+    }catch(err){alert(err.message);}
   }
 
   async function loadStats(days){
