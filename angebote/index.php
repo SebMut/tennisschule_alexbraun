@@ -17,7 +17,7 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
   ?>
     <article id="<?=h($anchor)?>" class="offer-panel offer-detail-card<?= $featured?' is-featured':'' ?>">
       <div class="offer-detail-media">
-        <img src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
+        <img loading="lazy" decoding="async" src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
         <div class="offer-badges">
           <?php if($featured): ?><span class="offer-badge offer-badge-featured"><?=h($o['featured_label']??'Aktuell')?></span><?php endif; ?>
           <?php if(!empty($offer['status'])): ?><span class="offer-badge offer-badge-status <?=h('status-'.$statusKind)?>"><?=h($offer['status'])?></span><?php endif; ?>
@@ -79,7 +79,7 @@ render_json_ld([
 endif; ?>
 
 <section class="gallery-section"><div class="container gallery-grid">
-<?php $gallery=$o['gallery']??[]; foreach([[0,3],[1,4],[2,5]] as $indexes): ?><div class="gallery-column"><?php foreach($indexes as $idx): if(empty($gallery[$idx])) continue; ?><div class="gallery-item"><img src="<?=h($gallery[$idx])?>" alt="Tennistraining"></div><?php endforeach; ?></div><?php endforeach; ?>
+<?php $gallery=$o['gallery']??[]; foreach([[0,3],[1,4],[2,5]] as $indexes): ?><div class="gallery-column"><?php foreach($indexes as $idx): if(empty($gallery[$idx])) continue; ?><div class="gallery-item"><img loading="lazy" decoding="async" src="<?=h($gallery[$idx])?>" alt="Tennistraining"></div><?php endforeach; ?></div><?php endforeach; ?>
 </div></section>
 
 <div class="trainings-modal" id="trainingModal" aria-hidden="true"><div class="trainings-modal-content" role="dialog" aria-modal="true"><button class="trainings-close" type="button" aria-label="Schließen">X</button><div class="trainings-form-content" id="trainingModalContent"></div></div></div>
