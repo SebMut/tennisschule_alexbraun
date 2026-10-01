@@ -34,7 +34,10 @@ function site_hero(bool $home = false): void {
     $d = site_data();
     $tagline = $d['site']['tagline'] ?? '';
     $copy = $d['site']['hero_copy'] ?? '';
-    echo '<section class="hero '.($home ? 'home-hero' : 'page-hero').'"><div class="hero-overlay"></div><div class="container hero-content">';
+    $heroImage = (string)($d['site']['hero_image'] ?? '/assets/media/header_bild.jpg');
+    $heroImage = str_replace(["'", '"', ')', "\\"], '', $heroImage);
+    $heroStyle = "--hero-image:url('" . $heroImage . "')";
+    echo '<section class="hero '.($home ? 'home-hero' : 'page-hero').'" style="'.h($heroStyle).'"><div class="hero-overlay"></div><div class="container hero-content">';
     echo '<p class="eyebrow">Tennisschule Alex Braun</p><h1><span>Tennisschule</span>Alex Braun</h1>';
     if ($home) {
         echo '<p class="hero-lead">'.h($tagline).'</p><p class="hero-copy">'.h($copy).'</p>';
