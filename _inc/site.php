@@ -16,6 +16,20 @@ function h(?string $value): string {
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function local_server_config(): array {
+    static $config = null;
+    if ($config !== null) return $config;
+    $path = dirname(__DIR__) . '/config.local.php';
+    if (!is_file($path)) return $config = [];
+    $loaded = require $path;
+    return $config = is_array($loaded) ? $loaded : [];
+}
+
+function mapbox_public_token(): string {
+    $config = local_server_config();
+    return (string)($config['mapbox']['token'] ?? '');
+}
+
 function nav_active(string $active, string $name): string {
     return $active === $name ? ' active' : '';
 }
