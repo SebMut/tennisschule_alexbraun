@@ -16,6 +16,40 @@ jobs:
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
+      - name: Serversecrets für United Domains erzeugen
+        env:
+          TS_ADMIN_PASSWORD: ${{ secrets.TS_ADMIN_PASSWORD }}
+          TS_GITHUB_TOKEN: ${{ secrets.TS_GITHUB_TOKEN }}
+          TS_SMTP_PASSWORD: ${{ secrets.TS_SMTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${TS_ADMIN_PASSWORD:?GitHub Secret TS_ADMIN_PASSWORD fehlt}"
+          : "${TS_GITHUB_TOKEN:?GitHub Secret TS_GITHUB_TOKEN fehlt}"
+          : "${TS_SMTP_PASSWORD:?GitHub Secret TS_SMTP_PASSWORD fehlt}"
+
+          php -r '
+            $config = [
+              "admin_password_hash" => password_hash(getenv("TS_ADMIN_PASSWORD"), PASSWORD_DEFAULT),
+              "github" => [
+                "token" => getenv("TS_GITHUB_TOKEN"),
+                "owner" => "SebMut",
+                "repo" => "tennisschule_alexbraun",
+                "branch" => "main",
+              ],
+              "smtp" => [
+                "host" => "smtps.udag.de",
+                "port" => 587,
+                "encryption" => "tls",
+                "username" => "info@tennisschule-alexbraun.de",
+                "password" => getenv("TS_SMTP_PASSWORD"),
+                "from" => "info@tennisschule-alexbraun.de",
+                "from_name" => "Tennisschule Alex Braun",
+                "to" => "info@tennisschule-alexbraun.de",
+              ],
+            ];
+            file_put_contents("config.local.php", "<?php\nreturn " . var_export($config, true) . ";\n");
+          '
+
       - name: Auf United-Domains-Webspace übertragen
         env:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
@@ -37,7 +71,6 @@ jobs:
           mirror -R --delete --verbose \
             --exclude-glob .git* \
             --exclude .github/ \
-            --exclude config.local.php \
             --exclude storage/ \
             --exclude README.md \
             --exclude DEPLOYMENT-UNITED-DOMAINS.md \
