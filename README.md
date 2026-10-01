@@ -60,7 +60,7 @@ Google Maps wird auf den Standortseiten erst nach ausdrücklicher Zustimmung gel
 
 Siehe `DEPLOYMENT-UNITED-DOMAINS.md`.
 
-Der vorhandene GitHub-Workflow `Deploy to United Domains` ist absichtlich nur manuell startbar, damit die bestehende WordPress-Seite nicht versehentlich überschrieben wird.
+Der GitHub-Workflow `Deploy to United Domains` deployt Änderungen auf `main` automatisch in das Testverzeichnis `tennisschule_alexbraun_umstrukturierung`. Vor dem Upload werden PHP und JavaScript geprüft. Die bestehende WordPress-Seite wird dabei nicht überschrieben.
 
 ## Qualitätssicherung
 
