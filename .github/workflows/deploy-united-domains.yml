@@ -99,4 +99,38 @@ jobs:
           bye
           LFTP
 
+      - name: Testdomain technisch prüfen
+        run: |
+          set -euo pipefail
+          BASE="https://test.tennisschule-alexbraun.de"
+
+          check_page() {
+            local path="$1"
+            local marker="$2"
+            local tmp
+            tmp="$(mktemp)"
+            curl -fsSL --retry 3 --retry-delay 2 "$BASE$path" -o "$tmp"
+            grep -Fq "$marker" "$tmp"
+            rm -f "$tmp"
+          }
+
+          check_page "/" "trust-strip"
+          check_page "/angebote/" "offer-detail-card"
+          check_page "/trainerteam/" "trainer-grid"
+          check_page "/standorte/" "location-cards"
+          check_page "/kontakt/" "name=\"topic\""
+          check_page "/sitemap.xml" "<urlset"
+          check_page "/robots.txt" "Sitemap:"
+
+          home="$(mktemp)"
+          curl -fsSL --retry 3 --retry-delay 2 "$BASE/" -o "$home"
+          grep -Eq 'data-mapbox-token="[^"]+"' "$home"
+          grep -Fq 'mobile-sticky-cta' "$home"
+          grep -Fq 'why-section' "$home"
+          rm -f "$home"
+
+          code="$(curl -sS -o /tmp/ts-404.html -w '%{http_code}' "$BASE/diese-seite-gibt-es-nicht-987654/")"
+          test "$code" = "404"
+          grep -Fq "Seite nicht gefunden" /tmp/ts-404.html
+
 # Admin secret refresh trigger
