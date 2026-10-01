@@ -15,12 +15,12 @@ site_header('angebote');
       <article class="offer-panel">
         <h3><?= h($offer['title'] ?? '') ?></h3>
         <?php if ($id === 'sommer'): ?>
-          <button class="trainings-btn" type="button" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Sommertraining</button>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" type="button" data-hover="Jetzt anmelden!" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Sommertraining</button></div>
         <?php elseif ($id === 'winter'): ?>
-          <button class="trainings-btn" type="button" data-training-url="https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true" data-training-error="Ab ca. 28.08.2026 buchbar.">Anmeldung Wintertraining</button>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" type="button" data-hover="Jetzt anmelden!" data-training-url="https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true" data-training-error="Ab ca. 28.08.2026 buchbar.">Anmeldung Wintertraining</button></div>
         <?php else: ?>
-          <button class="trainings-btn" type="button" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Tenniscamps<br>TSV Feldkirchen</button>
-          <button class="trainings-btn" type="button" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Tenniscamps<br>SV Heimstetten</button>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" type="button" data-hover="Jetzt anmelden!" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Tenniscamps<br>TSV Feldkirchen</button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" type="button" data-hover="Jetzt anmelden!" data-training-error="Ab ca. 10.03.2027 buchbar.">Anmeldung Tenniscamps<br>SV Heimstetten</button></div>
         <?php endif; ?>
         <ul><?php foreach (($offer['details'] ?? []) as $detail): ?><li><?= h($detail) ?></li><?php endforeach; ?></ul>
       </article>
