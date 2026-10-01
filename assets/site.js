@@ -71,6 +71,18 @@
   mobileOverlay?.addEventListener('click',()=>setMenu(false));
   mobileMenu?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
 
+  document.querySelectorAll('[data-trainer-toggle]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id='trainer-details-'+btn.dataset.trainerToggle;
+      const panel=document.getElementById(id);
+      if(!panel)return;
+      const open=panel.hidden;
+      panel.hidden=!open;
+      btn.setAttribute('aria-expanded',String(open));
+      btn.textContent=open?'Weniger anzeigen':'Mehr erfahren';
+    });
+  });
+
   const trainingModal=document.getElementById('trainingModal');
   const trainingModalContent=document.getElementById('trainingModalContent');
   const trainingClose=trainingModal?.querySelector('.trainings-close');
@@ -106,63 +118,43 @@
   const initMapbox=()=>{
     const mapboxContainer=document.getElementById('mapbox-container');
     const mapDataEl=document.getElementById('mapbox-location-data');
-    if(!mapboxContainer||!mapDataEl||typeof window.mapboxgl==='undefined') return;
-
+    if(!mapboxContainer||!mapDataEl||typeof window.mapboxgl==='undefined'||mapboxContainer.dataset.initialized==='1') return;
     const token=mapboxContainer.dataset.mapboxToken||'';
     let locations=[]; try{locations=JSON.parse(mapDataEl.textContent||'[]');}catch(_){}
-    if(!token||!locations.length){
-      mapboxContainer.classList.add('mapbox-error');
-      mapboxContainer.textContent='Karte konnte nicht geladen werden.';
-      return;
-    }
-
+    if(!token||!locations.length){mapboxContainer.classList.add('mapbox-error');mapboxContainer.textContent='Karte konnte nicht geladen werden.';return;}
+    mapboxContainer.dataset.initialized='1';
     window.mapboxgl.accessToken=token;
-    const map=new window.mapboxgl.Map({
-      container:mapboxContainer,
-      style:'mapbox://styles/mapbox/streets-v12',
-      center:[11.32,48.15],
-      zoom:13,
-      maxZoom:15,
-      scrollZoom:false,
-      dragPan:false,
-      doubleClickZoom:false,
-      touchZoomRotate:false
-    });
-
+    const map=new window.mapboxgl.Map({container:mapboxContainer,style:'mapbox://styles/mapbox/streets-v12',center:[11.32,48.15],zoom:13,maxZoom:15,scrollZoom:false,dragPan:false,doubleClickZoom:false,touchZoomRotate:false});
     const bounds=new window.mapboxgl.LngLatBounds();
     locations.forEach(loc=>{
-      const marker=document.createElement('div');
-      marker.className='custom-marker';
-
-      const img=document.createElement('img');
-      img.src=loc.logo;
-      img.alt=loc.name;
-      marker.appendChild(img);
-
-      const label=document.createElement('div');
-      label.className='marker-label';
-      label.textContent=mapboxContainer.dataset.routeLabel||'Route berechnen';
-      marker.appendChild(label);
-
-      marker.addEventListener('click',()=>{
-        track('map_route','map_route:'+loc.key,loc.name,loc.link);
-        location.href=loc.link;
+      const marker=document.createElement('button');marker.type='button';marker.className='custom-marker';marker.setAttribute('aria-label',loc.name+' anzeigen');
+      const img=document.createElement('img');img.src=loc.logo;img.alt='';marker.appendChild(img);
+      const label=document.createElement('div');label.className='marker-label';label.textContent=loc.name;marker.appendChild(label);
+      const popupHtml='<div class="map-popup"><strong>'+String(loc.name||'')+'</strong>'+(loc.fact?'<p>'+String(loc.fact)+'</p>':'')+'<div class="map-popup-actions"><a data-map-detail href="'+loc.detail_url+'">Standort ansehen</a><a data-map-route href="'+loc.link+'" target="_blank" rel="noopener">'+(mapboxContainer.dataset.routeLabel||'Route berechnen')+'</a></div></div>';
+      const popup=new window.mapboxgl.Popup({offset:28,closeButton:true,maxWidth:'280px'}).setHTML(popupHtml);
+      new window.mapboxgl.Marker(marker,{anchor:'bottom'}).setLngLat([loc.lng,loc.lat]).setPopup(popup).addTo(map);
+      marker.addEventListener('click',()=>track('map_location','map_location:'+loc.key,loc.name,loc.detail_url));
+      popup.on('open',()=>{
+        popup.getElement()?.querySelector('[data-map-route]')?.addEventListener('click',()=>track('map_route','map_route:'+loc.key,loc.name,loc.link),{once:true});
+        popup.getElement()?.querySelector('[data-map-detail]')?.addEventListener('click',()=>track('map_detail','map_detail:'+loc.key,loc.name,loc.detail_url),{once:true});
       });
-
-      new window.mapboxgl.Marker(marker,{anchor:'bottom'})
-        .setLngLat([loc.lng,loc.lat])
-        .addTo(map);
-
       bounds.extend([loc.lng,loc.lat]);
     });
-
     map.fitBounds(bounds,{padding:80,maxZoom:15});
   };
 
-  if(typeof window.mapboxgl!=='undefined'){
-    initMapbox();
-  }else{
-    window.addEventListener('load',initMapbox,{once:true});
+  const loadMapbox=()=>{
+    if(typeof window.mapboxgl!=='undefined'){initMapbox();return;}
+    if(document.querySelector('script[data-mapbox-loader]'))return;
+    const css=document.createElement('link');css.rel='stylesheet';css.href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';document.head.appendChild(css);
+    const script=document.createElement('script');script.src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';script.dataset.mapboxLoader='1';script.onload=initMapbox;document.head.appendChild(script);
+  };
+  const mapboxContainer=document.getElementById('mapbox-container');
+  if(mapboxContainer){
+    if('IntersectionObserver'in window){
+      const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();loadMapbox();}},{rootMargin:'300px'});
+      observer.observe(mapboxContainer);
+    }else loadMapbox();
   }
 
   const winterPopup=document.getElementById('winterPopup');
@@ -185,6 +177,7 @@
       if(close) close.style.visibility='hidden';
       setTimeout(()=>{
         winterPopup.classList.add('open');winterPopup.setAttribute('aria-hidden','false');body.classList.add('popup-open');
+        close?.focus();
         track('popup_view','popup_view','Popup angezeigt','');
         try{if(frequency>0)localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
         setTimeout(()=>{if(close)close.style.visibility='visible';},closeDelay);
