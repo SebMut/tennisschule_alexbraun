@@ -110,12 +110,51 @@
     </section>
 
     <section class="cms-section" data-admin-section="trainerteam" hidden>
-      <h2>Trainerteam</h2>
-      ${textField('Seitenüberschrift','trainers.page_title',data.trainers?.page_title)}
-      ${textField('Einleitung','trainers.intro',data.trainers?.intro,true)}
-      ${trainers.map((t,i)=>`<div class="cms-card"><div class="item-head"><strong>${esc(t.name||'Trainer')}</strong><button type="button" class="danger small remove-trainer" data-index="${i}">Entfernen</button></div>
-      <div class="grid2">${textField('Name',`trainers.items.${i}.name`,t.name)}${textField('Rolle',`trainers.items.${i}.role`,t.role)}</div>${imageField('Bild',`trainers.items.${i}.image`,t.image)}</div>`).join('')}
-      <button type="button" id="addTrainer" class="secondary">Trainer hinzufügen</button>
+      <div class="trainer-section-head">
+        <div>
+          <h2>Trainerteam</h2>
+          <p class="muted">Aktuell ${trainers.length} Trainer im Team.</p>
+        </div>
+        <button type="button" class="add-trainer">+ Trainer hinzufügen</button>
+      </div>
+
+      <div class="trainer-overview">
+        ${trainers.map((t,i)=>`
+          <article class="trainer-overview-card">
+            <img src="${esc(t.image||'/assets/media/logo.png')}" alt="${esc(t.name||'Trainer')}" loading="lazy">
+            <div class="trainer-overview-info">
+              <strong>${esc(t.name||'Trainer')}</strong>
+              <span>${esc(t.role||'')}</span>
+            </div>
+            <div class="trainer-overview-actions">
+              <button type="button" class="secondary small edit-trainer" data-index="${i}">Bearbeiten</button>
+              <button type="button" class="danger small remove-trainer" data-index="${i}">Löschen</button>
+            </div>
+          </article>
+        `).join('')}
+        ${trainers.length===0?'<div class="trainer-overview-empty">Noch keine Trainer vorhanden.</div>':''}
+      </div>
+
+      <div class="trainer-page-settings">
+        ${textField('Seitenüberschrift','trainers.page_title',data.trainers?.page_title)}
+        ${textField('Einleitung','trainers.intro',data.trainers?.intro,true)}
+      </div>
+
+      <div class="trainer-editor-list">
+        ${trainers.map((t,i)=>`<div class="cms-card trainer-editor-card" data-trainer-editor="${i}">
+          <div class="item-head">
+            <strong>${esc(t.name||'Trainer')}</strong>
+            <button type="button" class="danger small remove-trainer" data-index="${i}">Löschen</button>
+          </div>
+          <div class="grid2">
+            ${textField('Name',`trainers.items.${i}.name`,t.name)}
+            ${textField('Rolle',`trainers.items.${i}.role`,t.role)}
+          </div>
+          ${imageField('Bild',`trainers.items.${i}.image`,t.image)}
+        </div>`).join('')}
+      </div>
+
+      <button type="button" class="secondary add-trainer bottom-add-trainer">+ Trainer hinzufügen</button>
     </section>
 
     <section class="cms-section" data-admin-section="standorte" hidden>
@@ -184,8 +223,27 @@
     editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>setPath(data,el.dataset.boolPath,el.checked)));
     editor.querySelectorAll('[data-lines]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.lines,el.value.split('\n').map(x=>x.trim()).filter(Boolean))));
     editor.querySelectorAll('.cms-upload').forEach(el=>el.addEventListener('change',uploadImage));
-    editor.querySelectorAll('.remove-trainer').forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.dataset.index);if(confirm('Trainer wirklich entfernen?')){data.trainers.items.splice(i,1);render();}}));
-    $('#addTrainer')?.addEventListener('click',()=>{data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png'});render();});
+    const removeTrainer=(i)=>{
+      const trainer=data.trainers.items[i];
+      if(!trainer)return;
+      if(confirm((trainer.name||'Trainer')+' wirklich löschen?')){
+        data.trainers.items.splice(i,1);
+        render();
+        showTab('trainerteam');
+      }
+    };
+    editor.querySelectorAll('.remove-trainer').forEach(btn=>btn.addEventListener('click',()=>removeTrainer(Number(btn.dataset.index))));
+    editor.querySelectorAll('.add-trainer').forEach(btn=>btn.addEventListener('click',()=>{
+      data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png'});
+      render();
+      showTab('trainerteam');
+      const newIndex=data.trainers.items.length-1;
+      window.setTimeout(()=>editor.querySelector('[data-trainer-editor="'+newIndex+'"]')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+    }));
+    editor.querySelectorAll('.edit-trainer').forEach(btn=>btn.addEventListener('click',()=>{
+      const i=Number(btn.dataset.index);
+      editor.querySelector('[data-trainer-editor="'+i+'"]')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }));
     editor.querySelectorAll('[data-stats-days]').forEach(btn=>btn.addEventListener('click',()=>{statsDays=Number(btn.dataset.statsDays);editor.querySelectorAll('[data-stats-days]').forEach(b=>b.classList.toggle('active',b===btn));loadStats(statsDays);}));
   }
 
