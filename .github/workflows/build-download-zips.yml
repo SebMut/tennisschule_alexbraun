@@ -39,3 +39,5 @@ jobs:
           name: tennisschule_alexbraun_webspace
           path: tennisschule_alexbraun_webspace.zip
           compression-level: 0
+
+# Build trigger: Kubio 1-to-1 migration
