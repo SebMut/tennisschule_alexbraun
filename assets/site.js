@@ -52,6 +52,28 @@
     track('click',key,label,href);
   },true);
 
+  const newsletterForm=document.getElementById('newsletterSignupForm');
+  if(newsletterForm){
+    newsletterForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const message=document.getElementById('newsletterMessage');
+      const submit=newsletterForm.querySelector('button[type="submit"]');
+      if(message){message.textContent='Anmeldung wird verarbeitet …';message.className='newsletter-message';}
+      if(submit)submit.disabled=true;
+      try{
+        const response=await fetch(newsletterForm.action,{method:'POST',body:new FormData(newsletterForm),credentials:'same-origin'});
+        const result=await response.json().catch(()=>({ok:false,error:'Ungültige Serverantwort.'}));
+        if(!response.ok||result.ok===false)throw new Error(result.error||'Die Anmeldung konnte nicht verarbeitet werden.');
+        if(message){message.textContent=result.message||'Bitte bestätige deine Anmeldung per E-Mail.';message.className='newsletter-message success';}
+        if(result.status==='pending')newsletterForm.reset();
+        track('newsletter_signup_success','newsletter_signup_success','Newsletter-Anmeldung','');
+      }catch(err){
+        if(message){message.textContent=err.message;message.className='newsletter-message error';}
+        track('newsletter_signup_error','newsletter_signup_error','Newsletter-Anmeldung fehlgeschlagen','');
+      }finally{if(submit)submit.disabled=false;}
+    });
+  }
+
   document.querySelectorAll('form[data-track-form]').forEach(form=>{
     form.addEventListener('submit',()=>track('form_submit','form:'+form.dataset.trackForm,'Formular gesendet',form.action));
   });
