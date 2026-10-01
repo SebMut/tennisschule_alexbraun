@@ -42,6 +42,7 @@ declare(strict_types=1);
         <button type="button" class="admin-menu-item" data-admin-tab="trainerteam">Trainerteam</button>
         <button type="button" class="admin-menu-item" data-admin-tab="standorte">Standorte</button>
         <button type="button" class="admin-menu-item" data-admin-tab="kontakt">Kontakt</button>
+        <button type="button" class="admin-menu-item" data-admin-tab="newsletter">Newsletter</button>
         <button type="button" class="admin-menu-item" data-admin-tab="weitere">Weitere Seiten</button>
         <button type="button" class="admin-menu-item stats-tab" data-admin-tab="statistik">Statistik</button>
       </nav>
