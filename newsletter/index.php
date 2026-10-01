@@ -10,9 +10,9 @@ page_head($n['page_title']??'Newsletter'); site_header();
 <div class="contact-form-col"><h2><?=h($c['heading']??'Kontakt')?></h2><form action="/api/contact.php" method="post" accept-charset="UTF-8" data-track-form="newsletter-contact">
 <div class="form-grid">
 <div class="full"><label for="name"><?=h($labels['name']??'Vorname & Nachname *')?></label><input id="name" name="name" required></div>
-<div><label for="subject"><?=h($labels['subject']??'Betreff *')?></label><input id="subject" name="subject" required></div>
-<div><label for="phone"><?=h($labels['phone']??'Telefon *')?></label><input id="phone" name="phone" type="tel" required></div>
 <div class="full"><label for="email"><?=h($labels['email']??'Email *')?></label><input id="email" name="email" type="email" required></div>
+<div><label for="phone"><?=h($labels['phone']??'Telefon')?></label><input id="phone" name="phone" type="tel"<?= !empty($c['phone_required'])?' required':'' ?>></div>
+<div><label for="topic"><?=h($labels['topic']??'Anliegen *')?></label><select id="topic" name="topic" required><option value="">Bitte auswählen</option><?php foreach(($c['topics']??[]) as $topic): ?><option value="<?=h($topic)?>"><?=h($topic)?></option><?php endforeach; ?></select></div>
 <div class="full"><label for="message"><?=h($labels['message']??'Nachricht *')?></label><textarea id="message" name="message" required></textarea></div>
 <div class="honeypot"><input name="website" tabindex="-1" autocomplete="off"></div>
 <div class="full"><button class="contact-submit" data-track="newsletter_submit" type="submit"><?=h($labels['submit']??'Senden')?></button></div>
