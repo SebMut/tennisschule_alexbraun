@@ -258,6 +258,11 @@
       <div class="cms-card"><strong>Erfolgsseite</strong>
         ${textField('Seitentitel','success.page_title',data.success?.page_title)}${textField('Nachricht','success.message',data.success?.message,true)}
       </div>
+      <div class="cms-card"><strong>404 – Seite nicht gefunden</strong>
+        ${textField('Überschrift','not_found.title',data.not_found?.title)}${textField('Text','not_found.text',data.not_found?.text,true)}
+        <div class="grid2">${textField('Button 1 Text','not_found.primary_label',data.not_found?.primary_label)}${textField('Button 1 Ziel','not_found.primary_url',data.not_found?.primary_url)}
+        ${textField('Button 2 Text','not_found.secondary_label',data.not_found?.secondary_label)}${textField('Button 2 Ziel','not_found.secondary_url',data.not_found?.secondary_url)}</div>
+      </div>
       <div class="cms-card"><strong>SEO & Teilen</strong>
         ${textField('Basis-URL','seo.base_url',data.seo?.base_url)}
         ${imageField('Standard Open-Graph-Bild','seo.default_og_image',data.seo?.default_og_image,true)}
