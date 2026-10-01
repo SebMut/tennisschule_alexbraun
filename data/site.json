@@ -496,5 +496,13 @@
         "path": "/impressum-datenschutzerklaerung/"
       }
     }
+  },
+  "not_found": {
+    "title": "Seite nicht gefunden",
+    "text": "Die gewünschte Seite ist nicht verfügbar. Du kannst zurück zur Startseite gehen oder direkt unsere Trainingsangebote ansehen.",
+    "primary_label": "Zur Startseite",
+    "primary_url": "/",
+    "secondary_label": "Zu den Angeboten",
+    "secondary_url": "/angebote/"
   }
 }
