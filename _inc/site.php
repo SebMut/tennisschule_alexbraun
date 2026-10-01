@@ -109,11 +109,12 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     $og=(string)($meta['og_image']??$seo['default_og_image']??'/assets/media/header_bild.jpg');
     if(str_starts_with($og,'/')) $og=$base.$og;
     $host=strtolower((string)($_SERVER['HTTP_HOST']??'')); $staging=str_starts_with($host,'test.tennisschule-alexbraun.de');
-    if($staging&&!headers_sent()) header('X-Robots-Tag: noindex, nofollow, noarchive',true);
+    $errorPage=http_response_code()>=400;
+    if(($staging||$errorPage)&&!headers_sent()) header('X-Robots-Tag: noindex, nofollow, noarchive',true);
     echo '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
-    if($staging) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
+    if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
     echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
