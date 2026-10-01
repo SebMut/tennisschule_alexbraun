@@ -83,6 +83,13 @@
       panel.hidden=!open;
       btn.setAttribute('aria-expanded',String(open));
       btn.textContent=open?'Weniger anzeigen':'Mehr erfahren';
+      if(open) track('trainer_detail','trainer_detail:'+btn.dataset.trainerToggle,btn.closest('.trainer-card')?.querySelector('h3')?.textContent||'Trainerdetail','');
+    });
+  });
+
+  document.querySelectorAll('.faq-item').forEach((item,i)=>{
+    item.addEventListener('toggle',()=>{
+      if(item.open) track('faq_open','faq:'+i,item.querySelector('summary')?.textContent?.trim()||'FAQ','');
     });
   });
 
