@@ -21,13 +21,12 @@ jobs:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
           UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
           UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
-          UD_REMOTE_PATH: ${{ secrets.UD_REMOTE_PATH }}
+          UD_REMOTE_PATH: tennisschule_alexbraun_umstrukturierung
         run: |
           set -euo pipefail
           : "${UD_SFTP_HOST:?GitHub Secret UD_SFTP_HOST fehlt}"
           : "${UD_SFTP_USER:?GitHub Secret UD_SFTP_USER fehlt}"
           : "${UD_SFTP_PASSWORD:?GitHub Secret UD_SFTP_PASSWORD fehlt}"
-          : "${UD_REMOTE_PATH:?GitHub Secret UD_REMOTE_PATH fehlt}"
 
           lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
           set sftp:auto-confirm yes
