@@ -52,6 +52,13 @@ function site_footer(): void {
 }
 function page_head(string $title, string $description = ''): void {
     if ($description === '') $description = $title . ' - Tennisschule Alex Braun';
+    $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
+    $isStaging = $host === 'test.tennisschule-alexbraun.de' || str_starts_with($host, 'test.tennisschule-alexbraun.de:');
+    if ($isStaging && !headers_sent()) {
+        header('X-Robots-Tag: noindex, nofollow, noarchive', true);
+    }
     echo '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
-    echo '<title>'.h($title).' - Tennisschule Alex Braun</title><meta name="description" content="'.h($description).'"><link rel="stylesheet" href="/assets/style.css"></head><body>';
+    echo '<title>'.h($title).' - Tennisschule Alex Braun</title><meta name="description" content="'.h($description).'">';
+    if ($isStaging) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
+    echo '<link rel="stylesheet" href="/assets/style.css"></head><body>';
 }
