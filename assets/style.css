@@ -392,3 +392,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(max-width:520px){
   .why-grid{grid-template-columns:1fr}
 }
+
+/* Newsletter signup */
+.newsletter-signup-section{padding:42px 0;background:#f5f6f8}
+.newsletter-signup-card{background:#fff;border:1px solid #e3e5ea;border-radius:12px;box-shadow:0 14px 34px rgba(43,45,66,.08);padding:30px}
+.newsletter-signup-copy{text-align:center;margin-bottom:24px}
+.newsletter-signup-copy h2{font-size:2em;margin-bottom:10px}
+.newsletter-signup-copy p{max-width:680px;margin-left:auto;margin-right:auto}
+.newsletter-signup-form{max-width:620px;margin:0 auto}
+.newsletter-consent{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin:14px 0 20px}
+.newsletter-consent input{width:20px;height:20px;flex:0 0 auto;margin:2px 0 0}
+.newsletter-consent span{line-height:1.5}
+.newsletter-submit{width:100%;font-size:14px}
+.newsletter-message{margin-top:14px;font-weight:700}
+.newsletter-message.success{color:#247032}
+.newsletter-message.error{color:#a02020}
+.newsletter-action-page{padding:52px 0;background:#f5f6f8}
+.newsletter-action-card{background:#fff;border:1px solid #e3e5ea;border-radius:12px;padding:34px;box-shadow:0 14px 34px rgba(43,45,66,.08)}
+@media(max-width:767px){
+  .newsletter-signup-card,.newsletter-action-card{padding:20px}
+}
