@@ -19,7 +19,7 @@ $hash = (string)($config['admin_password_hash'] ?? '');
 if ($hash === '') json_response(['ok'=>false,'error'=>'Admin-Passwort ist noch nicht konfiguriert.'], 503);
 
 $key = hash('sha256', client_ip());
-$rateFile = storage_dir() . '/login-' . $key . '.json';
+$rateFile = storage_dir() . '/login-v2-' . $key . '.json';
 $rate = ['start'=>time(),'count'=>0];
 if (is_file($rateFile)) {
     $old = json_decode((string)file_get_contents($rateFile), true);
