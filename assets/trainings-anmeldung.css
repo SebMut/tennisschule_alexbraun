@@ -1,0 +1,124 @@
+.trainings-btn-wrapper {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.trainings-btn {
+    display: block;
+    width: 90%; /* volle Spaltenbreite */
+    padding: 5px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    background-color: #F17C20 !important;
+    color: #fff;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1;
+    text-align: center;
+    border: 12px solid #F17C20 !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: normal;
+    text-transform: uppercase !important;
+    margin: 0 auto;
+    letter-spacing: 1px !important;
+    transition: background-color 1.0s ease, border-color 1.0s ease, color 1000.0s ease; /* sanftes Faden */
+
+}
+
+.trainings-btn:hover {
+    background-color: #2B2D42 !important; /* grüner Hintergrund */
+    border-color: #2B2D42 !important;     /* grüne Umrandung */
+    color: #FE13FF;               /* schwarzer Text */
+}
+
+/* Modal-Hintergrund */
+.trainings-modal {
+    display: none;
+    position: fixed;
+    z-index: 2147483647 !important; /* maximal */
+    isolation: isolate; /* verhindert, dass andere Elemente drüber liegen */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+/* Aktiviertes Modal */
+.trainings-modal.active {
+    display: flex;
+    opacity: 1;
+
+}
+
+/* Modal-Box */
+.trainings-modal-content {
+    position: relative;
+    z-index: 2147483647 !important; /* sicherheitshalber auch hier */
+    background: #fff;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 900px;
+    max-height: 90%;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-out;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+}
+/* Schließen-Button */
+.trainings-modal .trainings-close { 
+    position: absolute;
+    top: 25px;
+    right: 30px; 
+    background: rgba(241, 124, 32, 0.3) !important;
+    border: none !important; 
+    color: white !important; 
+    font-size: 1.5rem;
+    cursor: pointer; 
+    transition: color 0.3s ease, background 0.3s ease; 
+    border-radius: 5px;
+}
+
+.trainings-modal .trainings-close:hover {
+    color: rgba(241, 124, 32, 0.3) !important;
+    background: rgba(255, 255, 255, 0.5); /* etwas stärker sichtbar beim Hover */
+}
+
+/* Inhalt */
+.trainings-form-content {
+    padding-top: 60px; /* genug Abstand, damit Text unter dem Button startet */
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.trainings-form-content.visible {
+    opacity: 1;
+}
+.trainings-form-content iframe {
+    border: none;
+    width: 100%;
+    height: 80vh; /* große Ansicht */
+    background-color: #fff;
+}
+
+/* Fehler-Meldung */
+.trainings-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 18px;
+    padding: 20px;
+    text-align: center;
+    color: red;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
