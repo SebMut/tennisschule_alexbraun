@@ -25,7 +25,13 @@
       "copyright_name": "Tennisschule Alex Braun",
       "phone": "+49 172 2104 303",
       "email": "info@tennisschule-alexbraun.de",
-      "instagram": "https://www.instagram.com/tennisschule_alexbraun"
+      "instagram": "https://www.instagram.com/tennisschule_alexbraun",
+      "links": [
+        {
+          "label": "Newsletter",
+          "url": "/newsletter/"
+        }
+      ]
     },
     "hero_primary_url": "/angebote/",
     "hero_secondary_url": "/kontakt/"
