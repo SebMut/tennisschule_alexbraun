@@ -16,7 +16,8 @@
       "locations": "Standorte",
       "locations_overview": "Übersicht",
       "shop": "Shop",
-      "contact": "Kontakt"
+      "contact": "Kontakt",
+      "shop_url": "https://shop.tennisschule-alexbraun.de/"
     },
     "footer": {
       "name": "Tennisschule Alex Braun",
@@ -25,7 +26,9 @@
       "phone": "+49 172 2104 303",
       "email": "info@tennisschule-alexbraun.de",
       "instagram": "https://www.instagram.com/tennisschule_alexbraun"
-    }
+    },
+    "hero_primary_url": "/angebote/",
+    "hero_secondary_url": "/kontakt/"
   },
   "home": {
     "about_title": "Über uns",
@@ -45,7 +48,14 @@
     "locations_title": "Unsere Standorte",
     "popup_image": "/assets/media/popup_wintertraining_2026_2027-2.png",
     "popup_link": "/angebote/",
-    "map_route_label": "Route berechnen"
+    "map_route_label": "Route berechnen",
+    "offer_link_url": "/angebote/",
+    "team_button_url": "/trainerteam/",
+    "popup_enabled": true,
+    "popup_frequency_days": 7,
+    "popup_delay_seconds": 1,
+    "popup_close_delay_seconds": 2,
+    "popup_alt": "Wintertennistraining"
   },
   "offers": {
     "intro": "Unser Tennistraining bietet eine erstklassige Gelegenheit, um dein Spiel zu verbessern und die Leidenschaft für Tennis zu entfachen. Durch individuelle Betreuung, professionelle Anleitung und innovative Trainingsmethoden helfen wir Spielern jeden Levels, ihre Ziele zu erreichen. Für weitere Informationen kontaktiere uns gerne.",
@@ -245,5 +255,9 @@
         "body": "Diese Datenschutzerklärung ist aktuell gültig. Durch die Weiterentwicklung unserer Website und Angebote darüber oder aufgrund geänderter gesetzlicher beziehungsweise behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern. Die jeweils aktuelle Datenschutzerklärung kann jederzeit auf der Website unter Datenschutzerklärung von Ihnen abgerufen und ausgedruckt werden."
       }
     ]
+  },
+  "analytics": {
+    "enabled": true,
+    "retention_days": 365
   }
 }
