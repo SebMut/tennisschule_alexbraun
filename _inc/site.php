@@ -65,7 +65,6 @@ function site_hero(bool $home = false): void {
         echo '<p class="hero-lead">'.h($tagline).'</p>';
         echo '<p class="hero-copy">'.h($copy).'</p>';
         echo '<div class="hero-actions"><a class="btn hero-btn hero-btn-orange" href="/angebote/">Anmeldung</a><a class="btn hero-btn hero-btn-white" href="/kontakt/">Kontakt</a></div>';
-        echo '<a class="hero-down" href="#content-start" aria-label="Weiter zum Inhalt">⌄</a>';
     }
     echo '</div></section>';
 }
@@ -94,7 +93,7 @@ function site_footer(): void {
     echo '</div></footer><script src="/assets/site.js"></script>';
 }
 
-function page_head(string $title, string $description = ''): void {
+function page_head(string $title, string $description = '', bool $mapbox = false): void {
     if ($description === '') $description = $title . ' - Tennisschule Alex Braun';
     $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
     $isStaging = $host === 'test.tennisschule-alexbraun.de' || str_starts_with($host, 'test.tennisschule-alexbraun.de:');
@@ -106,5 +105,10 @@ function page_head(string $title, string $description = ''): void {
     if ($isStaging) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
     echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
     echo '<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet">';
-    echo '<link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css">';
+    if ($mapbox) {
+        echo '<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css">';
+        echo '<script defer src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>';
+    }
+    echo '</head><body>';
 }
