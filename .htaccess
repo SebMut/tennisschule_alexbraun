@@ -1,3 +1,4 @@
+ErrorDocument 404 /404.php
 DirectoryIndex index.php index.html
 Options -Indexes
 
