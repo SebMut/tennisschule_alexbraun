@@ -68,3 +68,5 @@ label{display:block;font-weight:700;margin:13px 0 5px}input,textarea{width:100%;
   .trainer-section-head .add-trainer{width:100%}
   .trainer-overview{grid-template-columns:1fr}
 }
+
+.offer-admin-current{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#fff1e7;color:#a84d08;font-size:12px;font-weight:700}
