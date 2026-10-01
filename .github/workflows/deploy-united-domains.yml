@@ -42,10 +42,7 @@ jobs:
           TS_MAPBOX_TOKEN: ${{ secrets.TS_MAPBOX_TOKEN }}
         run: |
           set -euo pipefail
-          if [ -z "${TS_MAPBOX_TOKEN:-}" ]; then
-            TS_MAPBOX_TOKEN="$(curl -fsSL --retry 3 https://www.tennisschule-alexbraun.de/ | grep -oE 'pk\.[A-Za-z0-9._-]+' | head -n 1 || true)"
-            export TS_MAPBOX_TOKEN
-          fi
+          : "${TS_MAPBOX_TOKEN:?GitHub Secret TS_MAPBOX_TOKEN fehlt}"
 
           php -r '
             $adminPassword = getenv("TS_ADMIN_PASSWORD") ?: "";
