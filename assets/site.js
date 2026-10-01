@@ -91,6 +91,71 @@
   } catch (_) {}
   document.querySelectorAll('[data-load-map]').forEach(btn => btn.addEventListener('click', loadMaps));
 
+
+  const mapboxContainer = document.getElementById('mapbox-container');
+  if (mapboxContainer && typeof window.mapboxgl !== 'undefined') {
+    const token = mapboxContainer.dataset.mapboxToken || '';
+    if (token) {
+      window.mapboxgl.accessToken = token;
+
+      const map = new window.mapboxgl.Map({
+        container: mapboxContainer,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [11.32, 48.15],
+        zoom: 13,
+        maxZoom: 15,
+        scrollZoom: false,
+        dragPan: false,
+        doubleClickZoom: false,
+        touchZoomRotate: false
+      });
+
+      const locations = [
+        {
+          name: 'TSV Feldkirchen',
+          lat: 48.143427223206544,
+          lng: 11.719520683624244,
+          logo: '/assets/media/mapbox-tsv.png',
+          link: 'https://maps.app.goo.gl/5F42TkRamtwv8FSdA'
+        },
+        {
+          name: 'SV Heimstetten',
+          lat: 48.16306908434989,
+          lng: 11.74709917555206,
+          logo: '/assets/media/mapbox-svh.png',
+          link: 'https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9'
+        }
+      ];
+
+      const bounds = new window.mapboxgl.LngLatBounds();
+
+      locations.forEach(loc => {
+        const marker = document.createElement('div');
+        marker.className = 'custom-marker';
+
+        const img = document.createElement('img');
+        img.src = loc.logo;
+        img.alt = loc.name;
+        marker.appendChild(img);
+
+        const label = document.createElement('div');
+        label.className = 'marker-label';
+        label.textContent = 'Route berechnen';
+        marker.appendChild(label);
+
+        marker.addEventListener('click', () => { window.location.href = loc.link; });
+
+        new window.mapboxgl.Marker(marker, { anchor: 'bottom' })
+          .setLngLat([loc.lng, loc.lat])
+          .addTo(map);
+
+        bounds.extend([loc.lng, loc.lat]);
+      });
+
+      map.fitBounds(bounds, { padding: 80, maxZoom: 15 });
+    }
+  }
+
   const winterPopup = document.getElementById('winterPopup');
   if (winterPopup) {
     const close = winterPopup.querySelector('.wp-popup-close');
