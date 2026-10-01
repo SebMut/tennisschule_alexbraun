@@ -1,8 +1,8 @@
 # Tennisschule Alex Braun
 
-Statische Neuimplementierung der bisherigen WordPress-Website von https://www.tennisschule-alexbraun.de/.
+Statische Migration der bisherigen WordPress-Website von https://www.tennisschule-alexbraun.de/.
 
-## Enthaltene Seiten
+## Migrierte Seiten
 
 - /
 - /angebote/
@@ -13,12 +13,23 @@ Statische Neuimplementierung der bisherigen WordPress-Website von https://www.te
 - /kontakt/
 - /impressum-datenschutzerklaerung/
 
-## Aktueller Migrationsstand
+## Medien
 
-Die öffentliche Seitenstruktur, Texte, Navigation, Trainer, Angebote, Standorte und rechtlichen Inhalte sind als statische HTML/CSS/JS-Version umgesetzt.
+Die für die Website benötigten Originalbilder und Dokumente wurden aus dem WordPress-Uploads-Bestand in das Repository unter `assets/media/` übernommen.
 
-Die vorhandenen Bilder werden in dieser Migrationsstufe direkt aus dem bisherigen WordPress-/Jetpack-Bildbestand geladen. Vor der Abschaltung des WordPress-Hostings müssen diese Medien in das neue Hosting übernommen werden.
+Das Frontend lädt keine Website-Bilder mehr über WordPress oder Jetpack. Externe Links zu Shopify, Vereinswebsites und Google Maps bleiben absichtlich extern.
 
-Das Kontaktformular ist visuell vorhanden. Die endgültige serverseitige Formularzustellung wird beim Cloudflare-Deployment eingerichtet.
+## Technik
 
-Das geplante Eigentümer-CMS wird ohne Astro/TinaCMS umgesetzt. Der Fine-grained GitHub Token darf nicht im Browser oder Repository gespeichert werden und wird später als serverseitiges Secret hinterlegt.
+Die Website läuft ohne WordPress, Astro oder TinaCMS als statisches HTML/CSS/JavaScript-Projekt.
+
+Das geplante Eigentümer-CMS wird als eigener Admin-Bereich umgesetzt. Schreibzugriffe auf GitHub erfolgen später serverseitig über einen Fine-grained GitHub Token. Der Token darf niemals im Browser oder im Repository gespeichert werden.
+
+## Noch vor Domain-Umschaltung
+
+- Staging-/Preview-Deployment einrichten und visuell gegen die bisherige Seite prüfen.
+- Kontakt- und Anmeldeformulare serverseitig anbinden.
+- Eigentümer-CMS /admin fertigstellen.
+- Erst danach DNS/Domain auf das neue Hosting umstellen.
+
+Die bestehende WordPress-Installation kann bis zur finalen Umschaltung unverändert online bleiben.
