@@ -144,6 +144,7 @@
       setTimeout(()=>{
         winterPopup.classList.add('open');winterPopup.setAttribute('aria-hidden','false');body.classList.add('popup-open');
         track('popup_view','popup_view','Popup angezeigt','');
+        try{if(frequency>0)localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
         setTimeout(()=>{if(close)close.style.visibility='visible';},closeDelay);
       },delay);
     }
