@@ -127,3 +127,6 @@ textarea{min-height:170px;resize:vertical}
 .form-notice{padding:14px 16px;border-radius:5px;margin:0 0 22px;font-weight:700}
 .form-notice.success{background:#edf8ef;color:#256331;border:1px solid #b9dfc0}
 .form-notice.error{background:#fff1f1;color:#8b2222;border:1px solid #edc1c1}
+
+.map-consent{margin-top:30px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:#f3f5f8;border:1px solid var(--line)}
+.map-consent p{max-width:620px}
