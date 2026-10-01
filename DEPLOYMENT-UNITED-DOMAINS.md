@@ -18,9 +18,9 @@ Nicht direkt die bestehende WordPress-Installation überschreiben.
 
 Empfohlen ist zunächst ein eigenes Verzeichnis, z. B.:
 
-`/tennisschule-neu/`
+`tennisschule_alexbraun_umstrukturierung`
 
-Dorthin wird diese GitHub-Version deployed. Erst nach der Abnahme wird die Domain in United Domains auf dieses Verzeichnis umgestellt.
+Dorthin wird diese GitHub-Version deployed. Die Testdomain ist dafür **https://test.tennisschule-alexbraun.de**. Auf dieser Subdomain setzt die Website automatisch `noindex,nofollow,noarchive`, damit die Testversion nicht von Suchmaschinen indexiert wird.
 
 ## 2. GitHub Actions Secrets für den SFTP-Deploy
 
@@ -29,23 +29,27 @@ Im Repository unter Settings → Secrets and variables → Actions folgende Secr
 - `UD_SFTP_HOST` – SFTP-Host von United Domains
 - `UD_SFTP_USER` – SFTP-Benutzer
 - `UD_SFTP_PASSWORD` – SFTP-Passwort
-- `UD_REMOTE_PATH` – Zielverzeichnis, z. B. `/tennisschule-neu`
+Das Zielverzeichnis ist bereits fest auf `tennisschule_alexbraun_umstrukturierung` eingestellt.
 
 Der Workflow **Deploy to United Domains** läuft bewusst nur manuell. Dadurch kann er die bestehende WordPress-Seite nicht versehentlich ersetzen.
 
-## 3. Server-Konfiguration anlegen
+## 3. Secrets für die Server-Konfiguration
 
-Auf dem United-Domains-Webspace:
+Der Deploy-Workflow erzeugt `config.local.php` automatisch und lädt sie auf den United-Domains-Webspace. Die Datei wird nicht in Git committed.
 
-1. `config.example.php` nach `config.local.php` kopieren.
-2. Nur `config.local.php` mit echten Zugangsdaten befüllen.
-3. `config.local.php` niemals in Git committen.
+Zusätzlich zu den drei SFTP-Secrets werden folgende GitHub Actions Secrets benötigt:
 
-Benötigt werden:
+- `TS_ADMIN_PASSWORD` – das gewünschte Passwort für `/admin/`
+- `TS_GITHUB_TOKEN` – Fine-grained GitHub Token
+- `TS_SMTP_PASSWORD` – Passwort des Postfachs `info@tennisschule-alexbraun.de`
 
-- Admin-Passworthash
-- Fine-grained GitHub Token
-- SMTP-Benutzer und SMTP-Passwort
+Der SMTP-Benutzer ist bereits auf `info@tennisschule-alexbraun.de` eingestellt.
+
+### Benötigte SFTP-Secrets
+
+- `UD_SFTP_HOST`
+- `UD_SFTP_USER`
+- `UD_SFTP_PASSWORD`
 
 ### Fine-grained GitHub Token
 
