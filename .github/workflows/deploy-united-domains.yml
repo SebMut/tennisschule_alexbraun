@@ -23,13 +23,10 @@ jobs:
           TS_SMTP_PASSWORD: ${{ secrets.TS_SMTP_PASSWORD }}
         run: |
           set -euo pipefail
-          : "${TS_ADMIN_PASSWORD:?GitHub Secret TS_ADMIN_PASSWORD fehlt}"
-          : "${TS_GITHUB_TOKEN:?GitHub Secret TS_GITHUB_TOKEN fehlt}"
-          : "${TS_SMTP_PASSWORD:?GitHub Secret TS_SMTP_PASSWORD fehlt}"
-
           php -r '
+            $adminPassword = getenv("TS_ADMIN_PASSWORD") ?: "";
             $config = [
-              "admin_password_hash" => password_hash(getenv("TS_ADMIN_PASSWORD"), PASSWORD_DEFAULT),
+              "admin_password_hash" => $adminPassword !== "" ? password_hash($adminPassword, PASSWORD_DEFAULT) : "",
               "github" => [
                 "token" => getenv("TS_GITHUB_TOKEN"),
                 "owner" => "SebMut",
