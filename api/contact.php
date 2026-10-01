@@ -14,14 +14,15 @@ if (trim((string)($_POST['website'] ?? '')) !== '') {
 }
 
 $name = trim((string)($_POST['name'] ?? ''));
-$subject = trim((string)($_POST['subject'] ?? ''));
+$topic = trim((string)($_POST['topic'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
 $email = trim((string)($_POST['email'] ?? ''));
 $message = trim((string)($_POST['message'] ?? ''));
 
-$valid = $name !== '' && $subject !== '' && $phone !== '' && $message !== ''
+$allowedTopics = ['Sommertraining','Wintertraining','Tenniscamp','Einzeltraining','Probetraining','Sonstiges'];
+$valid = $name !== '' && $topic !== '' && in_array($topic, $allowedTopics, true) && $message !== ''
     && filter_var($email, FILTER_VALIDATE_EMAIL)
-    && strlen($name) <= 120 && strlen($subject) <= 160
+    && strlen($name) <= 120 && strlen($topic) <= 80
     && strlen($phone) <= 60 && strlen($email) <= 190 && strlen($message) <= 5000;
 
 if (!$valid) {
@@ -42,13 +43,13 @@ $mailBody =
     "Neue Kontaktanfrage über tennisschule-alexbraun.de\n\n" .
     "Name: " . $clean($name) . "\n" .
     "E-Mail: " . $clean($email) . "\n" .
-    "Telefon: " . $clean($phone) . "\n" .
-    "Betreff: " . $clean($subject) . "\n\n" .
+    "Telefon: " . ($phone !== '' ? $clean($phone) : 'nicht angegeben') . "\n" .
+    "Anliegen: " . $clean($topic) . "\n\n" .
     "Nachricht:\n" . $message . "\n";
 
 try {
     smtp_send([
-        'subject' => 'Website: ' . $subject,
+        'subject' => 'Website: ' . $topic,
         'reply_to' => $email,
         'body' => $mailBody,
     ]);
