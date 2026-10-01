@@ -1,40 +1,19 @@
 <?php
 require dirname(__DIR__) . '/_inc/site.php';
-page_head('Kontakt');
-site_header('kontakt');
-$status = $_GET['status'] ?? '';
-?>
-<main>
-<?php site_hero(); ?>
-<section class="contact-section">
-  <div class="container">
-    <div class="contact-card">
-      <div class="contact-photo" role="img" aria-label="Alex Braun"></div>
-      <div class="contact-form-col">
-        <h2>Kontakt</h2>
-        <?php if ($status === 'sent'): ?><div class="form-notice success">Vielen Dank. Deine Nachricht wurde versendet.</div><?php endif; ?>
-        <?php if ($status === 'error'): ?><div class="form-notice error">Die Nachricht konnte nicht versendet werden. Bitte versuche es erneut oder schreibe direkt an info@tennisschule-alexbraun.de.</div><?php endif; ?>
-        <form action="/api/contact.php" method="post" accept-charset="UTF-8">
-          <div class="form-grid">
-            <div class="full"><label for="name">Vorname &amp; Nachname *</label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
-            <div><label for="subject">Betreff *</label><input id="subject" name="subject" required maxlength="160"></div>
-            <div><label for="phone">Telefon *</label><input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="60"></div>
-            <div class="full"><label for="email">Email *</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="190"></div>
-            <div class="full"><label for="message">Nachricht *</label><textarea id="message" name="message" required maxlength="5000"></textarea></div>
-            <div class="honeypot" aria-hidden="true"><label>Falls Du menschlich bist, lasse dieses Feld leer.<input name="website" tabindex="-1" autocomplete="off"></label></div>
-            <div class="full"><button class="contact-submit" type="submit">Senden</button></div>
-          </div>
-        </form>
-        <div class="contact-social">
-          <a href="tel:+491722104303" aria-label="Telefon"><?= social_icon('phone') ?></a>
-          <a href="https://wa.me/+491722104303" aria-label="WhatsApp"><?= social_icon('whatsapp') ?></a>
-          <a href="mailto:info@tennisschule-alexbraun.de" aria-label="E-Mail"><?= social_icon('mail') ?></a>
-          <a href="https://www.instagram.com/tennisschule_alexbraun" target="_blank" rel="noopener" aria-label="Instagram"><?= social_icon('instagram') ?></a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-</main>
-<?php site_footer(); ?>
-</body></html>
+$d=site_data(); $c=$d['contact']??[]; $labels=$c['labels']??[];
+page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['status']??'';
+?><main><?php site_hero(); ?><section class="contact-section"><div class="container"><div class="contact-card">
+<div class="contact-photo" style="<?=h("--contact-image:url('".str_replace(["'",'"',')','\\'],'',(string)($c['image']??''))."')")?>" role="img" aria-label="<?=h($c['heading']??'Kontakt')?>"></div>
+<div class="contact-form-col"><h2><?=h($c['heading']??'Kontakt')?></h2>
+<?php if($status==='sent'): ?><div class="form-notice success"><?=h($c['success_message']??'')?></div><?php endif; ?>
+<?php if($status==='error'): ?><div class="form-notice error"><?=h($c['error_message']??'')?></div><?php endif; ?>
+<form action="/api/contact.php" method="post" accept-charset="UTF-8" data-track-form="contact">
+<div class="form-grid">
+<div class="full"><label for="name"><?=h($labels['name']??'Vorname & Nachname *')?></label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
+<div><label for="subject"><?=h($labels['subject']??'Betreff *')?></label><input id="subject" name="subject" required maxlength="160"></div>
+<div><label for="phone"><?=h($labels['phone']??'Telefon *')?></label><input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="60"></div>
+<div class="full"><label for="email"><?=h($labels['email']??'Email *')?></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="190"></div>
+<div class="full"><label for="message"><?=h($labels['message']??'Nachricht *')?></label><textarea id="message" name="message" required maxlength="5000"></textarea></div>
+<div class="honeypot" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+<div class="full"><button class="contact-submit" data-track="contact_submit" type="submit"><?=h($labels['submit']??'Senden')?></button></div>
+</div></form></div></div></div></section></main><?php site_footer(); ?></body></html>
