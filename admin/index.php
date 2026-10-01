@@ -35,11 +35,14 @@ declare(strict_types=1);
       <button id="saveBtn">Änderungen speichern</button>
     </div>
     <nav class="admin-menu" id="adminMenu" aria-label="Bereiche">
-      <button type="button" class="admin-menu-item active" data-admin-tab="home">Home</button>
+      <button type="button" class="admin-menu-item active" data-admin-tab="allgemein">Allgemein</button>
+      <button type="button" class="admin-menu-item" data-admin-tab="home">Home</button>
       <button type="button" class="admin-menu-item" data-admin-tab="angebote">Angebote</button>
       <button type="button" class="admin-menu-item" data-admin-tab="trainerteam">Trainerteam</button>
       <button type="button" class="admin-menu-item" data-admin-tab="standorte">Standorte</button>
       <button type="button" class="admin-menu-item" data-admin-tab="kontakt">Kontakt</button>
+      <button type="button" class="admin-menu-item" data-admin-tab="weitere">Weitere Seiten</button>
+      <button type="button" class="admin-menu-item stats-tab" data-admin-tab="statistik">Statistik</button>
     </nav>
     <div id="saveMessage" class="message"></div>
     <div id="editor"></div>
