@@ -4,6 +4,17 @@
   const logoutBtn=$('#logoutBtn'),saveBtn=$('#saveBtn'),saveMessage=$('#saveMessage'),editor=$('#editor'),adminMenu=$('#adminMenu');
   let data=null,csrf='',currentTab='allgemein',statsDays=30;
 
+  const syncAdminHeaderHeight=()=>{
+    const header=document.querySelector('.admin-header');
+    document.documentElement.style.setProperty('--admin-header-height',(header?.offsetHeight||72)+'px');
+  };
+  syncAdminHeaderHeight();
+  window.addEventListener('resize',syncAdminHeaderHeight);
+  if('ResizeObserver'in window){
+    const header=document.querySelector('.admin-header');
+    if(header)new ResizeObserver(syncAdminHeaderHeight).observe(header);
+  }
+
   const esc=(v='')=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
   const setPath=(obj,path,value)=>{const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++)c=c[p[i]];c[p.at(-1)]=value;};
   async function request(url,options={}){const r=await fetch(url,{credentials:'same-origin',...options});const b=await r.json().catch(()=>({ok:false,error:'Ungültige Serverantwort.'}));if(!r.ok||b.ok===false)throw new Error(b.error||'Fehler');return b;}
