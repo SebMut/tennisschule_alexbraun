@@ -1,10 +1,21 @@
 name: Deploy to United Domains
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "DEPLOYMENT-UNITED-DOMAINS.md"
+      - ".github/workflows/build-download-zips.yml"
+      - ".github/workflows/php-lint.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: united-domains-staging
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -12,6 +23,13 @@ jobs:
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v4
+
+      - name: PHP und JavaScript prüfen
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          node --check assets/site.js
+          node --check admin/admin.js
 
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
@@ -47,7 +65,7 @@ jobs:
             file_put_contents("config.local.php", "<?php\nreturn " . var_export($config, true) . ";\n");
           '
 
-      - name: Auf United-Domains-Webspace übertragen
+      - name: Auf United-Domains-Testwebspace übertragen
         env:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
           UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
