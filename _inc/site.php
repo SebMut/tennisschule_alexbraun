@@ -114,9 +114,7 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
-    echo '<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet">';
-    echo '<link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
       'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,
