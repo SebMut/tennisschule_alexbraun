@@ -31,7 +31,7 @@ Im Repository unter Settings → Secrets and variables → Actions folgende Secr
 - `UD_SFTP_PASSWORD` – SFTP-Passwort
 Das Zielverzeichnis ist bereits fest auf `tennisschule_alexbraun_umstrukturierung` eingestellt.
 
-Der Workflow **Deploy to United Domains** läuft bewusst nur manuell. Dadurch kann er die bestehende WordPress-Seite nicht versehentlich ersetzen.
+Der Workflow **Deploy to United Domains** läuft automatisch bei relevanten Änderungen auf `main` und kann zusätzlich manuell gestartet werden. Er deployt ausschließlich in `tennisschule_alexbraun_umstrukturierung`; die bestehende WordPress-Seite wird dadurch nicht überschrieben.
 
 ## 3. Secrets für die Server-Konfiguration
 
@@ -131,4 +131,4 @@ Fehlen sie:
 - `/admin/` ist noch nicht nutzbar;
 - das Kontaktformular kann noch keine E-Mails versenden.
 
-Sobald die Secrets später ergänzt wurden, genügt ein erneuter manueller Deploy.
+Sobald die Secrets später ergänzt wurden, genügt ein neuer relevanter Commit auf `main` oder alternativ ein manueller Start des Workflows.
