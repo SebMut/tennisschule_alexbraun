@@ -34,7 +34,7 @@ img{display:block;max-width:100%}
 .hero{position:relative;overflow:hidden}
 .home-hero{min-height:595px;background:
 linear-gradient(90deg,rgba(1,21,60,.92) 0%,rgba(5,42,103,.80) 50%,rgba(5,42,103,.2) 100%),
-url("https://i0.wp.com/www.tennisschule-alexbraun.de/wp-content/uploads/2025/07/startseite_2.jpg?fit=1400%2C933&ssl=1") center/cover}
+url("/assets/media/header_bild.jpg") center/cover}
 .hero-content{position:relative;z-index:2;padding:100px 0 95px;color:#fff;max-width:1180px}
 .eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:13px;font-weight:700;color:var(--yellow);margin:0 0 12px}
 .hero h1{font-size:70px;line-height:.98;margin:0 0 24px;max-width:720px;font-weight:800}
