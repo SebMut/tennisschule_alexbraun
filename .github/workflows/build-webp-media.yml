@@ -1,0 +1,35 @@
+name: Build optimized WebP media
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-webp-media.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install WebP tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq webp
+      - name: Convert current JPG/JPEG media
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            out="${file%.*}.webp"
+            cwebp -quiet -q 84 "$file" -o "$out"
+          done < <(find assets/media -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' \) -print0)
+      - name: Commit WebP media
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/media/*.webp
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Add optimized WebP media"
+          git push
