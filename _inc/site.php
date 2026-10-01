@@ -22,7 +22,7 @@ function mapbox_public_token(): string { return (string)((local_server_config()[
 
 function seo_page_key(): string {
     $path=parse_url((string)($_SERVER['REQUEST_URI']??'/'),PHP_URL_PATH) ?: '/';
-    $map=['/'=>'home','/angebote/'=>'offers','/trainerteam/'=>'trainers','/standorte/'=>'locations','/tsv-feldkirchen/'=>'feldkirchen','/sv-heimstetten/'=>'heimstetten','/kontakt/'=>'contact'];
+    $map=['/'=>'home','/angebote/'=>'offers','/trainerteam/'=>'trainers','/standorte/'=>'locations','/tsv-feldkirchen/'=>'feldkirchen','/sv-heimstetten/'=>'heimstetten','/kontakt/'=>'contact','/newsletter/'=>'newsletter','/nachricht-erfolgreich-zugestellt/'=>'success','/impressum-datenschutzerklaerung/'=>'legal'];
     return $map[$path] ?? '';
 }
 function render_json_ld(array $data): void {
