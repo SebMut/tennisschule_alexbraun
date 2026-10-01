@@ -43,7 +43,8 @@ p{margin:0 0 20px}
 .nav-dropdown{position:relative}
 .nav-caret{font-size:15px;margin-left:4px}
 .dropdown-menu{display:none;position:absolute;top:42px;left:-5px;min-width:205px;background:#fff;margin:0 5px;box-shadow:0 0 5px 2px rgba(0,0,0,.04);z-index:65}
-.nav-dropdown:hover .dropdown-menu{display:block}
+.dropdown-menu::before{content:"";position:absolute;left:0;right:0;top:-20px;height:20px;background:transparent}
+.nav-dropdown:hover .dropdown-menu,.nav-dropdown:focus-within .dropdown-menu{display:block}
 .dropdown-menu a{display:block;padding:10px 20px;border-bottom:1px solid rgba(128,128,128,.2);background:#fff;color:#404141;font-size:14px;font-weight:400;white-space:nowrap}
 .dropdown-menu a:hover{background:var(--kubio-blue);color:#fff}
 .menu-toggle{display:none;margin-left:auto;width:34px;height:34px;padding:5px;border:0;background:transparent;cursor:pointer}
