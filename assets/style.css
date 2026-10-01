@@ -133,7 +133,7 @@ p{margin:0 0 20px}
 .offers-page-section .section-heading{width:80%}
 .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .offer-panel{overflow:hidden;text-align:left}
-.offer-panel h3{font-size:1.4em;font-weight:500}
+.offer-panel h3{font-size:1.5em;font-weight:700;text-align:center}
 .offer-panel .kubio-btn{margin:0 0 18px}
 .offer-panel ul{padding-left:22px;margin:0 0 24px}
 .gallery-section{padding:0;background:#fff}
