@@ -83,7 +83,7 @@ site_header('home');
 </section>
 <section class="home-map-wrap">
   <div class="container">
-    <div id="mapbox-container" class="mapbox-home" aria-label="Standorte Tennisschule Alex Braun"></div>
+    <div id="mapbox-container" class="mapbox-home" data-mapbox-token="<?= h(mapbox_public_token()) ?>" aria-label="Standorte Tennisschule Alex Braun"></div>
   </div>
 </section>
 
