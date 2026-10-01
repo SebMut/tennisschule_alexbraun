@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/_inc/site.php';
 $d = site_data();
-page_head('Home', 'Seit Mai 2023 leitet die Tennisschule Alex Braun das Training beim TSV Feldkirchen. Ein motiviertes Team fördert Talente, Leistungssportler & den Breitensport.');
+page_head('Home', 'Seit Mai 2023 leitet die Tennisschule Alex Braun das Training beim TSV Feldkirchen. Ein motiviertes Team fördert Talente, Leistungssportler & den Breitensport.', true);
 site_header('home');
 ?>
 <main>
@@ -83,13 +83,7 @@ site_header('home');
 </section>
 <section class="home-map-wrap">
   <div class="container">
-    <div class="map-shell">
-      <div class="map-consent">
-        <p>Google Maps wird erst nach deiner Zustimmung geladen. Dabei können Daten an Google übertragen werden.</p>
-        <button type="button" class="kubio-btn" data-load-map>Karte laden</button>
-      </div>
-      <iframe class="map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-map-src="https://maps.google.com/maps?iwloc=near&amp;output=embed&amp;q=Tennisschule+Alex+Braun+M%C3%BCnchen&amp;z=10" title="Standorte Tennisschule Alex Braun" hidden></iframe>
-    </div>
+    <div id="mapbox-container" class="mapbox-home" aria-label="Standorte Tennisschule Alex Braun"></div>
   </div>
 </section>
 
