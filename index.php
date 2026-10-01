@@ -21,10 +21,20 @@ site_header('home');
 
 <section class="offers-home"><div class="container">
   <div class="section-heading"><h2><?=h($home['offers_title']??'Unser Angebot')?></h2><p><?=h($home['offers_intro']??'')?></p></div>
-  <div class="cards three"><?php foreach(($d['offers']['items']??[]) as $offer): ?>
-    <article class="offer-card"><img src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
-      <div class="offer-card-body"><h3><?=h($offer['title']??'')?></h3><p><?=h($offer['home_text']??'')?></p>
-      <a class="text-link" data-track="home_offer_<?=h($offer['id']??'offer')?>" href="<?=h($home['offer_link_url']??'/angebote/')?>"><?=h($home['offer_link_text']??'Zur Anmeldung')?></a></div>
+  <div class="cards three"><?php foreach(($d['offers']['items']??[]) as $offer):
+    $homeUrl=$offer['home_cta_url']??($home['offer_link_url']??'/angebote/');
+    $external=preg_match('#^https?://#',$homeUrl);
+  ?>
+    <article class="offer-card<?= !empty($offer['featured'])?' is-featured':'' ?>">
+      <div class="offer-card-media">
+        <img src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
+        <?php if(!empty($offer['status'])): ?><span class="offer-card-status <?=h('status-'.($offer['status_kind']??''))?>"><?=h($offer['status'])?></span><?php endif; ?>
+      </div>
+      <div class="offer-card-body">
+        <h3><?=h($offer['title']??'')?></h3>
+        <p><?=h($offer['home_text']??'')?></p>
+        <a class="text-link" data-track="home_offer_<?=h($offer['id']??'offer')?>" href="<?=h($homeUrl)?>"<?= $external?' target="_blank" rel="noopener"':'' ?>><?=h($offer['home_cta_label']??($home['offer_link_text']??'Zur Anmeldung'))?></a>
+      </div>
     </article>
   <?php endforeach; ?></div>
 </div></section>
