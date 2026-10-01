@@ -1,8 +1,19 @@
 # Tennisschule Alex Braun
 
-Statische Migration der bisherigen WordPress-Website von https://www.tennisschule-alexbraun.de/.
+Migration der bisherigen WordPress-Website auf eine schlanke PHP-Lösung für United Domains.
 
-## Migrierte Seiten
+## Architektur
+
+- Hosting und Domain: United Domains
+- Website: PHP + HTML/CSS/JavaScript
+- Inhalte: `data/site.json`
+- Eigentümer-CMS: `/admin/`
+- Versionierung: GitHub
+- Kontaktformular: SMTP über United Domains
+- Datenbank: keine
+- Supabase: nicht erforderlich
+
+## Seiten
 
 - /
 - /angebote/
@@ -12,24 +23,47 @@ Statische Migration der bisherigen WordPress-Website von https://www.tennisschul
 - /sv-heimstetten/
 - /kontakt/
 - /impressum-datenschutzerklaerung/
+- /admin/
 
-## Medien
+## CMS
 
-Die für die Website benötigten Originalbilder und Dokumente wurden aus dem WordPress-Uploads-Bestand in das Repository unter `assets/media/` übernommen.
+Der Eigentümer kann im Adminbereich Texte, Angebote, Trainer, Bilder und Standorte bearbeiten.
 
-Das Frontend lädt keine Website-Bilder mehr über WordPress oder Jetpack. Externe Links zu Shopify, Vereinswebsites und Google Maps bleiben absichtlich extern.
+Beim Speichern:
 
-## Technik
+1. wird `data/site.json` sofort auf dem Webspace aktualisiert;
+2. wird dieselbe Änderung über einen serverseitig gespeicherten Fine-grained GitHub Token nach GitHub committed.
 
-Die Website läuft ohne WordPress, Astro oder TinaCMS als statisches HTML/CSS/JavaScript-Projekt.
+Bild-Uploads landen unter `assets/media/cms/` und werden ebenfalls in GitHub versioniert.
 
-Das geplante Eigentümer-CMS wird als eigener Admin-Bereich umgesetzt. Schreibzugriffe auf GitHub erfolgen später serverseitig über einen Fine-grained GitHub Token. Der Token darf niemals im Browser oder im Repository gespeichert werden.
+## Sicherheit
 
-## Noch vor Domain-Umschaltung
+Geheimnisse werden nicht im Repository gespeichert. Auf dem Webspace wird dafür `config.local.php` aus `config.example.php` erstellt.
 
-- Staging-/Preview-Deployment einrichten und visuell gegen die bisherige Seite prüfen.
-- Kontakt- und Anmeldeformulare serverseitig anbinden.
-- Eigentümer-CMS /admin fertigstellen.
-- Erst danach DNS/Domain auf das neue Hosting umstellen.
+Benötigt:
 
-Die bestehende WordPress-Installation kann bis zur finalen Umschaltung unverändert online bleiben.
+- Admin-Passworthash
+- Fine-grained GitHub Token mit Contents Read/Write nur für dieses Repository
+- SMTP-Zugangsdaten
+
+Admin-Login nutzt PHP-Sessions, CSRF-Schutz und Login-Rate-Limiting.
+
+## Kontaktformular
+
+Der Versand läuft direkt per SMTP über den United-Domains-Mailserver. Es ist kein externer Formulardienst erforderlich.
+
+## Google Maps
+
+Google Maps wird auf den Standortseiten erst nach ausdrücklicher Zustimmung geladen. Die Zustimmung wird lokal im Browser gespeichert.
+
+## Deployment
+
+Siehe `DEPLOYMENT-UNITED-DOMAINS.md`.
+
+Der vorhandene GitHub-Workflow `Deploy to United Domains` ist absichtlich nur manuell startbar, damit die bestehende WordPress-Seite nicht versehentlich überschrieben wird.
+
+## Qualitätssicherung
+
+GitHub Actions prüft alle PHP- und JavaScript-Dateien automatisch auf Syntaxfehler.
+
+Die bestehende WordPress-Installation sollte erst nach vollständiger Abnahme und finaler Domain-Umschaltung entfernt werden.
