@@ -19,6 +19,15 @@ function local_server_config(): array {
     return $config = is_array($loaded) ? $loaded : [];
 }
 function mapbox_public_token(): string { return (string)((local_server_config()['mapbox']['token'] ?? '')); }
+
+function seo_page_key(): string {
+    $path=parse_url((string)($_SERVER['REQUEST_URI']??'/'),PHP_URL_PATH) ?: '/';
+    $map=['/'=>'home','/angebote/'=>'offers','/trainerteam/'=>'trainers','/standorte/'=>'locations','/tsv-feldkirchen/'=>'feldkirchen','/sv-heimstetten/'=>'heimstetten','/kontakt/'=>'contact'];
+    return $map[$path] ?? '';
+}
+function render_json_ld(array $data): void {
+    echo '<script type="application/ld+json">'.json_encode($data,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE).'</script>';
+}
 function nav_active(string $active, string $name): string { return $active === $name ? ' active' : ''; }
 
 function site_header(string $active = ''): void {
@@ -67,25 +76,54 @@ function social_icon(string $type): string {
 }
 
 function site_footer(): void {
-    $d=site_data(); $f=$d['site']['footer']??[];
+    $d=site_data(); $f=$d['site']['footer']??[]; $mobile=$d['mobile_cta']??[];
     $phone=$f['phone']??'+49 172 2104 303'; $email=$f['email']??'info@tennisschule-alexbraun.de';
     echo '<footer class="site-footer"><div class="container footer-grid"><div class="footer-left">';
-    echo '<a class="footer-name" href="/">'.h($f['name']??'Tennisschule Alex Braun').'</a><div class="footer-social">';
+    echo '<a class="footer-name" href="/">'.h($f['name']??'Tennisschule Alex Braun').'</a>';
+    echo '<div class="footer-contact-lines"><a data-track="footer_phone_text" href="tel:'.h(preg_replace('/\s+/','',$phone)).'">'.h($phone).'</a><a data-track="footer_email_text" href="mailto:'.h($email).'">'.h($email).'</a></div>';
+    echo '<div class="footer-social">';
     echo '<a data-track="footer_phone" href="tel:'.h(preg_replace('/\s+/','',$phone)).'" aria-label="Telefon">'.social_icon('phone').'</a>';
     echo '<a data-track="footer_whatsapp" href="https://wa.me/'.h(preg_replace('/\D+/','',$phone)).'" aria-label="WhatsApp">'.social_icon('whatsapp').'</a>';
     echo '<a data-track="footer_email" href="mailto:'.h($email).'" aria-label="E-Mail">'.social_icon('mail').'</a>';
     echo '<a data-track="footer_instagram" href="'.h($f['instagram']??'').'" target="_blank" rel="noopener" aria-label="Instagram">'.social_icon('instagram').'</a></div></div>';
-    echo '<div class="footer-right"><a data-track="footer_legal" href="/impressum-datenschutzerklaerung/">'.h($f['legal_label']??'Impressum & Datenschutzerklärung').'</a>';
-    echo '<p>© '.date('Y').' '.h($f['copyright_name']??'Tennisschule Alex Braun').'.</p></div></div></footer><script src="/assets/site.js"></script>';
+    echo '<div class="footer-right"><nav class="footer-links" aria-label="Footer Navigation">';
+    foreach(($f['links']??[]) as $link) echo '<a data-track="footer_link_'.h(preg_replace('/[^a-z0-9]+/i','_',strtolower((string)($link['label']??'')))).'" href="'.h($link['url']??'#').'">'.h($link['label']??'').'</a>';
+    echo '<a data-track="footer_legal" href="/impressum-datenschutzerklaerung/">'.h($f['legal_label']??'Impressum & Datenschutzerklärung').'</a></nav>';
+    echo '<p>© '.date('Y').' '.h($f['copyright_name']??'Tennisschule Alex Braun').'.</p></div></div></footer>';
+    if(!empty($mobile['enabled'])){
+      echo '<nav class="mobile-sticky-cta" aria-label="Schnellaktionen">';
+      echo '<a data-track="mobile_cta_training" class="mobile-sticky-primary" href="'.h($mobile['primary_url']??'/angebote/').'">'.h($mobile['primary_label']??'Training buchen').'</a>';
+      echo '<a data-track="mobile_cta_contact" class="mobile-sticky-secondary" href="'.h($mobile['secondary_url']??'/kontakt/').'">'.h($mobile['secondary_label']??'Kontakt').'</a>';
+      echo '</nav>';
+    }
+    echo '<script src="/assets/site.js"></script>';
 }
 
 function page_head(string $title,string $description='',bool $mapbox=false): void {
-    if($description==='') $description=$title.' - Tennisschule Alex Braun';
+    $d=site_data(); $seo=$d['seo']??[]; $key=seo_page_key(); $meta=$seo['pages'][$key]??[];
+    $siteName=$d['site']['name']??'Tennisschule Alex Braun';
+    $finalTitle=(string)($meta['title']??($title.' - '.$siteName));
+    $finalDescription=(string)($meta['description']??($description!==''?$description:$title.' - '.$siteName));
+    $base=rtrim((string)($seo['base_url']??'https://www.tennisschule-alexbraun.de'),'/');
+    $canonical=$base.(string)($meta['path']??(parse_url((string)($_SERVER['REQUEST_URI']??'/'),PHP_URL_PATH)?:'/'));
+    $og=(string)($meta['og_image']??$seo['default_og_image']??'/assets/media/header_bild.jpg');
+    if(str_starts_with($og,'/')) $og=$base.$og;
     $host=strtolower((string)($_SERVER['HTTP_HOST']??'')); $staging=str_starts_with($host,'test.tennisschule-alexbraun.de');
     if($staging&&!headers_sent()) header('X-Robots-Tag: noindex, nofollow, noarchive',true);
-    echo '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.h($title).' - Tennisschule Alex Braun</title><meta name="description" content="'.h($description).'">';
+    echo '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
+    echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
+    echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css">';
-    if($mapbox) echo '<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"><script defer src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>';
-    echo '</head><body>';
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
+    echo '<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Open+Sans:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet">';
+    echo '<link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
+    render_json_ld([
+      '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
+      'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,
+      'sameAs'=>array_values(array_filter([$d['site']['footer']['instagram']??null]))
+    ]);
+    render_json_ld([
+      '@context'=>'https://schema.org','@type'=>'Person','name'=>'Alex Braun','jobTitle'=>'Leiter der Tennisschule',
+      'worksFor'=>['@type'=>'Organization','name'=>$siteName]
+    ]);
 }
