@@ -126,4 +126,13 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
       '@context'=>'https://schema.org','@type'=>'Person','name'=>'Alex Braun','jobTitle'=>'Leiter der Tennisschule',
       'worksFor'=>['@type'=>'Organization','name'=>$siteName]
     ]);
+    foreach(['feldkirchen','heimstetten'] as $locationKey){
+      $location=$d['locations'][$locationKey]??[];
+      if(empty($location['name'])) continue;
+      render_json_ld([
+        '@context'=>'https://schema.org','@type'=>'SportsActivityLocation',
+        'name'=>$location['name'],'url'=>$base.($locationKey==='feldkirchen'?'/tsv-feldkirchen/':'/sv-heimstetten/'),
+        'description'=>$location['overview_text']??$location['description']??''
+      ]);
+    }
 }
