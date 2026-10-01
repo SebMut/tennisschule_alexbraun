@@ -17,7 +17,7 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
 <ul><?php foreach(($offer['details']??[]) as $detail): ?><li><?=h($detail)?></li><?php endforeach; ?></ul></article>
 <?php endforeach; ?></div></div></section>
 <section class="gallery-section"><div class="container gallery-grid">
-<?php $gallery=$o['gallery']??[]; foreach(array_chunk($gallery,2) as $col): ?><div class="gallery-column"><?php foreach($col as $img): ?><div class="gallery-item"><img src="<?=h($img)?>" alt="Tennistraining"></div><?php endforeach; ?></div><?php endforeach; ?>
+<?php $gallery=$o['gallery']??[]; foreach([[0,3],[1,4],[2,5]] as $indexes): ?><div class="gallery-column"><?php foreach($indexes as $idx): if(empty($gallery[$idx])) continue; ?><div class="gallery-item"><img src="<?=h($gallery[$idx])?>" alt="Tennistraining"></div><?php endforeach; ?></div><?php endforeach; ?>
 </div></section>
 <div class="trainings-modal" id="trainingModal" aria-hidden="true"><div class="trainings-modal-content" role="dialog" aria-modal="true"><button class="trainings-close" type="button" aria-label="Schließen">X</button><div class="trainings-form-content" id="trainingModalContent"></div></div></div>
 </main><?php site_footer(); ?></body></html>
