@@ -60,11 +60,14 @@
   const mobileMenu=document.getElementById('mobileMenu');
   const mobileOverlay=document.getElementById('mobileOverlay');
   const mobileClose=document.querySelector('.mobile-close');
+  let menuReturnFocus=null;
   const setMenu=open=>{
     if(!mobileMenu||!mobileOverlay||!toggle) return;
     mobileMenu.classList.toggle('open',open); mobileOverlay.classList.toggle('open',open);
     mobileMenu.setAttribute('aria-hidden',String(!open)); toggle.setAttribute('aria-expanded',String(open));
     body.classList.toggle('menu-open',open);
+    if(open){menuReturnFocus=document.activeElement;setTimeout(()=>mobileClose?.focus(),0);}
+    else if(menuReturnFocus instanceof HTMLElement){menuReturnFocus.focus();menuReturnFocus=null;}
   };
   toggle?.addEventListener('click',()=>setMenu(true));
   mobileClose?.addEventListener('click',()=>setMenu(false));
@@ -86,21 +89,23 @@
   const trainingModal=document.getElementById('trainingModal');
   const trainingModalContent=document.getElementById('trainingModalContent');
   const trainingClose=trainingModal?.querySelector('.trainings-close');
+  let trainingReturnFocus=null;
   const closeTrainingModal=()=>{
     if(!trainingModal||!trainingModalContent)return;
     trainingModal.classList.remove('active'); trainingModal.setAttribute('aria-hidden','true');
-    setTimeout(()=>{trainingModalContent.innerHTML='';trainingModalContent.classList.remove('visible');body.classList.remove('popup-open');},300);
+    setTimeout(()=>{trainingModalContent.innerHTML='';trainingModalContent.classList.remove('visible');body.classList.remove('popup-open');if(trainingReturnFocus instanceof HTMLElement)trainingReturnFocus.focus();trainingReturnFocus=null;},300);
   };
   document.querySelectorAll('.trainings-btn').forEach(btn=>btn.addEventListener('click',()=>{
     if(!trainingModal||!trainingModalContent)return;
     const formUrl=btn.dataset.trainingUrl||'', errorMsg=btn.dataset.trainingError||'Die Anmeldung ist aktuell nicht verfügbar.';
+    trainingReturnFocus=btn;
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
     if(formUrl){
       const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;trainingModalContent.replaceChildren(iframe);
     }else{
       const error=document.createElement('div');error.className='trainings-error';error.textContent=errorMsg;trainingModalContent.replaceChildren(error);
     }
-    setTimeout(()=>trainingModalContent.classList.add('visible'),50);
+    setTimeout(()=>{trainingModalContent.classList.add('visible');trainingClose?.focus();},50);
   }));
   trainingClose?.addEventListener('click',closeTrainingModal);
   trainingModal?.addEventListener('click',e=>{if(e.target===trainingModal)closeTrainingModal();});
@@ -160,6 +165,7 @@
   const winterPopup=document.getElementById('winterPopup');
   if(winterPopup){
     const close=winterPopup.querySelector('.wp-popup-close');
+    let popupReturnFocus=null;
     const frequency=Math.max(0,Number(winterPopup.dataset.frequencyDays||7))*86400000;
     const delay=Math.max(0,Number(winterPopup.dataset.delaySeconds||1))*1000;
     const closeDelay=Math.max(0,Number(winterPopup.dataset.closeDelaySeconds||2))*1000;
@@ -170,12 +176,15 @@
       winterPopup.classList.remove('open');winterPopup.setAttribute('aria-hidden','true');body.classList.remove('popup-open');
       track('popup_close','popup_close','Popup geschlossen','');
       try{localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
+      if(popupReturnFocus instanceof HTMLElement)popupReturnFocus.focus();
+      popupReturnFocus=null;
     };
     close?.addEventListener('click',closePopup);
     winterPopup.addEventListener('click',e=>{if(e.target===winterPopup)closePopup();});
     if(mayShow){
       if(close) close.style.visibility='hidden';
       setTimeout(()=>{
+        popupReturnFocus=document.activeElement;
         winterPopup.classList.add('open');winterPopup.setAttribute('aria-hidden','false');body.classList.add('popup-open');
         close?.focus();
         track('popup_view','popup_view','Popup angezeigt','');
@@ -186,6 +195,18 @@
   }
 
   document.addEventListener('keydown',e=>{
+    if(e.key==='Tab'){
+      const scope=trainingModal?.classList.contains('active')?trainingModal:winterPopup?.classList.contains('open')?winterPopup:mobileMenu?.classList.contains('open')?mobileMenu:null;
+      if(scope){
+        const focusable=[...scope.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(el=>el.offsetParent!==null);
+        if(focusable.length){
+          const first=focusable[0],last=focusable[focusable.length-1];
+          if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+          else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+        }
+      }
+      return;
+    }
     if(e.key!=='Escape')return;
     setMenu(false); if(trainingModal?.classList.contains('active'))closeTrainingModal();
     if(winterPopup?.classList.contains('open')) winterPopup.querySelector('.wp-popup-close')?.click();
