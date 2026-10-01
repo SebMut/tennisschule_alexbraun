@@ -479,6 +479,21 @@
         "title": "Kontakt | Tennisschule Alex Braun",
         "description": "Kontakt zur Tennisschule Alex Braun für Fragen zu Training, Camps und Anmeldung.",
         "path": "/kontakt/"
+      },
+      "newsletter": {
+        "title": "Newsletter | Tennisschule Alex Braun",
+        "description": "Newsletter der Tennisschule Alex Braun mit Informationen zu Camps und aktuellen Angeboten.",
+        "path": "/newsletter/"
+      },
+      "success": {
+        "title": "Nachricht gesendet | Tennisschule Alex Braun",
+        "description": "Bestätigung der Kontaktanfrage an die Tennisschule Alex Braun.",
+        "path": "/nachricht-erfolgreich-zugestellt/"
+      },
+      "legal": {
+        "title": "Impressum & Datenschutz | Tennisschule Alex Braun",
+        "description": "Impressum und Datenschutzerklärung der Tennisschule Alex Braun.",
+        "path": "/impressum-datenschutzerklaerung/"
       }
     }
   }
