@@ -3,6 +3,10 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') json_response(['ok'=>false],405);
+$ua = strtolower((string)($_SERVER['HTTP_USER_AGENT'] ?? ''));
+if ($ua !== '' && preg_match('/bot|crawler|spider|slurp|bingpreview|facebookexternalhit|headless/i', $ua)) {
+    json_response(['ok'=>true,'bot'=>true]);
+}
 
 $siteFile=site_json_path();
 $siteData=is_file($siteFile)?json_decode((string)file_get_contents($siteFile),true):[];
