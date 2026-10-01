@@ -7,9 +7,11 @@
   const saveBtn = document.getElementById('saveBtn');
   const saveMessage = document.getElementById('saveMessage');
   const editor = document.getElementById('editor');
+  const adminMenu = document.getElementById('adminMenu');
 
   let data = null;
   let csrf = '';
+  let currentTab = 'home';
 
   const esc = (value='') => String(value)
     .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
@@ -46,11 +48,36 @@
     return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value || []).join('\n'))}</textarea></label>`;
   }
 
-  function imageField(label, path, value) {
+  function imagePreview(value, wide=false, label='Aktuell verwendetes Bild') {
+    if (!value) return '';
+    return `<div class="current-image${wide ? ' wide' : ''}">
+      <span class="current-image-label">${esc(label)}</span>
+      <img src="${esc(value)}" alt="" loading="lazy">
+    </div>`;
+  }
+
+  function imageField(label, path, value, wide=false) {
     return `<div class="image-row">
-      ${textField(label, path, value)}
+      <div>
+        ${textField(label, path, value)}
+        ${imagePreview(value, wide)}
+      </div>
       <label>Neues Bild<input class="cms-upload" data-upload-path="${esc(path)}" type="file" accept="image/jpeg,image/png,image/webp"></label>
     </div>`;
+  }
+
+  function staticImage(value, label, wide=false) {
+    return imagePreview(value, wide, label);
+  }
+
+  function showTab(tab) {
+    currentTab = tab;
+    adminMenu?.querySelectorAll('[data-admin-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.adminTab === tab);
+    });
+    editor?.querySelectorAll('[data-admin-section]').forEach(section => {
+      section.hidden = section.dataset.adminSection !== tab;
+    });
   }
 
   function render() {
@@ -61,36 +88,46 @@
     const locH = data.locations?.heimstetten || {};
 
     editor.innerHTML = `
-      <section class="cms-section">
-        <h2>Startseite</h2>
+      <section class="cms-section" data-admin-section="home">
+        <h2>Home</h2>
         ${textField('Unterzeile im Hero','site.tagline',data.site?.tagline)}
         ${textField('Hero-Text','site.hero_copy',data.site?.hero_copy,true)}
-        ${imageField('Hero-Bild','site.hero_image',data.site?.hero_image)}
+        ${imageField('Hero-Bild','site.hero_image',data.site?.hero_image,true)}
         ${textField('Überschrift Über uns','home.about_title',data.home?.about_title)}
         ${(data.home?.about_paragraphs || []).map((p,i)=>textField('Über uns – Absatz '+(i+1),'home.about_paragraphs.'+i,p,true)).join('')}
-        ${imageField('Bild Über uns','home.about_image',data.home?.about_image)}
+        ${imageField('Bild Über uns','home.about_image',data.home?.about_image,true)}
         ${textField('Einleitung Angebot auf Startseite','home.offers_intro',data.home?.offers_intro,true)}
         ${textField('Einleitung Trainerteam auf Startseite','home.team_intro',data.home?.team_intro,true)}
+        <div class="current-image-grid">
+          ${staticImage('/assets/media/trainerteam_2024.jpeg','Aktuelles Trainerteam-Bild')}
+          ${staticImage('/assets/media/popup_wintertraining_2026_2027-2.png','Aktuelles Wintertraining-Popup')}
+        </div>
       </section>
 
-      <section class="cms-section">
+      <section class="cms-section" data-admin-section="angebote" hidden>
         <h2>Angebote</h2>
         ${textField('Einleitung','offers.intro',data.offers?.intro,true)}
         ${offers.map((offer,i)=>`
           <div class="cms-card">
-            <div class="item-head"><strong>Angebot ${i+1}</strong></div>
+            <div class="item-head"><strong>${esc(offer.title || ('Angebot '+(i+1)))}</strong></div>
             <div class="grid2">
               ${textField('Titel',`offers.items.${i}.title`,offer.title)}
               ${textField('Buttontext',`offers.items.${i}.button`,offer.button)}
             </div>
             ${textField('Text auf Startseite',`offers.items.${i}.home_text`,offer.home_text,true)}
-            ${imageField('Bild',`offers.items.${i}.image`,offer.image)}
+            ${imageField('Bild',`offers.items.${i}.image`,offer.image,true)}
             ${linesField('Eckdaten – eine Zeile pro Punkt',`offers.items.${i}.details`,offer.details)}
           </div>
         `).join('')}
+        <div class="cms-card">
+          <strong>Galeriebilder auf der Angebotsseite</strong>
+          <div class="current-image-grid">
+            ${['angebote_1.jpg','angebote_2.jpg','angebote_3.jpg','angebote_4.jpg','angebote_5.jpg','angebote_6.jpg'].map((img,i)=>staticImage('/assets/media/'+img,'Galeriebild '+(i+1))).join('')}
+          </div>
+        </div>
       </section>
 
-      <section class="cms-section">
+      <section class="cms-section" data-admin-section="trainerteam" hidden>
         <h2>Trainerteam</h2>
         ${textField('Einleitung','trainers.intro',data.trainers?.intro,true)}
         ${trainers.map((trainer,i)=>`
@@ -106,7 +143,7 @@
         <button type="button" id="addTrainer" class="secondary">Trainer hinzufügen</button>
       </section>
 
-      <section class="cms-section">
+      <section class="cms-section" data-admin-section="standorte" hidden>
         <h2>Standorte</h2>
         <div class="cms-card">
           <strong>TSV Feldkirchen</strong>
@@ -129,8 +166,27 @@
             ${textField('Mitgliedsantrag','locations.heimstetten.membership',locH.membership)}
           </div>
         </div>
+        <div class="cms-card">
+          <strong>Mapbox-Marker</strong>
+          <div class="current-image-grid">
+            ${staticImage('/assets/media/mapbox-tsv.png','Marker TSV Feldkirchen')}
+            ${staticImage('/assets/media/mapbox-svh.png','Marker SV Heimstetten')}
+          </div>
+        </div>
+      </section>
+
+      <section class="cms-section" data-admin-section="kontakt" hidden>
+        <h2>Kontakt</h2>
+        ${staticImage('/assets/media/braun_kontakt.jpg','Aktuelles Kontaktbild',true)}
+        <div class="contact-info-box">
+          <p><strong>Kontaktformular:</strong> Vorname &amp; Nachname, Betreff, Telefon, E-Mail und Nachricht.</p>
+          <p><strong>Empfänger:</strong> info@tennisschule-alexbraun.de</p>
+          <p><strong>Hinweis:</strong> Das E-Mail-Passwort wird aus Sicherheitsgründen nicht im CMS angezeigt.</p>
+        </div>
       </section>
     `;
+
+    showTab(currentTab);
 
     editor.querySelectorAll('[data-path]').forEach(el => {
       el.addEventListener('input', () => setPath(data, el.dataset.path, el.value));
@@ -240,6 +296,10 @@
       await request('/api/logout.php', {method:'POST',headers:{'X-CSRF-Token':csrf}});
     } catch (_) {}
     location.reload();
+  });
+
+  adminMenu?.querySelectorAll('[data-admin-tab]').forEach(btn => {
+    btn.addEventListener('click', () => showTab(btn.dataset.adminTab || 'home'));
   });
 
   checkAuth();
