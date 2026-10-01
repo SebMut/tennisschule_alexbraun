@@ -11,10 +11,13 @@ declare(strict_types=1);
 </head>
 <body>
 <header class="admin-header">
-  <div><strong>Tennisschule Alex Braun</strong><span>Website bearbeiten</span></div>
+  <div class="admin-brand">
+    <span class="admin-brand-mark">AB</span>
+    <div><strong>Tennisschule Alex Braun</strong><span>Website-Verwaltung</span></div>
+  </div>
   <div class="admin-actions">
-    <a href="/" target="_blank" rel="noopener">Website öffnen</a>
-    <button id="logoutBtn" class="secondary" hidden>Abmelden</button>
+    <a class="admin-site-link" href="/" target="_blank" rel="noopener">Website öffnen ↗</a>
+    <button id="logoutBtn" class="secondary compact" hidden>Abmelden</button>
   </div>
 </header>
 
@@ -32,8 +35,15 @@ declare(strict_types=1);
   <section id="editorPanel" hidden>
     <div class="admin-sticky-controls">
       <div class="editor-top">
-        <div><h1>Inhalte bearbeiten</h1><p>Änderungen werden sofort auf dem Webspace gespeichert und zusätzlich in GitHub versioniert.</p></div>
-        <button id="saveBtn">Änderungen speichern</button>
+        <div class="editor-heading">
+          <span class="editor-kicker">Aktueller Bereich</span>
+          <h1 id="currentSectionTitle">Allgemein</h1>
+          <p id="currentSectionDescription">Grundlegende Website-Einstellungen, Navigation, Hero und Footer.</p>
+        </div>
+        <div class="save-cluster">
+          <span id="dirtyState" class="dirty-state saved">Gespeichert</span>
+          <button id="saveBtn">Änderungen speichern</button>
+        </div>
       </div>
       <nav class="admin-menu" id="adminMenu" aria-label="Bereiche">
         <button type="button" class="admin-menu-item active" data-admin-tab="allgemein">Allgemein</button>
