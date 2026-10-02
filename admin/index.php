@@ -1,5 +1,7 @@
 <?php
 declare(strict_types=1);
+require_once dirname(__DIR__) . '/staging-access.php';
+staging_access_require(false);
 ?><!doctype html>
 <html lang="de">
 <head>
