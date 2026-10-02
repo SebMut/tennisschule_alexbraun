@@ -101,9 +101,19 @@ jobs:
 
       - name: Testdomain technisch prüfen
         continue-on-error: true
+        env:
+          TS_ADMIN_PASSWORD: ${{ secrets.TS_ADMIN_PASSWORD }}
         run: |
           set -euo pipefail
           BASE="https://test.tennisschule-alexbraun.de"
+          COOKIE_JAR="$(mktemp)"
+
+          echo "Melde Healthcheck an der geschützten Testdomain an …"
+          curl -fsSL --retry 5 --retry-delay 3 \
+            -c "$COOKIE_JAR" -b "$COOKIE_JAR" \
+            --data-urlencode "password=$TS_ADMIN_PASSWORD" \
+            --data-urlencode "next=/" \
+            "$BASE/test-zugang.php" -o /tmp/ts-login-result.html
 
           check_page() {
             local path="$1"
@@ -111,7 +121,7 @@ jobs:
             local tmp
             tmp="$(mktemp)"
             echo "Prüfe $path auf Marker: $marker"
-            if ! curl -fsSL --retry 5 --retry-delay 3 "$BASE$path" -o "$tmp"; then
+            if ! curl -fsSL --retry 5 --retry-delay 3 -b "$COOKIE_JAR" "$BASE$path" -o "$tmp"; then
               echo "::warning::Testdomain $path ist vom GitHub-Runner nicht erreichbar."
               rm -f "$tmp"
               return 1
@@ -135,14 +145,15 @@ jobs:
           check_page "/robots.txt" "Sitemap:"
 
           home="$(mktemp)"
-          curl -fsSL --retry 3 --retry-delay 2 "$BASE/" -o "$home"
+          curl -fsSL --retry 3 --retry-delay 2 -b "$COOKIE_JAR" "$BASE/" -o "$home"
           grep -Eq 'data-mapbox-token="[^"]+"' "$home"
           grep -Fq 'mobile-sticky-cta' "$home"
           grep -Fq 'why-section' "$home"
           rm -f "$home"
 
-          code="$(curl -sS -o /tmp/ts-404.html -w '%{http_code}' "$BASE/diese-seite-gibt-es-nicht-987654/")"
+          code="$(curl -sS -b "$COOKIE_JAR" -o /tmp/ts-404.html -w '%{http_code}' "$BASE/diese-seite-gibt-es-nicht-987654/")"
           test "$code" = "404"
           grep -Fq "Seite nicht gefunden" /tmp/ts-404.html
+          rm -f "$COOKIE_JAR"
 
 # Admin secret refresh trigger
