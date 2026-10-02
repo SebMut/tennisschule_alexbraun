@@ -24,7 +24,17 @@ function csrf_token(): string {
 
 function is_authenticated(): bool {
     start_admin_session();
-    return !empty($_SESSION['authenticated']);
+    if (empty($_SESSION['authenticated'])) return false;
+
+    if (staging_access_is_test_host()) {
+        $hash = (string)(app_config()['admin_password_hash'] ?? '');
+        if ($hash === '') return false;
+        $expected = staging_access_signature($hash);
+        return !empty($_SESSION['staging_access_signature'])
+            && hash_equals($expected, (string)$_SESSION['staging_access_signature']);
+    }
+
+    return true;
 }
 
 function require_auth(): void {
