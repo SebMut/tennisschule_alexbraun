@@ -40,4 +40,5 @@ if (!password_verify($password, $hash)) {
 session_regenerate_id(true);
 $_SESSION['authenticated'] = true;
 $_SESSION['csrf'] = bin2hex(random_bytes(24));
+if (staging_access_is_test_host()) staging_access_mark_authenticated();
 json_response(['ok'=>true,'authenticated'=>true,'csrf'=>$_SESSION['csrf']]);
