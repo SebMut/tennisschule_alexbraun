@@ -31,7 +31,8 @@ p{margin:0 0 20px}
 .lead{font-weight:400;font-size:1.2em;line-height:1.5}
 
 /* Original Kubio navigation */
-.site-header{position:absolute;z-index:60;top:0;left:0;right:0;background:transparent}
+.site-header{position:fixed;z-index:60;top:0;left:0;right:0;background:rgba(43,45,66,.18);transition:background .22s ease,box-shadow .22s ease,backdrop-filter .22s ease;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
+.site-header.is-scrolled,.site-header.menu-active{background:rgba(43,45,66,.96);box-shadow:0 8px 24px rgba(0,0,0,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .nav-shell{height:80px;display:flex;align-items:center;padding:0 20px}
 .brand{display:flex;align-items:center;justify-content:center;padding:10px;flex:0 0 auto}
 .brand img{max-height:60px;width:auto}
@@ -423,4 +424,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(prefers-reduced-motion:reduce){
   .trust-strip.is-marquee .trust-strip-inner{overflow-x:auto}
   .trust-strip.is-marquee .trust-strip-track{animation:none;transform:none}
+}
+
+/* Direct offer navigation feedback */
+.trainings-btn.attention-pulse{
+  position:relative;
+  z-index:1;
+  animation:training-attention 1s ease-in-out 3;
+}
+@keyframes training-attention{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(241,124,32,0)}
+  45%{transform:scale(1.035);box-shadow:0 0 0 8px rgba(241,124,32,.22)}
+  70%{transform:scale(1.02);box-shadow:0 0 0 4px rgba(241,124,32,.14)}
+}
+@media(prefers-reduced-motion:reduce){
+  .trainings-btn.attention-pulse{
+    animation:none;
+    box-shadow:0 0 0 4px rgba(241,124,32,.24);
+  }
 }
