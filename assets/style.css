@@ -448,3 +448,395 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
     box-shadow:0 0 0 4px rgba(241,124,32,.24);
   }
 }
+
+
+/* Randomized tennis 404 */
+.error404-fun{
+  padding:34px 0 64px;
+  background:linear-gradient(180deg,#fff 0%,#f6f7fa 100%);
+  overflow:hidden;
+}
+.error404-stage{
+  position:relative;
+  width:100%;
+  height:300px;
+  margin:0 auto 28px;
+  overflow:hidden;
+  border:1px solid #e5e8ee;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(241,124,32,.10),transparent 34%),
+    linear-gradient(180deg,#fff 0%,#f7f8fb 100%);
+  box-shadow:0 14px 34px rgba(43,45,66,.08);
+}
+.error404-scene{
+  position:absolute;
+  inset:0;
+  display:none;
+  overflow:hidden;
+}
+.error404-scene.is-active{display:block}
+.error404-copy{text-align:center}
+.error404-copy h2{font-size:clamp(30px,5vw,46px);margin-bottom:8px}
+.error404-copy p{font-size:18px;color:#5a5f6f;margin-bottom:22px}
+.error404-actions{margin-top:0}
+.error404-secondary{
+  background:#fff;
+  color:var(--kubio-dark);
+}
+.error404-secondary:hover{
+  background:var(--kubio-dark);
+  border-color:var(--kubio-dark);
+  color:#fff;
+}
+
+.error404-ball{
+  position:absolute;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 28%,#fbffd0 0 15%,#e7f04f 16% 48%,#c8d82c 49% 100%);
+  box-shadow:0 7px 15px rgba(0,0,0,.22);
+}
+.error404-ball:before,.error404-ball:after{
+  content:"";
+  position:absolute;
+  width:18px;
+  height:25px;
+  top:4px;
+  border:2px solid rgba(255,255,255,.95);
+  border-top-color:transparent;
+  border-bottom-color:transparent;
+  border-radius:50%;
+}
+.error404-ball:before{left:1px;transform:rotate(13deg)}
+.error404-ball:after{right:1px;transform:rotate(13deg)}
+
+/* 1 — Ball trifft das Netz */
+.error404-scene-net{
+  background:linear-gradient(180deg,#fafbfc 0 72%,#e9edf2 72% 100%);
+}
+.error404-score{
+  position:absolute;
+  left:50%;
+  top:45%;
+  transform:translate(-50%,-50%);
+  color:var(--kubio-dark);
+  font-weight:800;
+  font-size:clamp(105px,17vw,180px);
+  line-height:1;
+  letter-spacing:-8px;
+  opacity:.92;
+}
+.error404-score span{display:inline-block}
+.error404-net{
+  position:absolute;
+  left:12%;
+  right:12%;
+  bottom:57px;
+  height:74px;
+  border-left:5px solid var(--kubio-dark);
+  border-right:5px solid var(--kubio-dark);
+}
+.error404-net:before{
+  content:"";
+  position:absolute;
+  inset:6px 4px 0;
+  background:
+    repeating-linear-gradient(90deg,rgba(43,45,66,.22) 0 1px,transparent 1px 15px),
+    repeating-linear-gradient(180deg,rgba(43,45,66,.22) 0 1px,transparent 1px 11px);
+  border-top:5px solid var(--kubio-orange);
+}
+.error404-net-line{
+  position:absolute;
+  left:-7%;
+  right:-7%;
+  top:0;
+  height:5px;
+  background:var(--kubio-orange);
+  border-radius:5px;
+}
+.error404-ball-net{
+  left:-45px;
+  top:68px;
+  animation:error404-net-ball 3.2s ease-in-out infinite;
+}
+.error404-scene-net.is-active .error404-net{
+  animation:error404-net-shake 3.2s ease-in-out infinite;
+}
+@keyframes error404-net-ball{
+  0%{left:-45px;top:72px;transform:rotate(0)}
+  34%{left:43%;top:104px;transform:rotate(170deg)}
+  48%{left:49%;top:154px;transform:rotate(230deg) scale(.98)}
+  62%{left:53%;top:214px;transform:rotate(280deg) scale(.94)}
+  76%{left:54%;top:242px;transform:rotate(315deg) scale(.9)}
+  100%{left:54%;top:242px;transform:rotate(315deg) scale(.9)}
+}
+@keyframes error404-net-shake{
+  0%,43%,65%,100%{transform:translateX(0)}
+  48%{transform:translateX(-7px)}
+  53%{transform:translateX(6px)}
+  58%{transform:translateX(-3px)}
+}
+
+/* 2 — Schläger schlägt die 404 um */
+.error404-scene-racket{
+  background:radial-gradient(circle at 50% 45%,#fff 0 30%,#f4f6f9 100%);
+}
+.error404-score-racket{
+  display:flex;
+  gap:10px;
+  letter-spacing:0;
+}
+.error404-digit{
+  display:inline-block;
+  transform-origin:50% 100%;
+}
+.error404-scene-racket.is-active .digit-three{
+  animation:error404-digit-hit 3.4s ease-in-out infinite;
+}
+.error404-racket{
+  position:absolute;
+  right:8%;
+  bottom:24px;
+  width:130px;
+  height:180px;
+  transform-origin:62% 82%;
+  animation:error404-racket-swing 3.4s ease-in-out infinite;
+}
+.error404-racket-head{
+  position:absolute;
+  top:3px;
+  left:7px;
+  width:95px;
+  height:116px;
+  border:7px solid var(--kubio-orange);
+  border-radius:48%;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 10px,rgba(43,45,66,.18) 10px 12px),
+    repeating-linear-gradient(180deg,transparent 0 10px,rgba(43,45,66,.18) 10px 12px),
+    rgba(255,255,255,.86);
+}
+.error404-racket-handle{
+  position:absolute;
+  left:58px;
+  top:105px;
+  width:14px;
+  height:67px;
+  background:var(--kubio-dark);
+  border-radius:0 0 8px 8px;
+  transform:rotate(16deg);
+  transform-origin:top center;
+}
+.error404-ball-racket{
+  right:25%;
+  bottom:106px;
+  animation:error404-racket-ball 3.4s ease-in-out infinite;
+}
+@keyframes error404-racket-swing{
+  0%,55%,100%{transform:rotate(9deg)}
+  66%{transform:rotate(-24deg)}
+  75%{transform:rotate(18deg)}
+  84%{transform:rotate(7deg)}
+}
+@keyframes error404-digit-hit{
+  0%,64%,100%{transform:rotate(0) translate(0,0)}
+  72%{transform:rotate(18deg) translate(12px,5px)}
+  82%{transform:rotate(72deg) translate(35px,24px)}
+  92%{transform:rotate(84deg) translate(38px,28px)}
+}
+@keyframes error404-racket-ball{
+  0%{right:52%;bottom:220px;transform:rotate(0)}
+  55%{right:28%;bottom:120px;transform:rotate(160deg)}
+  69%{right:21%;bottom:94px;transform:rotate(220deg)}
+  100%{right:-60px;bottom:230px;transform:rotate(430deg)}
+}
+
+/* 3 — kleiner Court mit springendem Ball */
+.error404-scene-court{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:#f7f8fb;
+}
+.error404-scene-court.is-active{display:flex}
+.mini-court{
+  position:relative;
+  width:min(520px,78%);
+  height:220px;
+  border:5px solid #fff;
+  border-radius:8px;
+  background:#d77a32;
+  box-shadow:0 12px 28px rgba(43,45,66,.17);
+  overflow:hidden;
+}
+.mini-court:before{
+  content:"";
+  position:absolute;
+  inset:17px;
+  border:3px solid rgba(255,255,255,.95);
+}
+.mini-court-line-v{
+  position:absolute;
+  left:50%;
+  top:17px;
+  bottom:17px;
+  width:3px;
+  background:#fff;
+  transform:translateX(-50%);
+}
+.mini-court-line-h{
+  position:absolute;
+  left:17px;
+  right:17px;
+  top:50%;
+  height:3px;
+  background:#fff;
+  transform:translateY(-50%);
+}
+.mini-court-net{
+  position:absolute;
+  left:7px;
+  right:7px;
+  top:50%;
+  height:7px;
+  background:rgba(43,45,66,.82);
+  transform:translateY(-50%);
+  box-shadow:0 2px 0 rgba(255,255,255,.35);
+}
+.error404-court-number{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  color:rgba(255,255,255,.16);
+  font-size:150px;
+  font-weight:800;
+  pointer-events:none;
+}
+.error404-ball-court{
+  width:29px;
+  height:29px;
+  left:16%;
+  top:34px;
+  animation:error404-court-ball 3.5s cubic-bezier(.4,.05,.35,1) infinite;
+  z-index:4;
+}
+@keyframes error404-court-ball{
+  0%{left:15%;top:29px;transform:scale(1) rotate(0)}
+  18%{left:30%;top:147px;transform:scale(.9) rotate(90deg)}
+  34%{left:45%;top:60px;transform:scale(1) rotate(170deg)}
+  50%{left:59%;top:147px;transform:scale(.9) rotate(250deg)}
+  68%{left:74%;top:38px;transform:scale(1) rotate(340deg)}
+  84%{left:84%;top:147px;transform:scale(.9) rotate(420deg)}
+  100%{left:15%;top:29px;transform:scale(1) rotate(540deg)}
+}
+
+/* 4 — 404 als Tennis-Spielfeld */
+.error404-scene-numbercourt{
+  background:linear-gradient(180deg,#f8f9fb,#eef1f5);
+}
+.numbercourt-wrap{
+  position:absolute;
+  inset:26px 7%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
+.numbercourt-digit,.numbercourt-zero{
+  position:relative;
+  height:210px;
+}
+.numbercourt-digit{width:150px}
+.numbercourt-zero{
+  width:190px;
+  border-radius:48%;
+  background:#cf7630;
+  border:5px solid #fff;
+  box-shadow:0 10px 20px rgba(43,45,66,.13);
+  overflow:hidden;
+}
+.numbercourt-line{
+  position:absolute;
+  display:block;
+  background:#cf7630;
+  border:5px solid #fff;
+  box-shadow:0 8px 18px rgba(43,45,66,.12);
+}
+.numbercourt-four .a{
+  left:36px;top:8px;width:48px;height:140px;
+  transform:skewX(-20deg);
+}
+.numbercourt-four .b{
+  left:23px;top:102px;width:118px;height:46px;
+}
+.numbercourt-four .c{
+  right:13px;top:83px;width:46px;height:119px;
+}
+.numbercourt-baseline{
+  position:absolute;
+  left:24px;right:24px;height:3px;background:#fff;
+}
+.numbercourt-baseline.top{top:34px}
+.numbercourt-baseline.bottom{bottom:34px}
+.numbercourt-sideline{
+  position:absolute;
+  top:26px;bottom:26px;width:3px;background:#fff;
+}
+.numbercourt-sideline.left{left:42px}
+.numbercourt-sideline.right{right:42px}
+.numbercourt-netline{
+  position:absolute;
+  left:8px;right:8px;top:50%;
+  height:6px;background:var(--kubio-dark);
+  transform:translateY(-50%);
+}
+.error404-ball-numbercourt{
+  width:27px;height:27px;
+  left:25px;top:26px;
+  animation:error404-numbercourt-ball 3.3s ease-in-out infinite;
+}
+@keyframes error404-numbercourt-ball{
+  0%{left:25px;top:24px;transform:rotate(0)}
+  25%{left:131px;top:62px;transform:rotate(120deg)}
+  50%{left:35px;top:158px;transform:rotate(240deg)}
+  75%{left:126px;top:128px;transform:rotate(360deg)}
+  100%{left:25px;top:24px;transform:rotate(480deg)}
+}
+
+@media(max-width:700px){
+  .error404-fun{padding-top:24px}
+  .error404-stage{height:250px;border-radius:14px}
+  .error404-score{font-size:clamp(88px,27vw,135px);letter-spacing:-6px}
+  .error404-net{left:6%;right:6%;bottom:46px;height:62px}
+  .error404-racket{right:-6px;bottom:8px;transform:scale(.78)}
+  .mini-court{width:88%;height:188px}
+  .error404-court-number{font-size:105px}
+  .numbercourt-wrap{inset:25px 2%;gap:7px}
+  .numbercourt-digit{width:92px;height:185px}
+  .numbercourt-zero{width:120px;height:185px}
+  .numbercourt-four .a{left:24px;width:34px;height:120px}
+  .numbercourt-four .b{left:12px;top:92px;width:80px;height:37px}
+  .numbercourt-four .c{right:4px;top:77px;width:34px;height:100px}
+  .numbercourt-sideline.left{left:26px}
+  .numbercourt-sideline.right{right:26px}
+  .error404-ball-numbercourt{width:23px;height:23px}
+  @keyframes error404-numbercourt-ball{
+    0%{left:14px;top:24px;transform:rotate(0)}
+    25%{left:80px;top:56px;transform:rotate(120deg)}
+    50%{left:19px;top:137px;transform:rotate(240deg)}
+    75%{left:78px;top:112px;transform:rotate(360deg)}
+    100%{left:14px;top:24px;transform:rotate(480deg)}
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .error404-ball,
+  .error404-net,
+  .error404-racket,
+  .error404-digit{
+    animation:none!important;
+  }
+}
