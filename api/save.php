@@ -37,6 +37,9 @@ foreach (($data['offers']['items'] ?? []) as &$offer) {
     } else {
         $offer['registration_open'] = (bool)$offer['registration_open'];
     }
+    if (empty($offer['booking_date']) && !empty($currentOffersById[$id]['booking_date'])) {
+        $offer['booking_date'] = (string)$currentOffersById[$id]['booking_date'];
+    }
     $offer['featured'] = !empty($offer['featured']);
 }
 unset($offer);
