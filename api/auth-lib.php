@@ -28,8 +28,9 @@ function is_authenticated(): bool {
 
     if (staging_access_is_test_host()) {
         $hash = (string)(app_config()['admin_password_hash'] ?? '');
-        if ($hash === '') return false;
-        $expected = staging_access_signature($hash);
+        $fingerprint = staging_access_password_fingerprint();
+        if ($hash === '' || $fingerprint === '') return false;
+        $expected = staging_access_signature($fingerprint);
         return !empty($_SESSION['staging_access_signature'])
             && hash_equals($expected, (string)$_SESSION['staging_access_signature']);
     }
