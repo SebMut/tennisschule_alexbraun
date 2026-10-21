@@ -48,6 +48,7 @@ jobs:
             $adminPassword = getenv("TS_ADMIN_PASSWORD") ?: "";
             $config = [
               "admin_password_hash" => $adminPassword !== "" ? password_hash($adminPassword, PASSWORD_DEFAULT) : "",
+              "admin_password_fingerprint" => $adminPassword !== "" ? hash("sha256", $adminPassword) : "",
               "github" => [
                 "token" => getenv("TS_GITHUB_TOKEN"),
                 "owner" => "SebMut",
