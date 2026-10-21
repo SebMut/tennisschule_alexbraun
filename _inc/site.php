@@ -39,6 +39,12 @@ function offer_registration_open(array $offer): bool {
     return offer_is_current($offer) && !empty($offer['registration_open']);
 }
 function offer_next_booking_date(array $offer): string {
+    $raw=trim((string)($offer['booking_date']??''));
+    if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$raw,$m)){
+        return $m[3].'.'.$m[2].'.'.$m[1];
+    }
+
+    // Fallback only for older data.
     $id=(string)($offer['id']??'');
     $month=$id==='winter' ? 8 : 3;
     $day=10;
