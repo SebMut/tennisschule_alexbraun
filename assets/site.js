@@ -162,8 +162,8 @@
     trainingModal.classList.remove('active'); trainingModal.setAttribute('aria-hidden','true');
     setTimeout(()=>{trainingModalContent.innerHTML='';trainingModalContent.classList.remove('visible');body.classList.remove('popup-open');if(trainingReturnFocus instanceof HTMLElement)trainingReturnFocus.focus();trainingReturnFocus=null;},300);
   };
-  document.querySelectorAll('.trainings-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    if(!trainingModal||!trainingModalContent)return;
+  const openTrainingModal=btn=>{
+    if(!btn||!trainingModal||!trainingModalContent)return;
     const formUrl=btn.dataset.trainingUrl||'', errorMsg=btn.dataset.trainingError||'Die Anmeldung ist aktuell nicht verfügbar.';
     trainingReturnFocus=btn;
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
@@ -172,10 +172,41 @@
     }else{
       const error=document.createElement('div');error.className='trainings-error';error.textContent=errorMsg;trainingModalContent.replaceChildren(error);
     }
+    track('training_modal_open','training_modal:'+String(btn.dataset.trainingId||'unknown'),(btn.textContent||'').trim(),formUrl);
     setTimeout(()=>{trainingModalContent.classList.add('visible');trainingClose?.focus();},50);
-  }));
+  };
+  document.querySelectorAll('.trainings-btn').forEach(btn=>btn.addEventListener('click',()=>openTrainingModal(btn)));
   trainingClose?.addEventListener('click',closeTrainingModal);
   trainingModal?.addEventListener('click',e=>{if(e.target===trainingModal)closeTrainingModal();});
+
+  const directTraining=new URLSearchParams(location.search).get('training');
+  if(path.startsWith('/angebote')&&directTraining){
+    if(directTraining==='camps'){
+      const campCard=document.getElementById('tenniscamps');
+      const campButtons=[
+        document.querySelector('[data-training-id="camp-feldkirchen"]'),
+        document.querySelector('[data-training-id="camp-heimstetten"]')
+      ].filter(Boolean);
+      setTimeout(()=>{
+        campCard?.scrollIntoView({behavior:'smooth',block:'center'});
+        setTimeout(()=>{
+          campButtons.forEach(btn=>btn.classList.add('attention-pulse'));
+          if(campButtons[0] instanceof HTMLElement) campButtons[0].focus({preventScroll:true});
+          track('training_direct','training_direct:camps','Tenniscamps Standortauswahl','');
+          setTimeout(()=>campButtons.forEach(btn=>btn.classList.remove('attention-pulse')),3400);
+        },350);
+      },120);
+    }else if(directTraining==='sommer'||directTraining==='winter'){
+      const target=document.querySelector('[data-training-id="'+directTraining+'"]');
+      if(target){
+        setTimeout(()=>{
+          target.closest('.offer-detail-card')?.scrollIntoView({behavior:'auto',block:'center'});
+          openTrainingModal(target);
+          track('training_direct','training_direct:'+directTraining,(target.textContent||'').trim(),target.dataset.trainingUrl||'');
+        },120);
+      }
+    }
+  }
 
   const loadMaps=()=>{
     document.querySelectorAll('[data-map-src]').forEach(frame=>{
