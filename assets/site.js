@@ -33,6 +33,44 @@
   track('pageview','pageview',document.title,location.href);
   if(path==='/nachricht-erfolgreich-zugestellt/' || path==='/nachricht-erfolgreich-zugestellt') track('form_success','contact_success','Kontakt erfolgreich','');
 
+  const trustStrip=document.querySelector('.trust-strip');
+  const trustViewport=trustStrip?.querySelector('.trust-strip-inner');
+  const trustTrack=trustStrip?.querySelector('.trust-strip-track');
+  const trustOriginalGroup=trustStrip?.querySelector('.trust-strip-group');
+  let trustResizeTimer=null;
+
+  const updateTrustStrip=()=>{
+    if(!trustStrip||!trustViewport||!trustTrack||!trustOriginalGroup)return;
+
+    trustTrack.querySelectorAll('.trust-strip-group[data-clone="true"]').forEach(el=>el.remove());
+    trustStrip.classList.remove('is-marquee');
+    trustTrack.style.removeProperty('--trust-duration');
+
+    requestAnimationFrame(()=>{
+      const originalWidth=trustOriginalGroup.scrollWidth;
+      const availableWidth=trustViewport.clientWidth;
+      const shouldMarquee=originalWidth>availableWidth+2;
+
+      if(!shouldMarquee)return;
+
+      const clone=trustOriginalGroup.cloneNode(true);
+      clone.dataset.clone='true';
+      clone.setAttribute('aria-hidden','true');
+      trustTrack.appendChild(clone);
+      trustStrip.classList.add('is-marquee');
+
+      const pixelsPerSecond=55;
+      const duration=Math.max(18,originalWidth/pixelsPerSecond);
+      trustTrack.style.setProperty('--trust-duration',duration.toFixed(1)+'s');
+    });
+  };
+
+  updateTrustStrip();
+  window.addEventListener('resize',()=>{
+    clearTimeout(trustResizeTimer);
+    trustResizeTimer=setTimeout(updateTrustStrip,120);
+  });
+
   document.addEventListener('click',e=>{
     const el=e.target.closest('a,button');
     if(!el || el.closest('#adminMenu')) return;
