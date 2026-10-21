@@ -59,6 +59,7 @@ page_head($n['title']??'Seite nicht gefunden'); site_header();
             <text x="475" y="195" text-anchor="middle" class="solid-404 digit-last">4</text>
           </g>
 
+          <g transform="translate(610 164)">
           <g class="tennis-racket-svg">
             <ellipse cx="0" cy="-80" rx="49" ry="63" class="racket-frame"/>
             <g class="racket-strings">
@@ -76,6 +77,7 @@ page_head($n['title']??'Seite nicht gefunden'); site_header();
             <line x1="-8" y1="83" x2="8" y2="77" class="grip-wrap"/>
             <line x1="-8" y1="98" x2="8" y2="92" class="grip-wrap"/>
             <line x1="-8" y1="113" x2="8" y2="107" class="grip-wrap"/>
+          </g>
           </g>
 
           <path class="impact-star" d="M515 122 l10 -14 3 16 16 -7 -9 14 15 7 -17 1 5 16 -13 -11 -10 13 2 -17 -17 3 14 -10 -10 -13 16 6z"/>
@@ -99,6 +101,8 @@ page_head($n['title']??'Seite nicht gefunden'); site_header();
             <line x1="622" y1="139" x2="622" y2="161" class="net-post"/>
           </g>
           <text x="380" y="190" text-anchor="middle" class="court-watermark">404</text>
+          <circle cx="315" cy="220" r="18" class="bounce-ring bounce-ring-one"/>
+          <circle cx="450" cy="83" r="18" class="bounce-ring bounce-ring-two"/>
 
           <g class="ball ball-court">
             <ellipse cx="0" cy="18" rx="16" ry="5" class="ball-shadow-svg"/>
