@@ -106,7 +106,8 @@ p{margin:0 0 20px}
 .offer-card-media{position:relative;overflow:hidden}
 .offer-card-media img{width:100%;height:220px;object-fit:cover}
 .offer-card-status{position:absolute;left:14px;top:14px;max-width:calc(100% - 28px);padding:7px 10px;border-radius:999px;background:rgba(43,45,66,.88);color:#fff;font-size:12px;font-weight:700;line-height:1.2}
-.offer-card-status.status-open{background:var(--kubio-orange)}
+.offer-card-status.status-open{background:#2d8a52}
+.offer-card-status.status-closed{background:#b83232}
 .offer-card-status.status-upcoming{background:rgba(43,45,66,.88)}
 .offer-card-body{padding:20px;text-align:left}
 .offer-card-body h3{font-size:1.4em;font-weight:500;margin-bottom:20px}
@@ -153,6 +154,7 @@ p{margin:0 0 20px}
 .offer-badge-featured{background:var(--kubio-orange);color:#fff}
 .offer-badge-status{background:rgba(43,45,66,.9);color:#fff}
 .offer-badge-status.status-open{background:#2d8a52}
+.offer-badge-status.status-closed{background:#b83232}
 .offer-detail-body{display:flex;flex-direction:column;flex:1;padding:22px}
 .offer-detail-card h3{font-size:1.5em;font-weight:700;text-align:left;margin-bottom:12px}
 .offer-detail-copy{min-height:92px;margin-bottom:16px}
