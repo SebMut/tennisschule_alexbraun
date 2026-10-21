@@ -7,9 +7,15 @@ site_header('home');
 <main>
 <?php site_hero(true); ?><div id="content-start"></div>
 <?php if(!empty($home['trust_enabled']) && !empty($home['trust_items'])): ?>
-<section class="trust-strip" aria-label="Vorteile"><div class="container trust-strip-inner">
-  <?php foreach($home['trust_items'] as $item): ?><span><?=h($item)?></span><?php endforeach; ?>
-</div></section>
+<section class="trust-strip" aria-label="Vorteile">
+  <div class="container trust-strip-inner">
+    <div class="trust-strip-track">
+      <div class="trust-strip-group">
+        <?php foreach($home['trust_items'] as $item): ?><span><?=h($item)?></span><?php endforeach; ?>
+      </div>
+    </div>
+  </div>
+</section>
 <?php endif; ?>
 
 <section class="section about-section"><div class="container about-grid">
