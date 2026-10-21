@@ -53,6 +53,9 @@
   function numberField(label,path,value,min=0,max=999,note=''){
     return `<label>${esc(label)}<input type="number" min="${min}" max="${max}" step="1" data-number-path="${esc(path)}" value="${esc(value??0)}">${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
   }
+  function dateField(label,path,value,note=''){
+    return `<label>${esc(label)}<input type="date" data-path="${esc(path)}" value="${esc(value??'')}">${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
+  }
   function checkboxField(label,path,value,note=''){
     return `<label class="field-inline"><input type="checkbox" data-bool-path="${esc(path)}" ${value?'checked':''}><span>${esc(label)}${note?`<span class="field-note">${esc(note)}</span>`:''}</span></label>`;
   }
@@ -60,13 +63,10 @@
     return `<label>${esc(label)}<select data-path="${esc(path)}">${options.map(o=>`<option value="${esc(o.value)}" ${o.value===value?'selected':''}>${esc(o.label)}</option>`).join('')}</select>${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
   }
   function offerNextBookingLabel(offer){
-    const now=new Date();
-    const month=offer?.id==='winter'?7:2;
-    const day=10;
-    let year=now.getFullYear();
-    const candidate=new Date(year,month,day,0,0,0,0);
-    if(candidate<=now)year++;
-    return 'Ab ca. '+String(day).padStart(2,'0')+'.'+String(month+1).padStart(2,'0')+'.'+year+' buchbar';
+    const raw=String(offer?.booking_date||'');
+    const m=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(m)return 'Ab ca. '+m[3]+'.'+m[2]+'.'+m[1]+' buchbar';
+    return 'Buchungsdatum im CMS festlegen';
   }
   function offerAdminStatus(offer){
     if(!offer?.featured)return {label:offerNextBookingLabel(offer),kind:'upcoming'};
@@ -208,8 +208,8 @@
         <div class="offer-switch-panel">
           ${checkboxField('Aktuell',`offers.items.${i}.featured`,o.featured,'Ist das Training Teil der aktuell laufenden bzw. anstehenden Saison?')}
           ${checkboxField('Anmeldung geöffnet',`offers.items.${i}.registration_open`,o.registration_open,'Wirkt nur, wenn „Aktuell“ eingeschaltet ist.')}
+          ${dateField('Buchbar ab',`offers.items.${i}.booking_date`,o.booking_date,'Dieses Datum wird auf den Bildern und im Hinweis-Modal identisch verwendet.')}
           <div class="offer-auto-status"><strong>Anzeige auf der Website:</strong> ${esc(state.label)}</div>
-          <div class="field-note">${o.id==='winter'?'Wenn nicht aktuell: automatisch nächster 10.08.':'Wenn nicht aktuell: automatisch nächster 10.03.'}</div>
         </div>
 
         <div class="grid2">
@@ -217,7 +217,6 @@
           ${textField('Startseite: CTA-Ziel',`offers.items.${i}.home_cta_url`,o.home_cta_url)}
         </div>
 
-        ${textField('Hinweis, wenn nicht buchbar',`offers.items.${i}.unavailable_message`,o.unavailable_message)}
         ${o.id!=='camps'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
         ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Formular-URL Feldkirchen',`offers.items.${i}.form_url_feldkirchen`,o.form_url_feldkirchen)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+textField('Formular-URL Heimstetten',`offers.items.${i}.form_url_heimstetten`,o.form_url_heimstetten)+'</div>':''}
       </div>`}).join('')}
@@ -406,7 +405,13 @@
   }
 
   function bindEditors(){
-    editor.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.path,el.value)));
+    editor.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{
+      setPath(data,el.dataset.path,el.value);
+      if(el.dataset.path.startsWith('offers.items.')&&el.dataset.path.endsWith('.booking_date')){
+        render();
+        showTab('angebote');
+      }
+    }));
     editor.querySelectorAll('[data-number-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.numberPath,Number(el.value))));
     editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>{
       setPath(data,el.dataset.boolPath,el.checked);
