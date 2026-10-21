@@ -18,8 +18,9 @@ $config = app_config();
 $hash = (string)($config['admin_password_hash'] ?? '');
 if ($hash === '') json_response(['ok'=>false,'error'=>'Admin-Passwort ist noch nicht konfiguriert.'], 503);
 
-$key = hash('sha256', client_ip());
-$rateFile = storage_dir() . '/login-v2-' . $key . '.json';
+$fingerprint = staging_access_password_fingerprint();
+$key = hash('sha256', client_ip() . '|' . $fingerprint);
+$rateFile = storage_dir() . '/login-v3-' . $key . '.json';
 $rate = ['start'=>time(),'count'=>0];
 if (is_file($rateFile)) {
     $old = json_decode((string)file_get_contents($rateFile), true);
