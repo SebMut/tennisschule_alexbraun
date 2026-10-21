@@ -42,6 +42,7 @@ jobs:
           TS_MAPBOX_TOKEN: ${{ secrets.TS_MAPBOX_TOKEN }}
         run: |
           set -euo pipefail
+          : "${TS_ADMIN_PASSWORD:?GitHub Secret TS_ADMIN_PASSWORD fehlt}"
           : "${TS_MAPBOX_TOKEN:?GitHub Secret TS_MAPBOX_TOKEN fehlt}"
 
           php -r '
@@ -160,3 +161,5 @@ jobs:
 # Admin secret refresh trigger
 
 # Manual redeploy trigger 2026-10-21
+
+# Manual staging password redeploy 2026-10-21
