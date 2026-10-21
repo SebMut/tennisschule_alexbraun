@@ -25,8 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $storage = __DIR__ . '/storage';
     if (!is_dir($storage)) @mkdir($storage, 0755, true);
-    $key = hash('sha256', substr((string)($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 64));
-    $rateFile = $storage . '/staging-login-' . $key . '.json';
+    $fingerprint = staging_access_password_fingerprint();
+    $key = hash('sha256', substr((string)($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 64) . '|' . $fingerprint);
+    $rateFile = $storage . '/staging-login-v2-' . $key . '.json';
     $rate = ['start'=>time(),'count'=>0];
     if (is_file($rateFile)) {
         $old = json_decode((string)file_get_contents($rateFile), true);
