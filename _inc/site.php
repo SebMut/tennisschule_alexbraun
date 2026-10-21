@@ -32,6 +32,37 @@ function render_json_ld(array $data): void {
 }
 function nav_active(string $active, string $name): string { return $active === $name ? ' active' : ''; }
 
+function offer_is_current(array $offer): bool {
+    return !empty($offer['featured']);
+}
+function offer_registration_open(array $offer): bool {
+    return offer_is_current($offer) && !empty($offer['registration_open']);
+}
+function offer_next_booking_date(array $offer): string {
+    $id=(string)($offer['id']??'');
+    $month=$id==='winter' ? 8 : 3;
+    $day=10;
+    $tz=new DateTimeZone('Europe/Berlin');
+    $now=new DateTimeImmutable('now',$tz);
+    $year=(int)$now->format('Y');
+    $candidate=new DateTimeImmutable(sprintf('%04d-%02d-%02d 00:00:00',$year,$month,$day),$tz);
+    if($candidate <= $now) $candidate=$candidate->modify('+1 year');
+    return $candidate->format('d.m.Y');
+}
+function offer_status_label(array $offer): string {
+    if(!offer_is_current($offer)) return 'Ab ca. '.offer_next_booking_date($offer).' buchbar';
+    return offer_registration_open($offer) ? 'Anmeldung geöffnet' : 'Anmeldung geschlossen';
+}
+function offer_status_kind(array $offer): string {
+    if(!offer_is_current($offer)) return 'upcoming';
+    return offer_registration_open($offer) ? 'open' : 'closed';
+}
+function offer_unavailable_message(array $offer): string {
+    if(!offer_is_current($offer)) return offer_status_label($offer).'.';
+    if(!offer_registration_open($offer)) return 'Die Anmeldung ist aktuell geschlossen.';
+    return (string)($offer['unavailable_message']??'Die Anmeldung ist aktuell nicht verfügbar.');
+}
+
 function site_header(string $active = ''): void {
     $d=site_data(); $s=$d['site']??[]; $n=$s['navigation']??[]; $loc=$d['locations']??[];
     $logo=$s['logo']??'/assets/media/logo.png'; $name=$s['name']??'Tennisschule Alex Braun';
