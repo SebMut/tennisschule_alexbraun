@@ -223,10 +223,10 @@
                 "name": "Lena Gruber",
                 "role": "Trainerin",
                 "image": "/assets/media/Gruber.webp",
-                "qualifications": "1",
-                "experience": "1",
-                "focus": "1",
-                "bio": "1"
+                "qualifications": "",
+                "experience": "",
+                "focus": "",
+                "bio": ""
             },
             {
                 "name": "Felix Kellerer",
