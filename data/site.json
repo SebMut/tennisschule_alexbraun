@@ -135,7 +135,7 @@
                 "price": "ab 43€ pro Monat",
                 "status": "Ab ca. 10.03.2027 buchbar",
                 "status_kind": "upcoming",
-                "featured": false,
+                "featured": true,
                 "home_cta_label": "Sommertraining ansehen",
                 "home_cta_url": "/angebote/?training=sommer#sommertraining"
             },
