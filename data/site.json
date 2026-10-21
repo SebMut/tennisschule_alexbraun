@@ -313,13 +313,13 @@
       "logo": "/assets/media/tsv-feldkirchen.png",
       "website": "https://tennis-tsvfeldkirchen.de/",
       "membership": "https://tsvfeldkirchen.de/wp-content/uploads/2026/05/TSV-Mitgliedsantrag-NEU.pdf",
-      "map_query": "TSV Feldkirchen bei München",
       "button_website": "WEBSITE TSV Feldkirchen",
       "button_membership": "Mitgliedsantrag als PDF",
       "marker_image": "/assets/media/mapbox-tsv.png",
-      "marker_link": "https://maps.app.goo.gl/5F42TkRamtwv8FSdA",
       "overview_text": "Moderne Tennisanlage im Münchner Osten mit 8 Plätzen. Training für verschiedene Alters- und Spielstärken.",
-      "fact": "8 Tennisplätze"
+      "fact": "8 Tennisplätze",
+      "latitude": 48.143427223206544,
+      "longitude": 11.719520683624244
     },
     "heimstetten": {
       "name": "SV Heimstetten",
@@ -328,21 +328,22 @@
       "logo": "/assets/media/sv-heimstetten.png",
       "website": "https://sv-heimstetten.com/tennis/",
       "membership": "https://sv-heimstetten.com/service/mitglieder/",
-      "map_query": "SV Heimstetten",
       "button_website": "WEBSITE SV Heimstetten",
       "button_membership": "Zum Mitgliedsantrag",
       "marker_image": "/assets/media/mapbox-svh.png",
-      "marker_link": "https://maps.app.goo.gl/XDbYNtHu5hXGJvBr9",
       "overview_text": "Tennisabteilung seit 1970 mit Trainings- und Wettkampfangeboten für verschiedene Alters- und Leistungsstufen.",
-      "fact": "Tennisabteilung seit 1970"
+      "fact": "Tennisabteilung seit 1970",
+      "latitude": 48.16306908434989,
+      "longitude": 11.74709917555206
     },
     "page_title": "Unsere Standorte",
-    "map_consent_text": "Google Maps wird erst nach deiner Zustimmung geladen. Dabei können Daten an Google übertragen werden.",
-    "map_consent_button": "Karte laden",
     "location_button": "Standort ansehen",
     "route_button": "Route berechnen",
     "cta_label": "Training anfragen",
-    "cta_url": "/kontakt/"
+    "cta_url": "/kontakt/",
+    "map_route_button": "Route mit Mapbox berechnen",
+    "map_route_loading": "Standort wird ermittelt …",
+    "map_route_error": "Dein Standort konnte nicht ermittelt werden. Bitte erlaube den Standortzugriff und versuche es erneut."
   },
   "contact": {
     "page_title": "Kontakt",
