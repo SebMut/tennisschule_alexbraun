@@ -205,7 +205,7 @@
         </div>
 
         ${textField('Hinweis, wenn nicht buchbar',`offers.items.${i}.unavailable_message`,o.unavailable_message)}
-        ${o.id==='winter'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
+        ${o.id!=='camps'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
         ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+'</div>':''}
       </div>`).join('')}
 
