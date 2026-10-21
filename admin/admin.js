@@ -289,10 +289,15 @@
     <section class="cms-section" data-admin-section="standorte" hidden>
       <h2>Standorte</h2>
       ${textField('Seitenüberschrift','locations.page_title',data.locations?.page_title)}
-      ${textField('Karten-Hinweis','locations.map_consent_text',data.locations?.map_consent_text,true)}
-      ${textField('Karten-Button','locations.map_consent_button',data.locations?.map_consent_button)}
-      <div class="grid2">${textField('Standort-Button','locations.location_button',data.locations?.location_button)}${textField('Routen-Button','locations.route_button',data.locations?.route_button)}
-      ${textField('CTA-Text','locations.cta_label',data.locations?.cta_label)}${textField('CTA-Ziel','locations.cta_url',data.locations?.cta_url)}</div>
+      <div class="grid2">
+        ${textField('Standort-Button','locations.location_button',data.locations?.location_button)}
+        ${textField('Routen-Button Übersicht','locations.route_button',data.locations?.route_button)}
+        ${textField('Mapbox-Routenbutton','locations.map_route_button',data.locations?.map_route_button)}
+        ${textField('Text Standortermittlung','locations.map_route_loading',data.locations?.map_route_loading)}
+        ${textField('Fehlermeldung Standort','locations.map_route_error',data.locations?.map_route_error,true)}
+        ${textField('CTA-Text','locations.cta_label',data.locations?.cta_label)}
+        ${textField('CTA-Ziel','locations.cta_url',data.locations?.cta_url)}
+      </div>
       ${locationEditor('feldkirchen','TSV Feldkirchen',lf)}
       ${locationEditor('heimstetten','SV Heimstetten',lh,true)}
     </section>
@@ -395,7 +400,7 @@
       ${imageField('Logo',`locations.${key}.logo`,l.logo)}
       <div class="grid2">${textField('Website',`locations.${key}.website`,l.website)}${textField('Website-Button',`locations.${key}.button_website`,l.button_website)}
       ${textField('Mitgliedsantrag',`locations.${key}.membership`,l.membership)}${textField('Mitgliedsantrag-Button',`locations.${key}.button_membership`,l.button_membership)}
-      ${textField('Google-Maps-Suchbegriff',`locations.${key}.map_query`,l.map_query)}${textField('Mapbox-Routenlink',`locations.${key}.marker_link`,l.marker_link)}</div>
+      ${textField('Breitengrad',`locations.${key}.latitude`,l.latitude,'','Mapbox-Koordinate, z. B. 48.143427')}${textField('Längengrad',`locations.${key}.longitude`,l.longitude,'','Mapbox-Koordinate, z. B. 11.719521')}</div>
       ${imageField('Mapbox-Marker',`locations.${key}.marker_image`,l.marker_image)}
     </div>`;
   }
