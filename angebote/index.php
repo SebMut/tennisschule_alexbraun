@@ -44,10 +44,10 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
 
         <div class="offer-actions">
         <?php if($id==='camps'): ?>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-track="training_camp_feldkirchen" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_feldkirchen']??$offer['button']??'')?></button></div>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-track="training_camp_heimstetten" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_heimstetten']??$offer['button']??'')?></button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-feldkirchen" data-track="training_camp_feldkirchen" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_feldkirchen']??$offer['button']??'')?></button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-heimstetten" data-track="training_camp_heimstetten" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_heimstetten']??$offer['button']??'')?></button></div>
         <?php else: ?>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-track="training_<?=h($id)?>" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url'])): ?>data-training-url="<?=h($offer['form_url'])?>"<?php endif; ?> data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=h($offer['button']??'')?></button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="<?=h($id)?>" data-track="training_<?=h($id)?>" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url'])): ?>data-training-url="<?=h($offer['form_url'])?>"<?php endif; ?> data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=h($offer['button']??'')?></button></div>
         <?php endif; ?>
         </div>
       </div>
