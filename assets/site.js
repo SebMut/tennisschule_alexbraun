@@ -188,18 +188,83 @@
   const closeTrainingModal=()=>{
     if(!trainingModal||!trainingModalContent)return;
     trainingModal.classList.remove('active'); trainingModal.setAttribute('aria-hidden','true');
-    setTimeout(()=>{trainingModalContent.innerHTML='';trainingModalContent.classList.remove('visible');body.classList.remove('popup-open');if(trainingReturnFocus instanceof HTMLElement)trainingReturnFocus.focus();trainingReturnFocus=null;},300);
+    setTimeout(()=>{trainingModalContent.innerHTML='';trainingModalContent.classList.remove('visible');trainingModal.querySelector('.trainings-modal-content')?.classList.remove('is-info','is-form');body.classList.remove('popup-open');if(trainingReturnFocus instanceof HTMLElement)trainingReturnFocus.focus();trainingReturnFocus=null;},300);
+  };
+  const trainingDisplayName=id=>{
+    const map={
+      sommer:'Sommertraining',
+      winter:'Wintertraining',
+      'camp-feldkirchen':'Tenniscamp Feldkirchen',
+      'camp-heimstetten':'Tenniscamp Heimstetten'
+    };
+    return map[id]||'Tennistraining';
+  };
+  const buildTrainingInfoCard=(btn,errorMsg)=>{
+    const id=String(btn.dataset.trainingId||'');
+    const name=trainingDisplayName(id);
+    const dateMatch=String(errorMsg).match(/(\d{2}\.\d{2}\.\d{4})/);
+    const isUpcoming=Boolean(dateMatch);
+    const card=document.createElement('div');
+    card.className='training-info-card';
+
+    const icon=document.createElement('div');
+    icon.className='training-info-icon';
+    icon.setAttribute('aria-hidden','true');
+    icon.innerHTML='<svg viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M4 8h16M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 8h3v3H8v-3Z"/></svg>';
+
+    const eyebrow=document.createElement('span');
+    eyebrow.className='training-info-status '+(isUpcoming?'upcoming':'closed');
+    eyebrow.textContent=isUpcoming?'Demnächst buchbar':'Anmeldung geschlossen';
+
+    const title=document.createElement('h3');
+    title.id='trainingModalTitle';
+    title.textContent=name;
+
+    const message=document.createElement('p');
+    message.className='training-info-copy';
+    message.textContent=isUpcoming
+      ? 'Die Anmeldung ist noch nicht geöffnet.'
+      : 'Für dieses Training ist die Anmeldung derzeit geschlossen.';
+
+    const date=document.createElement('div');
+    date.className='training-info-date';
+    if(isUpcoming){
+      const label=document.createElement('span');
+      label.textContent='Voraussichtlich buchbar ab';
+      const strong=document.createElement('strong');
+      strong.textContent=dateMatch[1];
+      date.append(label,strong);
+    }else{
+      const strong=document.createElement('strong');
+      strong.textContent=errorMsg;
+      date.append(strong);
+    }
+
+    const actions=document.createElement('div');
+    actions.className='training-info-actions';
+    const close=document.createElement('button');
+    close.type='button';
+    close.className='training-info-close';
+    close.textContent='Verstanden';
+    close.addEventListener('click',closeTrainingModal);
+    actions.append(close);
+
+    card.append(icon,eyebrow,title,message,date,actions);
+    return card;
   };
   const openTrainingModal=btn=>{
     if(!btn||!trainingModal||!trainingModalContent)return;
     const formUrl=btn.dataset.trainingUrl||'', errorMsg=btn.dataset.trainingError||'Die Anmeldung ist aktuell nicht verfügbar.';
     const registrationOpen=btn.dataset.registrationOpen==='1';
     trainingReturnFocus=btn;
+    const modalCard=trainingModal.querySelector('.trainings-modal-content');
+    modalCard?.classList.toggle('is-info',!(formUrl&&registrationOpen));
+    modalCard?.classList.toggle('is-form',Boolean(formUrl&&registrationOpen));
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
     if(formUrl&&registrationOpen){
-      const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;trainingModalContent.replaceChildren(iframe);
+      const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;iframe.title=trainingDisplayName(String(btn.dataset.trainingId||''))+' Anmeldung';trainingModalContent.replaceChildren(iframe);
     }else{
-      const error=document.createElement('div');error.className='trainings-error';error.textContent=errorMsg;trainingModalContent.replaceChildren(error);
+      trainingModalContent.replaceChildren(buildTrainingInfoCard(btn,errorMsg));
     }
     track('training_modal_open','training_modal:'+String(btn.dataset.trainingId||'unknown'),(btn.textContent||'').trim(),formUrl);
     setTimeout(()=>{trainingModalContent.classList.add('visible');trainingClose?.focus();},50);
