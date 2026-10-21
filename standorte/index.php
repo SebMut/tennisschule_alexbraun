@@ -12,7 +12,7 @@ page_head($loc['page_title']??'Standorte'); site_header('standorte');
   <p><?=h($l['overview_text']??'')?></p>
   <div class="location-actions">
     <a class="kubio-btn" data-track="location_card_<?=h($key)?>" href="<?=h($url)?>"><?=h($loc['location_button']??'Standort ansehen')?></a>
-    <a class="location-route" data-track="location_route_<?=h($key)?>" href="<?=h($l['marker_link']??'#')?>" target="_blank" rel="noopener"><?=h($loc['route_button']??'Route berechnen')?></a>
+    <a class="location-route" data-track="location_route_<?=h($key)?>" href="<?=h($url)?>?route=1#standortkarte"><?=h($loc['route_button']??'Route berechnen')?></a>
   </div>
 </article>
 <?php endforeach; ?></div>
