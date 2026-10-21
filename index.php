@@ -44,11 +44,14 @@ site_header('home');
   <div class="cards three"><?php foreach(($d['offers']['items']??[]) as $offer):
     $homeUrl=$offer['home_cta_url']??($home['offer_link_url']??'/angebote/');
     $external=preg_match('#^https?://#',$homeUrl);
+    $offerCurrent=offer_is_current($offer);
+    $offerStatusKind=offer_status_kind($offer);
+    $offerStatusLabel=offer_status_label($offer);
   ?>
-    <article class="offer-card<?= !empty($offer['featured'])?' is-featured':'' ?>">
+    <article class="offer-card<?= $offerCurrent?' is-featured':'' ?>">
       <div class="offer-card-media">
         <img loading="lazy" src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
-        <?php if(!empty($offer['status'])): ?><span class="offer-card-status <?=h('status-'.($offer['status_kind']??''))?>"><?=h($offer['status'])?></span><?php endif; ?>
+        <span class="offer-card-status <?=h('status-'.$offerStatusKind)?>"><?=h($offerStatusLabel)?></span>
       </div>
       <div class="offer-card-body">
         <h3><?=h($offer['title']??'')?></h3>
