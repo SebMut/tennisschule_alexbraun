@@ -161,7 +161,7 @@
                 "price": "ab 43€ pro Monat",
                 "status": "Anmeldung geöffnet",
                 "status_kind": "open",
-                "featured": false,
+                "featured": true,
                 "home_cta_label": "Jetzt Wintertraining anmelden",
                 "home_cta_url": "/angebote/?training=winter#wintertraining"
             },
