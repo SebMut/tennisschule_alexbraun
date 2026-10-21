@@ -75,8 +75,8 @@ site_header('home');
 <section class="home-map-wrap"><div class="container">
   <div id="mapbox-container" class="mapbox-home" data-mapbox-token="<?=h(mapbox_public_token())?>" data-route-label="<?=h($home['map_route_label']??'Route berechnen')?>" aria-label="<?=h($home['locations_title']??'Standorte')?>"></div>
   <script type="application/json" id="mapbox-location-data"><?=json_encode([
-    ['key'=>'feldkirchen','name'=>$loc['feldkirchen']['name']??'TSV Feldkirchen','fact'=>$loc['feldkirchen']['fact']??'','detail_url'=>'/tsv-feldkirchen/','lat'=>48.143427223206544,'lng'=>11.719520683624244,'logo'=>$loc['feldkirchen']['marker_image']??'/assets/media/mapbox-tsv.png','link'=>$loc['feldkirchen']['marker_link']??'#'],
-    ['key'=>'heimstetten','name'=>$loc['heimstetten']['name']??'SV Heimstetten','fact'=>$loc['heimstetten']['fact']??'','detail_url'=>'/sv-heimstetten/','lat'=>48.16306908434989,'lng'=>11.74709917555206,'logo'=>$loc['heimstetten']['marker_image']??'/assets/media/mapbox-svh.png','link'=>$loc['heimstetten']['marker_link']??'#']
+    ['key'=>'feldkirchen','name'=>$loc['feldkirchen']['name']??'TSV Feldkirchen','fact'=>$loc['feldkirchen']['fact']??'','detail_url'=>'/tsv-feldkirchen/','route_url'=>'/tsv-feldkirchen/?route=1#standortkarte','lat'=>(float)($loc['feldkirchen']['latitude']??48.143427223206544),'lng'=>(float)($loc['feldkirchen']['longitude']??11.719520683624244),'logo'=>$loc['feldkirchen']['marker_image']??'/assets/media/mapbox-tsv.png'],
+    ['key'=>'heimstetten','name'=>$loc['heimstetten']['name']??'SV Heimstetten','fact'=>$loc['heimstetten']['fact']??'','detail_url'=>'/sv-heimstetten/','route_url'=>'/sv-heimstetten/?route=1#standortkarte','lat'=>(float)($loc['heimstetten']['latitude']??48.16306908434989),'lng'=>(float)($loc['heimstetten']['longitude']??11.74709917555206),'logo'=>$loc['heimstetten']['marker_image']??'/assets/media/mapbox-svh.png']
   ],JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)?></script>
 </div></section>
 
