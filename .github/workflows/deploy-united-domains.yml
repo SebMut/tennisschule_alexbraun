@@ -158,3 +158,5 @@ jobs:
           rm -f "$COOKIE_JAR"
 
 # Admin secret refresh trigger
+
+# Manual redeploy trigger 2026-10-21
