@@ -59,6 +59,21 @@
   function selectField(label,path,value,options,note=''){
     return `<label>${esc(label)}<select data-path="${esc(path)}">${options.map(o=>`<option value="${esc(o.value)}" ${o.value===value?'selected':''}>${esc(o.label)}</option>`).join('')}</select>${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
   }
+  function offerNextBookingLabel(offer){
+    const now=new Date();
+    const month=offer?.id==='winter'?7:2;
+    const day=10;
+    let year=now.getFullYear();
+    const candidate=new Date(year,month,day,0,0,0,0);
+    if(candidate<=now)year++;
+    return 'Ab ca. '+String(day).padStart(2,'0')+'.'+String(month+1).padStart(2,'0')+'.'+year+' buchbar';
+  }
+  function offerAdminStatus(offer){
+    if(!offer?.featured)return {label:offerNextBookingLabel(offer),kind:'upcoming'};
+    return offer?.registration_open
+      ? {label:'Anmeldung geöffnet',kind:'open'}
+      : {label:'Anmeldung geschlossen',kind:'closed'};
+  }
   function linesField(label,path,value){return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value||[]).join('\n'))}</textarea></label>`;}
   function preview(value,label='Aktuell verwendetes Bild',wide=false){return value?`<div class="current-image${wide?' wide':''}"><span class="current-image-label">${esc(label)}</span><img src="${esc(value)}" alt="" loading="lazy"></div>`:'';}
   function imageField(label,path,value,wide=false){return `<div class="image-row"><div>${textField(label,path,value)}${preview(value,'Aktuell verwendet',wide)}</div><label>Neues Bild<input class="cms-upload" data-upload-path="${esc(path)}" type="file" accept="image/jpeg,image/png,image/webp"></label></div>`;}
@@ -169,13 +184,10 @@
       <h2>Angebote</h2>
       ${textField('Seitenüberschrift','offers.page_title',data.offers?.page_title)}
       ${textField('Einleitung','offers.intro',data.offers?.intro,true)}
-      <div class="grid2">
-        ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
-        ${textField('Kennzeichnung des aktuellen Angebots','offers.featured_label',data.offers?.featured_label)}
-      </div>
+      ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
 
-      ${offers.map((o,i)=>`<div class="cms-card">
-        <div class="item-head"><strong>${esc(o.title||'Angebot')}</strong>${o.featured?'<span class="offer-admin-current">Aktuell hervorgehoben</span>':''}</div>
+      ${offers.map((o,i)=>{const state=offerAdminStatus(o);return `<div class="cms-card">
+        <div class="item-head"><strong>${esc(o.title||'Angebot')}</strong><span class="offer-admin-status ${esc(state.kind)}">${esc(state.label)}</span></div>
         <div class="grid2">
           ${textField('Titel',`offers.items.${i}.title`,o.title)}
           ${textField('Buttontext',`offers.items.${i}.button`,o.button)}
@@ -193,11 +205,12 @@
           ${textField('Preis',`offers.items.${i}.price`,o.price)}
         </div>
 
-        <div class="grid2">
-          ${textField('Anmeldestatus',`offers.items.${i}.status`,o.status)}
-          ${selectField('Statusdarstellung',`offers.items.${i}.status_kind`,o.status_kind,[{value:'open',label:'Offen / grün'},{value:'upcoming',label:'Bald buchbar / dunkel'},{value:'closed',label:'Geschlossen / dunkel'}])}
+        <div class="offer-switch-panel">
+          ${checkboxField('Aktuell',`offers.items.${i}.featured`,o.featured,'Ist das Training Teil der aktuell laufenden bzw. anstehenden Saison?')}
+          ${checkboxField('Anmeldung geöffnet',`offers.items.${i}.registration_open`,o.registration_open,'Wirkt nur, wenn „Aktuell“ eingeschaltet ist.')}
+          <div class="offer-auto-status"><strong>Anzeige auf der Website:</strong> ${esc(state.label)}</div>
+          <div class="field-note">${o.id==='winter'?'Wenn nicht aktuell: automatisch nächster 10.08.':'Wenn nicht aktuell: automatisch nächster 10.03.'}</div>
         </div>
-        ${checkboxField('Als aktuelles Angebot hervorheben',`offers.items.${i}.featured`,o.featured,'Für die aktuelle Saison nur gezielt verwenden.')}
 
         <div class="grid2">
           ${textField('Startseite: CTA-Text',`offers.items.${i}.home_cta_label`,o.home_cta_label)}
@@ -207,7 +220,7 @@
         ${textField('Hinweis, wenn nicht buchbar',`offers.items.${i}.unavailable_message`,o.unavailable_message)}
         ${o.id!=='camps'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
         ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+'</div>':''}
-      </div>`).join('')}
+      </div>`}).join('')}
 
       <div class="cms-card"><strong>FAQ</strong>
         ${checkboxField('FAQ anzeigen','faq.enabled',data.faq?.enabled)}
