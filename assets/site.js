@@ -173,9 +173,10 @@
   const openTrainingModal=btn=>{
     if(!btn||!trainingModal||!trainingModalContent)return;
     const formUrl=btn.dataset.trainingUrl||'', errorMsg=btn.dataset.trainingError||'Die Anmeldung ist aktuell nicht verfügbar.';
+    const registrationOpen=btn.dataset.registrationOpen==='1';
     trainingReturnFocus=btn;
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
-    if(formUrl){
+    if(formUrl&&registrationOpen){
       const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;trainingModalContent.replaceChildren(iframe);
     }else{
       const error=document.createElement('div');error.className='trainings-error';error.textContent=errorMsg;trainingModalContent.replaceChildren(error);
