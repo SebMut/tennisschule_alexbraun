@@ -217,54 +217,191 @@
     }
   }
 
-  const loadMaps=()=>{
-    document.querySelectorAll('[data-map-src]').forEach(frame=>{
-      if(!frame.src) frame.src=frame.dataset.mapSrc;
-      frame.hidden=false; frame.previousElementSibling?.remove();
-    });
-    try{localStorage.setItem('ts_maps_consent','yes');}catch(_){}
-  };
-  try{if(localStorage.getItem('ts_maps_consent')==='yes')loadMaps();}catch(_){}
-  document.querySelectorAll('[data-load-map]').forEach(btn=>btn.addEventListener('click',loadMaps));
-
   const initMapbox=()=>{
     const mapboxContainer=document.getElementById('mapbox-container');
     const mapDataEl=document.getElementById('mapbox-location-data');
     if(!mapboxContainer||!mapDataEl||typeof window.mapboxgl==='undefined'||mapboxContainer.dataset.initialized==='1') return;
+
     const token=mapboxContainer.dataset.mapboxToken||'';
     let locations=[]; try{locations=JSON.parse(mapDataEl.textContent||'[]');}catch(_){}
-    if(!token||!locations.length){mapboxContainer.classList.add('mapbox-error');mapboxContainer.textContent='Karte konnte nicht geladen werden.';return;}
+    if(!token||!locations.length){
+      mapboxContainer.classList.add('mapbox-error');
+      mapboxContainer.textContent='Karte konnte nicht geladen werden.';
+      return;
+    }
+
     mapboxContainer.dataset.initialized='1';
     window.mapboxgl.accessToken=token;
-    const map=new window.mapboxgl.Map({container:mapboxContainer,style:'mapbox://styles/mapbox/streets-v12',center:[11.32,48.15],zoom:13,maxZoom:15,scrollZoom:false,dragPan:false,doubleClickZoom:false,touchZoomRotate:false});
+    const single=mapboxContainer.dataset.mapboxSingle==='1';
+    const first=locations[0];
+
+    const map=new window.mapboxgl.Map({
+      container:mapboxContainer,
+      style:'mapbox://styles/mapbox/streets-v12',
+      center:[Number(first.lng),Number(first.lat)],
+      zoom:single?14.5:13,
+      maxZoom:17,
+      scrollZoom:false,
+      dragPan:true,
+      doubleClickZoom:true,
+      touchZoomRotate:true
+    });
+    map.addControl(new window.mapboxgl.NavigationControl({showCompass:false}),'top-right');
+
     const bounds=new window.mapboxgl.LngLatBounds();
     locations.forEach(loc=>{
-      const marker=document.createElement('button');marker.type='button';marker.className='custom-marker';marker.setAttribute('aria-label',loc.name+' anzeigen');
-      const img=document.createElement('img');img.src=loc.logo;img.alt='';marker.appendChild(img);
-      const label=document.createElement('div');label.className='marker-label';label.textContent=loc.name;marker.appendChild(label);
-      const popupHtml='<div class="map-popup"><strong>'+String(loc.name||'')+'</strong>'+(loc.fact?'<p>'+String(loc.fact)+'</p>':'')+'<div class="map-popup-actions"><a data-map-detail href="'+loc.detail_url+'">Standort ansehen</a><a data-map-route href="'+loc.link+'" target="_blank" rel="noopener">'+(mapboxContainer.dataset.routeLabel||'Route berechnen')+'</a></div></div>';
+      const marker=document.createElement('button');
+      marker.type='button';
+      marker.className='custom-marker';
+      marker.setAttribute('aria-label',loc.name+' anzeigen');
+
+      const img=document.createElement('img');
+      img.src=loc.logo;
+      img.alt='';
+      marker.appendChild(img);
+
+      const label=document.createElement('div');
+      label.className='marker-label';
+      label.textContent=loc.name;
+      marker.appendChild(label);
+
+      const routeUrl=loc.route_url||loc.detail_url||'#';
+      const popupHtml='<div class="map-popup"><strong>'+String(loc.name||'')+'</strong>'
+        +(loc.fact?'<p>'+String(loc.fact)+'</p>':'')
+        +'<div class="map-popup-actions"><a data-map-detail href="'+loc.detail_url+'">Standort ansehen</a>'
+        +(!single?'<a data-map-route href="'+routeUrl+'">'+(mapboxContainer.dataset.routeLabel||'Route berechnen')+'</a>':'')
+        +'</div></div>';
+
       const popup=new window.mapboxgl.Popup({offset:28,closeButton:true,maxWidth:'280px'}).setHTML(popupHtml);
-      new window.mapboxgl.Marker(marker,{anchor:'bottom'}).setLngLat([loc.lng,loc.lat]).setPopup(popup).addTo(map);
+      new window.mapboxgl.Marker(marker,{anchor:'bottom'}).setLngLat([Number(loc.lng),Number(loc.lat)]).setPopup(popup).addTo(map);
+
       marker.addEventListener('click',()=>track('map_location','map_location:'+loc.key,loc.name,loc.detail_url));
       popup.on('open',()=>{
-        popup.getElement()?.querySelector('[data-map-route]')?.addEventListener('click',()=>track('map_route','map_route:'+loc.key,loc.name,loc.link),{once:true});
+        popup.getElement()?.querySelector('[data-map-route]')?.addEventListener('click',()=>track('map_route','map_route:'+loc.key,loc.name,routeUrl),{once:true});
         popup.getElement()?.querySelector('[data-map-detail]')?.addEventListener('click',()=>track('map_detail','map_detail:'+loc.key,loc.name,loc.detail_url),{once:true});
       });
-      bounds.extend([loc.lng,loc.lat]);
+
+      bounds.extend([Number(loc.lng),Number(loc.lat)]);
     });
-    map.fitBounds(bounds,{padding:80,maxZoom:15});
+
+    if(!single&&locations.length>1) map.fitBounds(bounds,{padding:80,maxZoom:15});
+
+    if(single){
+      const routeButton=document.querySelector('[data-mapbox-route]');
+      const routeStatus=document.querySelector('[data-mapbox-route-status]');
+      const routeLoading=mapboxContainer.dataset.routeLoading||'Standort wird ermittelt …';
+      const routeError=mapboxContainer.dataset.routeError||'Dein Standort konnte nicht ermittelt werden.';
+      const target=[Number(first.lng),Number(first.lat)];
+
+      const setRouteStatus=(message,isError=false)=>{
+        if(!routeStatus)return;
+        routeStatus.textContent=message||'';
+        routeStatus.classList.toggle('error',isError);
+      };
+
+      const renderRoute=async position=>{
+        const origin=[position.coords.longitude,position.coords.latitude];
+        const url='https://api.mapbox.com/directions/v5/mapbox/driving/'
+          +origin.join(',')+';'+target.join(',')
+          +'?alternatives=false&geometries=geojson&overview=full&steps=false&access_token='+encodeURIComponent(token);
+
+        const response=await fetch(url);
+        if(!response.ok) throw new Error('Route konnte nicht geladen werden.');
+        const data=await response.json();
+        const route=data.routes?.[0];
+        if(!route?.geometry) throw new Error('Keine Route gefunden.');
+
+        const draw=()=>{
+          const geojson={type:'Feature',properties:{},geometry:route.geometry};
+          if(map.getSource('route')) map.getSource('route').setData(geojson);
+          else{
+            map.addSource('route',{type:'geojson',data:geojson});
+            map.addLayer({
+              id:'route',
+              type:'line',
+              source:'route',
+              layout:{'line-join':'round','line-cap':'round'},
+              paint:{'line-color':'#f17c20','line-width':6,'line-opacity':.88}
+            });
+          }
+
+          const originData={type:'Feature',properties:{},geometry:{type:'Point',coordinates:origin}};
+          if(map.getSource('route-origin')) map.getSource('route-origin').setData(originData);
+          else{
+            map.addSource('route-origin',{type:'geojson',data:originData});
+            map.addLayer({
+              id:'route-origin',
+              type:'circle',
+              source:'route-origin',
+              paint:{'circle-radius':7,'circle-color':'#2f7cff','circle-stroke-color':'#fff','circle-stroke-width':3}
+            });
+          }
+
+          const routeBounds=new window.mapboxgl.LngLatBounds();
+          route.geometry.coordinates.forEach(coord=>routeBounds.extend(coord));
+          map.fitBounds(routeBounds,{padding:55,maxZoom:15});
+
+          const km=(route.distance/1000).toFixed(route.distance>=10000?0:1);
+          const minutes=Math.max(1,Math.round(route.duration/60));
+          setRouteStatus(km+' km · ca. '+minutes+' Min.');
+          track('map_route','map_route:'+first.key,first.name,'Mapbox Directions');
+        };
+
+        if(map.loaded()) draw(); else map.once('load',draw);
+      };
+
+      const requestRoute=()=>{
+        if(!navigator.geolocation){
+          setRouteStatus(routeError,true);
+          return;
+        }
+        setRouteStatus(routeLoading,false);
+        if(routeButton) routeButton.disabled=true;
+        navigator.geolocation.getCurrentPosition(
+          async position=>{
+            try{await renderRoute(position);}
+            catch(err){setRouteStatus(err.message||routeError,true);}
+            finally{if(routeButton)routeButton.disabled=false;}
+          },
+          ()=>{
+            setRouteStatus(routeError,true);
+            if(routeButton)routeButton.disabled=false;
+          },
+          {enableHighAccuracy:false,timeout:12000,maximumAge:300000}
+        );
+      };
+
+      routeButton?.addEventListener('click',requestRoute);
+      if(new URLSearchParams(location.search).get('route')==='1'){
+        setTimeout(requestRoute,350);
+      }
+    }
   };
 
   const loadMapbox=()=>{
     if(typeof window.mapboxgl!=='undefined'){initMapbox();return;}
     if(document.querySelector('script[data-mapbox-loader]'))return;
-    const css=document.createElement('link');css.rel='stylesheet';css.href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';document.head.appendChild(css);
-    const script=document.createElement('script');script.src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';script.dataset.mapboxLoader='1';script.onload=initMapbox;document.head.appendChild(script);
+    const css=document.createElement('link');
+    css.rel='stylesheet';
+    css.href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
+    document.head.appendChild(css);
+
+    const script=document.createElement('script');
+    script.src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';
+    script.dataset.mapboxLoader='1';
+    script.onload=initMapbox;
+    document.head.appendChild(script);
   };
+
   const mapboxContainer=document.getElementById('mapbox-container');
   if(mapboxContainer){
     if('IntersectionObserver'in window){
-      const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();loadMapbox();}},{rootMargin:'300px'});
+      const observer=new IntersectionObserver(entries=>{
+        if(entries.some(e=>e.isIntersecting)){
+          observer.disconnect();
+          loadMapbox();
+        }
+      },{rootMargin:'300px'});
       observer.observe(mapboxContainer);
     }else loadMapbox();
   }
