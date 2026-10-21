@@ -33,16 +33,27 @@ function staging_access_password_hash(): string {
     return (string)($config['admin_password_hash'] ?? '');
 }
 
-function staging_access_signature(string $hash): string {
-    return $hash === '' ? '' : hash('sha256', 'ts-staging-access|' . $hash);
+function staging_access_password_fingerprint(): string {
+    $config = staging_access_config();
+    $fingerprint = (string)($config['admin_password_fingerprint'] ?? '');
+    if ($fingerprint !== '') return $fingerprint;
+
+    // Backward-compatible fallback until the next deploy has written the fingerprint.
+    $hash = (string)($config['admin_password_hash'] ?? '');
+    return $hash === '' ? '' : hash('sha256', 'legacy|' . $hash);
+}
+
+function staging_access_signature(string $fingerprint): string {
+    return $fingerprint === '' ? '' : hash('sha256', 'ts-staging-access|' . $fingerprint);
 }
 
 function staging_access_authenticated(): bool {
     if (!staging_access_is_test_host()) return true;
     staging_access_start_session();
     $hash = staging_access_password_hash();
-    if ($hash === '') return false;
-    $expected = staging_access_signature($hash);
+    $fingerprint = staging_access_password_fingerprint();
+    if ($hash === '' || $fingerprint === '') return false;
+    $expected = staging_access_signature($fingerprint);
     return !empty($_SESSION['authenticated'])
         && !empty($_SESSION['staging_access_signature'])
         && hash_equals($expected, (string)$_SESSION['staging_access_signature']);
@@ -50,9 +61,9 @@ function staging_access_authenticated(): bool {
 
 function staging_access_mark_authenticated(): void {
     staging_access_start_session();
-    $hash = staging_access_password_hash();
+    $fingerprint = staging_access_password_fingerprint();
     $_SESSION['authenticated'] = true;
-    $_SESSION['staging_access_signature'] = staging_access_signature($hash);
+    $_SESSION['staging_access_signature'] = staging_access_signature($fingerprint);
     if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(24));
 }
 
