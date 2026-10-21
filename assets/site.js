@@ -258,8 +258,18 @@
     const registrationOpen=btn.dataset.registrationOpen==='1';
     trainingReturnFocus=btn;
     const modalCard=trainingModal.querySelector('.trainings-modal-content');
-    modalCard?.classList.toggle('is-info',!(formUrl&&registrationOpen));
-    modalCard?.classList.toggle('is-form',Boolean(formUrl&&registrationOpen));
+    const isForm=Boolean(formUrl&&registrationOpen);
+    modalCard?.classList.toggle('is-info',!isForm);
+    modalCard?.classList.toggle('is-form',isForm);
+    if(modalCard){
+      if(isForm){
+        modalCard.removeAttribute('aria-labelledby');
+        modalCard.setAttribute('aria-label',trainingDisplayName(String(btn.dataset.trainingId||''))+' Anmeldung');
+      }else{
+        modalCard.removeAttribute('aria-label');
+        modalCard.setAttribute('aria-labelledby','trainingModalTitle');
+      }
+    }
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
     if(formUrl&&registrationOpen){
       const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;iframe.title=trainingDisplayName(String(btn.dataset.trainingId||''))+' Anmeldung';trainingModalContent.replaceChildren(iframe);
