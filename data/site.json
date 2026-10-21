@@ -160,7 +160,7 @@
                 "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
                 "price": "ab 43€ pro Monat",
                 "status": "Anmeldung geschlossen",
-                "status_kind": "closed",
+                "status_kind": "upcoming",
                 "featured": false,
                 "home_cta_label": "Jetzt Wintertraining anmelden",
                 "home_cta_url": "/angebote/?training=winter#wintertraining"
