@@ -116,6 +116,13 @@
     form.addEventListener('submit',()=>track('form_submit','form:'+form.dataset.trackForm,'Formular gesendet',form.action));
   });
 
+  const siteHeader=document.querySelector('.site-header');
+  const updateSiteHeader=()=>{
+    siteHeader?.classList.toggle('is-scrolled',window.scrollY>8);
+  };
+  updateSiteHeader();
+  window.addEventListener('scroll',updateSiteHeader,{passive:true});
+
   const toggle=document.querySelector('.menu-toggle');
   const mobileMenu=document.getElementById('mobileMenu');
   const mobileOverlay=document.getElementById('mobileOverlay');
@@ -126,6 +133,7 @@
     mobileMenu.classList.toggle('open',open); mobileOverlay.classList.toggle('open',open);
     mobileMenu.setAttribute('aria-hidden',String(!open)); toggle.setAttribute('aria-expanded',String(open));
     body.classList.toggle('menu-open',open);
+    siteHeader?.classList.toggle('menu-active',open);
     if(open){menuReturnFocus=document.activeElement;setTimeout(()=>mobileClose?.focus(),0);}
     else if(menuReturnFocus instanceof HTMLElement){menuReturnFocus.focus();menuReturnFocus=null;}
   };
