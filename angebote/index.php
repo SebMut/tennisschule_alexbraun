@@ -12,15 +12,17 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
   <?php foreach(($o['items']??[]) as $offer):
     $id=$offer['id']??'';
     $anchor=$id==='sommer'?'sommertraining':($id==='winter'?'wintertraining':'tenniscamps');
-    $featured=!empty($offer['featured']);
-    $statusKind=$offer['status_kind']??'';
+    $featured=offer_is_current($offer);
+    $registrationOpen=offer_registration_open($offer);
+    $statusKind=offer_status_kind($offer);
+    $statusLabel=offer_status_label($offer);
+    $unavailableMessage=offer_unavailable_message($offer);
   ?>
     <article id="<?=h($anchor)?>" class="offer-panel offer-detail-card<?= $featured?' is-featured':'' ?>">
       <div class="offer-detail-media">
         <img loading="lazy" decoding="async" src="<?=h($offer['image']??'')?>" alt="<?=h($offer['title']??'')?>">
         <div class="offer-badges">
-          <?php if($featured): ?><span class="offer-badge offer-badge-featured"><?=h($o['featured_label']??'Aktuell')?></span><?php endif; ?>
-          <?php if(!empty($offer['status'])): ?><span class="offer-badge offer-badge-status <?=h('status-'.$statusKind)?>"><?=h($offer['status'])?></span><?php endif; ?>
+          <span class="offer-badge offer-badge-status <?=h('status-'.$statusKind)?>"><?=h($statusLabel)?></span>
         </div>
       </div>
 
@@ -44,8 +46,8 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
 
         <div class="offer-actions">
         <?php if($id==='camps'): ?>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-feldkirchen" data-track="training_camp_feldkirchen" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_feldkirchen']??$offer['button']??'')?></button></div>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-heimstetten" data-track="training_camp_heimstetten" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=hbr($offer['button_heimstetten']??$offer['button']??'')?></button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-feldkirchen" data-track="training_camp_feldkirchen" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-registration-open="<?= $registrationOpen?'1':'0' ?>" data-training-error="<?=h($unavailableMessage)?>"><?=hbr($offer['button_feldkirchen']??$offer['button']??'')?></button></div>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-heimstetten" data-track="training_camp_heimstetten" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" data-registration-open="<?= $registrationOpen?'1':'0' ?>" data-training-error="<?=h($unavailableMessage)?>"><?=hbr($offer['button_heimstetten']??$offer['button']??'')?></button></div>
         <?php else: ?>
           <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="<?=h($id)?>" data-track="training_<?=h($id)?>" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url'])): ?>data-training-url="<?=h($offer['form_url'])?>"<?php endif; ?> data-training-error="<?=h($offer['unavailable_message']??'')?>"><?=h($offer['button']??'')?></button></div>
         <?php endif; ?>
