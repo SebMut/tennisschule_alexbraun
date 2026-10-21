@@ -116,6 +116,26 @@
     form.addEventListener('submit',()=>track('form_submit','form:'+form.dataset.trackForm,'Formular gesendet',form.action));
   });
 
+  const error404=document.querySelector('[data-error404]');
+  if(error404){
+    const scenes=[...error404.querySelectorAll('[data-error404-scene]')];
+    if(scenes.length){
+      let previous=-1;
+      try{previous=Number(sessionStorage.getItem('ts_404_scene')??-1);}catch(_){}
+      const choices=scenes.map((_,i)=>i).filter(i=>i!==previous);
+      let randomValue=Math.random();
+      if(window.crypto?.getRandomValues){
+        const buffer=new Uint32Array(1);
+        window.crypto.getRandomValues(buffer);
+        randomValue=buffer[0]/4294967296;
+      }
+      const index=choices[Math.floor(randomValue*choices.length)]??0;
+      scenes[index].classList.add('is-active');
+      try{sessionStorage.setItem('ts_404_scene',String(index));}catch(_){}
+      track('404_scene','404_scene:'+String(scenes[index].dataset.error404Scene||index),'404 Animation','');
+    }
+  }
+
   const siteHeader=document.querySelector('.site-header');
   const updateSiteHeader=()=>{
     siteHeader?.classList.toggle('is-scrolled',window.scrollY>8);
