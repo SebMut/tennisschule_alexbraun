@@ -219,7 +219,7 @@
 
         ${textField('Hinweis, wenn nicht buchbar',`offers.items.${i}.unavailable_message`,o.unavailable_message)}
         ${o.id!=='camps'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
-        ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+'</div>':''}
+        ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Formular-URL Feldkirchen',`offers.items.${i}.form_url_feldkirchen`,o.form_url_feldkirchen)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+textField('Formular-URL Heimstetten',`offers.items.${i}.form_url_heimstetten`,o.form_url_heimstetten)+'</div>':''}
       </div>`}).join('')}
 
       <div class="cms-card"><strong>FAQ</strong>
@@ -408,7 +408,13 @@
   function bindEditors(){
     editor.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.path,el.value)));
     editor.querySelectorAll('[data-number-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.numberPath,Number(el.value))));
-    editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>setPath(data,el.dataset.boolPath,el.checked)));
+    editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>{
+      setPath(data,el.dataset.boolPath,el.checked);
+      if(el.dataset.boolPath.startsWith('offers.items.')&&(el.dataset.boolPath.endsWith('.featured')||el.dataset.boolPath.endsWith('.registration_open'))){
+        render();
+        showTab('angebote');
+      }
+    }));
     editor.querySelectorAll('[data-lines]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.lines,el.value.split('\n').map(x=>x.trim()).filter(Boolean))));
     editor.querySelectorAll('.cms-upload').forEach(el=>el.addEventListener('change',uploadImage));
     const removeTrainer=(i)=>{
