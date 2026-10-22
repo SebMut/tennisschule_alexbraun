@@ -3,7 +3,7 @@
   const loginPanel=$('#loginPanel'),editorPanel=$('#editorPanel'),loginForm=$('#loginForm'),loginMessage=$('#loginMessage');
   const logoutBtn=$('#logoutBtn'),saveBtn=$('#saveBtn'),saveMessage=$('#saveMessage'),editor=$('#editor'),adminMenu=$('#adminMenu');
   const contentAuditWrap=$('#contentAuditWrap'),contentAuditToggle=$('#contentAuditToggle'),contentAuditSummary=$('#contentAuditSummary');
-  const contentAudit=$('#contentAudit'),conflictBanner=$('#conflictBanner'),reloadLatestBtn=$('#reloadLatestBtn');
+  const contentAudit=$('#contentAudit'),conflictBanner=$('#conflictBanner'),reloadLatestBtn=$('#reloadLatestBtn'),mobileSectionSelect=$('#mobileSectionSelect');
   const currentSectionTitle=$('#currentSectionTitle'),currentSectionDescription=$('#currentSectionDescription'),dirtyState=$('#dirtyState');
   let storedTab='allgemein';
   try{storedTab=sessionStorage.getItem('ts_admin_tab')||'allgemein';}catch(_){}
@@ -110,6 +110,7 @@
     const meta=sectionMeta[tab]||sectionMeta.allgemein;
     if(currentSectionTitle)currentSectionTitle.textContent=meta[0];
     if(currentSectionDescription)currentSectionDescription.textContent=meta[1];
+    if(mobileSectionSelect)mobileSectionSelect.value=tab;
     if(editor)editor.scrollTop=0;
     if(tab==='statistik') loadStats(statsDays);
     if(tab==='newsletter') loadNewsletterAdmin();
@@ -735,13 +736,13 @@
     try{sessionStorage.setItem('ts_admin_audit_collapsed',collapsed?'1':'0');}catch(_){}
   }
   function initAuditState(){
-    let stored=null;
-    try{stored=sessionStorage.getItem('ts_admin_audit_collapsed');}catch(_){}
-    if(stored!==null){
-      setAuditCollapsed(stored==='1');
+    if(window.matchMedia('(max-width:760px)').matches){
+      setAuditCollapsed(true);
       return;
     }
-    setAuditCollapsed(window.matchMedia('(max-width:700px)').matches);
+    let stored=null;
+    try{stored=sessionStorage.getItem('ts_admin_audit_collapsed');}catch(_){}
+    setAuditCollapsed(stored!==null?stored==='1':false);
   }
   contentAuditToggle?.addEventListener('click',()=>{
     setAuditCollapsed(!contentAuditWrap?.classList.contains('is-collapsed'));
@@ -788,6 +789,7 @@
   });
   logoutBtn.addEventListener('click',async()=>{try{await request('/api/logout.php',{method:'POST',headers:{'X-CSRF-Token':csrf}});}catch(_){}location.reload();});
   adminMenu?.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.adminTab||'allgemein')));
+  mobileSectionSelect?.addEventListener('change',()=>showTab(mobileSectionSelect.value||'allgemein'));
 
   document.addEventListener('keydown',e=>{
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&!editorPanel.hidden){
