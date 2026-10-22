@@ -342,23 +342,70 @@ textarea{min-height:96px}
 .cms-conflict-banner div{display:grid;gap:2px}
 .cms-conflict-banner strong{font-size:13px}
 .cms-conflict-banner span{font-size:12px;color:#9b4747}
-.content-audit{
-  margin:8px 0 10px;border:1px solid #e0e5ec;border-radius:10px;background:#fff;box-shadow:var(--shadow-sm);overflow:hidden
+
+.content-audit-wrap{
+  margin:14px 0 18px;
+  border:1px solid #e0e5ec;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;
 }
-.content-audit[hidden]{display:none!important}
-.content-audit-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:#f8fafc;border-bottom:1px solid #e8ecf2}
-.content-audit-head strong{font-size:13px;color:var(--ink)}
-.content-audit-counts{display:flex;gap:7px;flex-wrap:wrap}
-.audit-count{display:inline-flex;align-items:center;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:800}
-.audit-count.error{background:#fde9e9;color:#9f2d2d}
-.audit-count.warning{background:#fff4dc;color:#8b5a00}
-.audit-count.ok{background:#e8f6eb;color:#2d6d3c}
-.content-audit-list{display:grid;gap:0;max-height:190px;overflow:auto}
-.content-audit-item{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:9px 12px;border-top:1px solid #eef1f5;font-size:12px}
+.content-audit-wrap[hidden]{display:none!important}
+.content-audit-toggle{
+  width:100%;
+  min-height:54px;
+  padding:11px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:0;
+  border-radius:0;
+  background:#f8fafc;
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+}
+.content-audit-toggle>span:first-child{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.content-audit-toggle strong{font-size:14px}
+.content-audit-summary{font-size:12px;color:var(--muted);font-weight:700}
+.content-audit-toggle-icon{font-size:18px;line-height:1;transition:transform .16s ease}
+.content-audit-wrap.is-collapsed .content-audit-toggle-icon{transform:rotate(180deg)}
+.content-audit{
+  border-top:1px solid #e8ecf2;
+  background:#fff;
+}
+.content-audit-wrap.is-collapsed .content-audit{display:none}
+.content-audit-list{
+  display:grid;
+  gap:0;
+  max-height:260px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.content-audit-empty{
+  padding:12px 14px;
+  color:#2d6d3c;
+  font-size:12px;
+  font-weight:700;
+}
+.content-audit-item{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  padding:10px 12px;
+  border-top:1px solid #eef1f5;
+  font-size:12px;
+  line-height:1.4;
+}
 .content-audit-item:first-child{border-top:0}
 .audit-dot{width:8px;height:8px;border-radius:50%}
-.audit-dot.error{background:#c33b3b}.audit-dot.warning{background:#d7951f}
-.content-audit-item button{padding:5px 8px;font-size:11px}
+.audit-dot.error{background:#c33b3b}
+.audit-dot.warning{background:#d7951f}
+.content-audit-item button{padding:5px 8px;font-size:11px;white-space:nowrap}
+
 .revision-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .revision-list{display:grid;gap:8px}
 .revision-row{display:grid;grid-template-columns:95px 1fr auto;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fafbfc}
@@ -367,9 +414,30 @@ textarea{min-height:96px}
 .revision-meta strong,.revision-meta span{display:block}
 .revision-meta strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .revision-meta span{font-size:11px;color:var(--muted);margin-top:2px}
+
 @media(max-width:700px){
   .cms-conflict-banner{align-items:stretch;flex-direction:column}
+  .content-audit-wrap{margin:10px 12px 14px;border-radius:11px}
+  .content-audit-toggle{min-height:50px;padding:10px 12px}
+  .content-audit-toggle>span:first-child{gap:5px 9px}
+  .content-audit-toggle strong{font-size:13px}
+  .content-audit-summary{font-size:11px}
+  .content-audit-list{max-height:230px}
+  .content-audit-item{
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:start;
+    gap:7px 9px;
+    padding:10px 11px;
+    font-size:12px;
+  }
+  .content-audit-item button{
+    grid-column:2;
+    justify-self:start;
+    width:auto;
+    min-height:32px;
+    margin-top:1px;
+    padding:5px 9px;
+  }
   .revision-row{grid-template-columns:1fr}
-  .content-audit-item{grid-template-columns:auto 1fr}
-  .content-audit-item button{grid-column:2}
 }
+
