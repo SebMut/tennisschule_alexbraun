@@ -196,7 +196,7 @@ function validate_site_content(array $data): array {
             $image = trim((string)($trainer['image'] ?? ''));
             if ($image === '') {
                 $add('error','trainerteam','trainer_image_missing',($name!==''?$name:'Trainer').': Bild fehlt.',"trainers.items.$i.image");
-            } elseif ($image === '/assets/media/logo.png') {
+            } elseif ($image === '/assets/media/logo.png' && content_lower($name) !== 'julius brand') {
                 $add('warning','trainerteam','trainer_placeholder_image',($name!==''?$name:'Trainer').': Es wird noch das Logo als Platzhalterbild verwendet.',"trainers.items.$i.image");
             }
             if (content_lower($name) === 'test' || content_lower(trim((string)($trainer['role'] ?? ''))) === 'test') {
