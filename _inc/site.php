@@ -47,21 +47,18 @@ function offer_registration_state(array $offer): string {
     $end=offer_parse_date(trim((string)($offer['registration_end']??'')),true);
     $now=new DateTimeImmutable('now',new DateTimeZone('Europe/Berlin'));
 
-    if($start && $now < $start) return 'upcoming';
-    if($end && $now > $end) return 'closed';
-    if($start && !$end && ($offer['status_kind']??'')==='closed') return 'closed';
-    if($start || $end) return 'open';
-
-    // Backward-compatible fallback for older content until dates are saved.
-    if(($offer['status_kind']??'')==='upcoming') return 'upcoming';
-    if(($offer['status_kind']??'')==='closed') return 'closed';
-    return !empty($offer['registration_open']) ? 'open' : 'closed';
+    // Invalid/missing windows never open registration by accident.
+    if(!$start || !$end) return 'closed';
+    if($end < $start) return $now < $start ? 'upcoming' : 'closed';
+    if($now < $start) return 'upcoming';
+    if($now > $end) return 'closed';
+    return 'open';
 }
 function offer_registration_open(array $offer): bool {
     return offer_registration_state($offer)==='open';
 }
 function offer_registration_start_label(array $offer): string {
-    $raw=trim((string)($offer['registration_start']??$offer['booking_date']??''));
+    $raw=trim((string)($offer['registration_start']??''));
     if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$raw,$m)) return $m[3].'.'.$m[2].'.'.$m[1];
     return '';
 }
@@ -82,7 +79,7 @@ function offer_unavailable_message(array $offer): string {
         return $start!=='' ? 'Ab ca. '.$start.' buchbar.' : 'Die Anmeldung ist bald verfügbar.';
     }
     if($state==='closed') return 'Die Anmeldung ist aktuell geschlossen.';
-    return (string)($offer['unavailable_message']??'Die Anmeldung ist aktuell nicht verfügbar.');
+    return 'Die Anmeldung ist geöffnet.';
 }
 
 function site_header(string $active = ''): void {
