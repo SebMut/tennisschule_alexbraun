@@ -55,14 +55,24 @@ label{display:block;font-weight:700;margin:13px 0 5px}input,textarea{width:100%;
 .trainer-section-head h2{margin-bottom:4px}
 .trainer-section-head p{margin:0}
 .trainer-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:0 0 26px}
-.trainer-overview-card{display:grid;grid-template-columns:58px 1fr;gap:11px;align-items:center;border:1px solid var(--line);border-radius:9px;background:#f8f9fb;padding:10px}
+.trainer-overview-card{display:grid;grid-template-columns:28px 58px 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;background:#f8f9fb;padding:10px;transition:border-color .15s ease,box-shadow .15s ease,opacity .15s ease,transform .15s ease}
+.trainer-overview-card.is-hidden{opacity:.62;background:#f1f3f6}
+.trainer-overview-card.is-dragging{opacity:.42;transform:scale(.985)}
+.trainer-overview-card.drag-over{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,124,255,.12)}
+.trainer-drag-handle{width:28px;height:42px;padding:0;border:0;background:transparent;color:#8b93a2;font-size:20px;line-height:1;cursor:grab;touch-action:none}
+.trainer-drag-handle:active{cursor:grabbing;color:var(--blue)}
 .trainer-overview-card img{width:58px;height:58px;object-fit:cover;border-radius:7px;background:#fff;border:1px solid var(--line)}
 .trainer-overview-info{min-width:0}
 .trainer-overview-info strong,.trainer-overview-info span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trainer-overview-info strong{color:var(--ink)}
-.trainer-overview-info span{font-size:13px;color:var(--muted);margin-top:2px}
-.trainer-overview-actions{grid-column:1/-1;display:flex;gap:7px}
-.trainer-overview-actions button{flex:1;padding:7px 9px}
+.trainer-overview-info>span{font-size:13px;color:var(--muted);margin-top:2px}
+.trainer-visibility-status{display:inline-flex!important;width:max-content;margin-top:5px!important;padding:3px 7px;border-radius:999px;font-size:10px!important;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.trainer-visibility-status.visible{background:#e7f5ea;color:#2f6d3a}
+.trainer-visibility-status.hidden{background:#eceef2;color:#6f7684}
+.trainer-overview-actions{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.trainer-overview-actions button{flex:1 1 auto;padding:7px 9px}
+.trainer-overview-actions .move-trainer{flex:0 0 36px;min-width:36px;padding:7px 5px;font-size:15px}
+.trainer-overview-actions .move-trainer:disabled{opacity:.35;cursor:default}
 .trainer-overview-empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:9px;padding:24px;text-align:center;color:var(--muted)}
 .trainer-page-settings{border-top:1px solid var(--line);padding-top:18px;margin-top:4px}
 .trainer-editor-list{margin-top:22px}
@@ -319,3 +329,5 @@ textarea{min-height:96px}
 .offer-switch-panel{display:grid;gap:9px;margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
 .offer-switch-panel .field-inline{margin:0}
 .offer-auto-status{font-size:13px;color:var(--ink);padding-top:2px}
+
+.offer-status-warning{padding:8px 10px;border-radius:7px;background:#fff7e7;color:#8b5a00}
