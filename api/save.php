@@ -53,6 +53,19 @@ foreach (($data['offers']['items'] ?? []) as &$offer) {
 }
 unset($offer);
 
+// Preserve trainer visibility if an older CMS tab does not know the field yet.
+$currentTrainers = $current['trainers']['items'] ?? [];
+foreach (($data['trainers']['items'] ?? []) as $i => &$trainer) {
+    if (!array_key_exists('visible', $trainer)) {
+        $trainer['visible'] = array_key_exists('visible', $currentTrainers[$i] ?? [])
+            ? (bool)$currentTrainers[$i]['visible']
+            : true;
+    } else {
+        $trainer['visible'] = (bool)$trainer['visible'];
+    }
+}
+unset($trainer);
+
 $data['locations']['map_route_button'] = (string)($data['locations']['map_route_button']
     ?? $current['locations']['map_route_button']
     ?? 'Route mit Mapbox berechnen');
