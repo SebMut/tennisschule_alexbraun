@@ -59,6 +59,11 @@ staging_access_require(false);
         <button type="button" class="admin-menu-item stats-tab" data-admin-tab="statistik">Statistik</button>
       </nav>
       <div id="saveMessage" class="message"></div>
+      <div id="conflictBanner" class="cms-conflict-banner" hidden>
+        <div><strong>Neuere Inhalte vorhanden</strong><span>Dieser CMS-Tab ist nicht mehr aktuell. Speichern wurde gestoppt, damit keine neueren Änderungen überschrieben werden.</span></div>
+        <button id="reloadLatestBtn" type="button" class="secondary compact">Neueste Version laden</button>
+      </div>
+      <div id="contentAudit" class="content-audit" hidden></div>
     </div>
     <div id="editor"></div>
   </section>
