@@ -4,6 +4,9 @@ declare(strict_types=1);
 function content_revision_from_bytes(string $bytes): string {
     return hash('sha256', $bytes);
 }
+function content_lower(string $value): string {
+    return function_exists('mb_strtolower') ? mb_strtolower($value,'UTF-8') : strtolower($value);
+}
 
 function normalize_site_content(array $data, array $current = []): array {
     $currentOffers = [];
@@ -165,8 +168,8 @@ function validate_site_content(array $data): array {
 
     $winter = $offersById['winter'] ?? null;
     if (!empty($data['home']['popup_enabled']) && is_array($winter)) {
-        $popupText = mb_strtolower((string)($data['home']['popup_text'] ?? ''), 'UTF-8');
-        $popupHeading = mb_strtolower((string)($data['home']['popup_heading'] ?? ''), 'UTF-8');
+        $popupText = content_lower((string)($data['home']['popup_text'] ?? ''));
+        $popupHeading = content_lower((string)($data['home']['popup_heading'] ?? ''));
         if (str_contains($popupHeading,'winter') || str_contains($popupText,'winter')) {
             $state = validation_offer_state($winter);
             if (str_contains($popupText,'geöffnet') && $state !== 'open') {
@@ -182,7 +185,7 @@ function validate_site_content(array $data): array {
     foreach (($data['trainers']['items'] ?? []) as $i => $trainer) {
         $name = trim((string)($trainer['name'] ?? ''));
         if ($name !== '') {
-            $key = mb_strtolower($name,'UTF-8');
+            $key = content_lower($name);
             if (isset($seenTrainerNames[$key])) {
                 $add('warning','trainerteam','trainer_duplicate','Trainername „'.$name.'“ kommt mehrfach vor.',"trainers.items.$i.name");
             }
@@ -196,7 +199,7 @@ function validate_site_content(array $data): array {
             } elseif ($image === '/assets/media/logo.png') {
                 $add('warning','trainerteam','trainer_placeholder_image',($name!==''?$name:'Trainer').': Es wird noch das Logo als Platzhalterbild verwendet.',"trainers.items.$i.image");
             }
-            if (mb_strtolower($name,'UTF-8') === 'test' || mb_strtolower(trim((string)($trainer['role'] ?? '')),'UTF-8') === 'test') {
+            if (content_lower($name) === 'test' || content_lower(trim((string)($trainer['role'] ?? ''))) === 'test') {
                 $add('warning','trainerteam','trainer_test_content','Ein sichtbarer Test-Trainer ist noch vorhanden.',"trainers.items.$i.name");
             }
         }
