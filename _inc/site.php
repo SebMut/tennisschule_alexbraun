@@ -151,6 +151,10 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     $errorPage=http_response_code()>=400;
     if(($staging||$errorPage)&&!headers_sent()) header('X-Robots-Tag: noindex, nofollow, noarchive',true);
     echo '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
+    if($key==='home'){
+      $hero=(string)($d['site']['hero_image']??'/assets/media/header_bild.webp');
+      if($hero!=='') echo '<link rel="preload" as="image" href="'.h($hero).'" fetchpriority="high">';
+    }
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
