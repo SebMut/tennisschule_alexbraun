@@ -35,37 +35,52 @@ function nav_active(string $active, string $name): string { return $active === $
 function offer_is_current(array $offer): bool {
     return !empty($offer['featured']);
 }
-function offer_registration_open(array $offer): bool {
-    return offer_is_current($offer) && !empty($offer['registration_open']);
-}
-function offer_next_booking_date(array $offer): string {
-    $raw=trim((string)($offer['booking_date']??''));
-    if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$raw,$m)){
-        return $m[3].'.'.$m[2].'.'.$m[1];
-    }
-
-    // Fallback only for older data.
-    $id=(string)($offer['id']??'');
-    $month=$id==='winter' ? 8 : 3;
-    $day=10;
+function offer_parse_date(string $raw, bool $endOfDay=false): ?DateTimeImmutable {
+    if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$raw)) return null;
     $tz=new DateTimeZone('Europe/Berlin');
-    $now=new DateTimeImmutable('now',$tz);
-    $year=(int)$now->format('Y');
-    $candidate=new DateTimeImmutable(sprintf('%04d-%02d-%02d 00:00:00',$year,$month,$day),$tz);
-    if($candidate <= $now) $candidate=$candidate->modify('+1 year');
-    return $candidate->format('d.m.Y');
+    $time=$endOfDay?'23:59:59':'00:00:00';
+    $date=DateTimeImmutable::createFromFormat('!Y-m-d H:i:s',$raw.' '.$time,$tz);
+    return $date instanceof DateTimeImmutable ? $date : null;
+}
+function offer_registration_state(array $offer): string {
+    $start=offer_parse_date(trim((string)($offer['registration_start']??'')));
+    $end=offer_parse_date(trim((string)($offer['registration_end']??'')),true);
+    $now=new DateTimeImmutable('now',new DateTimeZone('Europe/Berlin'));
+
+    if($start && $now < $start) return 'upcoming';
+    if($end && $now > $end) return 'closed';
+    if($start || $end) return 'open';
+
+    // Backward-compatible fallback for older content until dates are saved.
+    if(($offer['status_kind']??'')==='upcoming') return 'upcoming';
+    if(($offer['status_kind']??'')==='closed') return 'closed';
+    return !empty($offer['registration_open']) ? 'open' : 'closed';
+}
+function offer_registration_open(array $offer): bool {
+    return offer_registration_state($offer)==='open';
+}
+function offer_registration_start_label(array $offer): string {
+    $raw=trim((string)($offer['registration_start']??$offer['booking_date']??''));
+    if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$raw,$m)) return $m[3].'.'.$m[2].'.'.$m[1];
+    return '';
 }
 function offer_status_label(array $offer): string {
-    if(!offer_is_current($offer)) return 'Ab ca. '.offer_next_booking_date($offer).' buchbar';
-    return offer_registration_open($offer) ? 'Anmeldung geöffnet' : 'Anmeldung geschlossen';
+    $state=offer_registration_state($offer);
+    if($state==='open') return 'Anmeldung geöffnet';
+    if($state==='closed') return 'Anmeldung geschlossen';
+    $start=offer_registration_start_label($offer);
+    return $start!=='' ? 'Bald verfügbar · ab '.$start : 'Bald verfügbar';
 }
 function offer_status_kind(array $offer): string {
-    if(!offer_is_current($offer)) return 'upcoming';
-    return offer_registration_open($offer) ? 'open' : 'closed';
+    return offer_registration_state($offer);
 }
 function offer_unavailable_message(array $offer): string {
-    if(!offer_is_current($offer)) return offer_status_label($offer).'.';
-    if(!offer_registration_open($offer)) return 'Die Anmeldung ist aktuell geschlossen.';
+    $state=offer_registration_state($offer);
+    if($state==='upcoming'){
+        $start=offer_registration_start_label($offer);
+        return $start!=='' ? 'Ab ca. '.$start.' buchbar.' : 'Die Anmeldung ist bald verfügbar.';
+    }
+    if($state==='closed') return 'Die Anmeldung ist aktuell geschlossen.';
     return (string)($offer['unavailable_message']??'Die Anmeldung ist aktuell nicht verfügbar.');
 }
 
