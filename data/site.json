@@ -286,6 +286,16 @@
                 "focus": "",
                 "bio": "",
                 "visible": true
+            },
+            {
+                "name": "Julius Brand",
+                "role": "Trainer",
+                "image": "/assets/media/logo.png",
+                "qualifications": "",
+                "experience": "",
+                "focus": "",
+                "bio": "",
+                "visible": true
             }
         ],
         "page_title": "Trainerteam",
