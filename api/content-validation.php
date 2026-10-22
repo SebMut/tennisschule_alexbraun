@@ -33,7 +33,6 @@ function normalize_site_content(array $data, array $current = []): array {
         ));
         $offer['featured'] = !empty($offer['featured']);
 
-        // The public status is derived only from the registration window.
         unset(
             $offer['status'],
             $offer['status_kind'],
@@ -166,17 +165,38 @@ function validate_site_content(array $data): array {
         }
     }
 
-    $winter = $offersById['winter'] ?? null;
-    if (!empty($data['home']['popup_enabled']) && is_array($winter)) {
+    // Popup status validation is offer-aware. It detects the referenced offer from
+    // heading/text instead of assuming Wintertraining. Generic popups are not checked.
+    if (!empty($data['home']['popup_enabled'])) {
         $popupText = content_lower((string)($data['home']['popup_text'] ?? ''));
         $popupHeading = content_lower((string)($data['home']['popup_heading'] ?? ''));
-        if (str_contains($popupHeading,'winter') || str_contains($popupText,'winter')) {
-            $state = validation_offer_state($winter);
+        $popupContent = trim($popupHeading.' '.$popupText);
+        $matchedOffer = null;
+        foreach ($offersById as $id => $offer) {
+            $title = trim((string)($offer['title'] ?? ''));
+            $needles = array_filter([
+                content_lower($title),
+                $id === 'sommer' ? 'sommertraining' : '',
+                $id === 'winter' ? 'wintertraining' : '',
+                $id === 'camps' ? 'tenniscamp' : '',
+                $id === 'camps' ? 'tenniscamps' : '',
+            ]);
+            foreach ($needles as $needle) {
+                if ($needle !== '' && str_contains($popupContent, $needle)) {
+                    $matchedOffer = $offer;
+                    break 2;
+                }
+            }
+        }
+
+        if (is_array($matchedOffer)) {
+            $title = trim((string)($matchedOffer['title'] ?? 'Angebot'));
+            $state = validation_offer_state($matchedOffer);
             if (str_contains($popupText,'geöffnet') && $state !== 'open') {
-                $add('error','home','popup_offer_mismatch','Popup sagt „Anmeldung geöffnet“, das Wintertraining ist laut Datumsfenster aber nicht geöffnet.','home.popup_text');
+                $add('error','home','popup_offer_mismatch','Popup sagt „Anmeldung geöffnet“, '.$title.' ist laut Datumsfenster aber nicht geöffnet.','home.popup_text');
             }
             if (str_contains($popupText,'geschlossen') && $state === 'open') {
-                $add('error','home','popup_offer_mismatch','Popup sagt „Anmeldung geschlossen“, das Wintertraining ist laut Datumsfenster aber geöffnet.','home.popup_text');
+                $add('error','home','popup_offer_mismatch','Popup sagt „Anmeldung geschlossen“, '.$title.' ist laut Datumsfenster aber geöffnet.','home.popup_text');
             }
         }
     }
