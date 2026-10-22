@@ -226,7 +226,8 @@
         "qualifications": "PTR Professional · GPTCA B Level Coach",
         "experience": "Ehemaliger Weltranglisten-Spieler · 2. Bundesliga-Akteur des MTTC Iphitos",
         "focus": "Moderne, praxisnahe Trainingskonzepte · individuelle Förderung",
-        "bio": "Alex Braun verbindet Erfahrung aus nationalem und internationalem Tennis mit langjähriger Tätigkeit in Vereinen und Organisationen."
+        "bio": "Alex Braun verbindet Erfahrung aus nationalem und internationalem Tennis mit langjähriger Tätigkeit in Vereinen und Organisationen.",
+        "visible": true
       },
       {
         "name": "Lena Gruber",
@@ -235,7 +236,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Felix Kellerer",
@@ -244,7 +246,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Alexa Pirok",
@@ -253,7 +256,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Christoph Konitz",
@@ -262,7 +266,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Felix Fauth",
@@ -271,7 +276,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Niclas Hargasser",
@@ -280,7 +286,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Tobias Schumacher",
@@ -289,7 +296,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "Julius Brand",
@@ -298,7 +306,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       },
       {
         "name": "test",
@@ -307,7 +316,8 @@
         "qualifications": "",
         "experience": "",
         "focus": "",
-        "bio": ""
+        "bio": "",
+        "visible": true
       }
     ],
     "page_title": "Trainerteam",
