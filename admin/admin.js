@@ -62,17 +62,26 @@
   function selectField(label,path,value,options,note=''){
     return `<label>${esc(label)}<select data-path="${esc(path)}">${options.map(o=>`<option value="${esc(o.value)}" ${o.value===value?'selected':''}>${esc(o.label)}</option>`).join('')}</select>${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
   }
-  function offerNextBookingLabel(offer){
-    const raw=String(offer?.booking_date||'');
-    const m=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if(m)return 'Ab ca. '+m[3]+'.'+m[2]+'.'+m[1]+' buchbar';
-    return 'Buchungsdatum im CMS festlegen';
+  function parseAdminDate(raw,endOfDay=false){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(String(raw||'')))return null;
+    const d=new Date(String(raw)+(endOfDay?'T23:59:59':'T00:00:00'));
+    return Number.isNaN(d.getTime())?null:d;
+  }
+  function formatAdminDateOnly(raw){
+    const m=String(raw||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m?m[3]+'.'+m[2]+'.'+m[1]:'';
   }
   function offerAdminStatus(offer){
-    if(!offer?.featured)return {label:offerNextBookingLabel(offer),kind:'upcoming'};
-    return offer?.registration_open
-      ? {label:'Anmeldung geöffnet',kind:'open'}
-      : {label:'Anmeldung geschlossen',kind:'closed'};
+    const now=new Date();
+    const start=parseAdminDate(offer?.registration_start);
+    const end=parseAdminDate(offer?.registration_end,true);
+    if(start&&now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(offer.registration_start),kind:'upcoming'};
+    if(end&&now>end)return {label:'Anmeldung geschlossen',kind:'closed'};
+    if(start&&!end&&offer?.status_kind==='closed')return {label:'Anmeldung geschlossen',kind:'closed',legacy:true};
+    if(start||end)return {label:'Anmeldung geöffnet',kind:'open'};
+    if(offer?.status_kind==='upcoming')return {label:'Bald verfügbar',kind:'upcoming',legacy:true};
+    if(offer?.status_kind==='closed')return {label:'Anmeldung geschlossen',kind:'closed',legacy:true};
+    return {label:offer?.registration_open?'Anmeldung geöffnet':'Anmeldung geschlossen',kind:offer?.registration_open?'open':'closed',legacy:true};
   }
   function linesField(label,path,value){return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value||[]).join('\n'))}</textarea></label>`;}
   function preview(value,label='Aktuell verwendetes Bild',wide=false){return value?`<div class="current-image${wide?' wide':''}"><span class="current-image-label">${esc(label)}</span><img src="${esc(value)}" alt="" loading="lazy"></div>`:'';}
@@ -206,10 +215,13 @@
         </div>
 
         <div class="offer-switch-panel">
-          ${checkboxField('Aktuell',`offers.items.${i}.featured`,o.featured,'Ist das Training Teil der aktuell laufenden bzw. anstehenden Saison?')}
-          ${checkboxField('Anmeldung geöffnet',`offers.items.${i}.registration_open`,o.registration_open,'Wirkt nur, wenn „Aktuell“ eingeschaltet ist.')}
-          ${dateField('Buchbar ab',`offers.items.${i}.booking_date`,o.booking_date,'Dieses Datum wird auf den Bildern und im Hinweis-Modal identisch verwendet.')}
-          <div class="offer-auto-status"><strong>Anzeige auf der Website:</strong> ${esc(state.label)}</div>
+          ${checkboxField('Auf Startseite hervorheben',`offers.items.${i}.featured`,o.featured,'Nur die optische Hervorhebung wird manuell gesteuert.')}
+          <div class="grid2">
+            ${dateField('Anmeldung startet',`offers.items.${i}.registration_start`,o.registration_start,'Vor diesem Datum erscheint „Bald verfügbar“.')}
+            ${dateField('Anmeldung endet',`offers.items.${i}.registration_end`,o.registration_end,'Nach diesem Datum erscheint „Anmeldung geschlossen“.')}
+          </div>
+          <div class="offer-auto-status"><strong>Automatischer Status:</strong> ${esc(state.label)}</div>
+          ${state.legacy?'<div class="field-note offer-status-warning">Bitte noch ein Enddatum eintragen, damit der Status vollständig automatisch läuft.</div>':''}
         </div>
 
         <div class="grid2">
@@ -407,7 +419,7 @@
   function bindEditors(){
     editor.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{
       setPath(data,el.dataset.path,el.value);
-      if(el.dataset.path.startsWith('offers.items.')&&el.dataset.path.endsWith('.booking_date')){
+      if(el.dataset.path.startsWith('offers.items.')&&(el.dataset.path.endsWith('.registration_start')||el.dataset.path.endsWith('.registration_end'))){
         render();
         showTab('angebote');
       }
@@ -415,7 +427,7 @@
     editor.querySelectorAll('[data-number-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.numberPath,Number(el.value))));
     editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>{
       setPath(data,el.dataset.boolPath,el.checked);
-      if(el.dataset.boolPath.startsWith('offers.items.')&&(el.dataset.boolPath.endsWith('.featured')||el.dataset.boolPath.endsWith('.registration_open'))){
+      if(el.dataset.boolPath.startsWith('offers.items.')&&el.dataset.boolPath.endsWith('.featured')){
         render();
         showTab('angebote');
       }
