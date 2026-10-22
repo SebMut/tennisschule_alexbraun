@@ -628,9 +628,99 @@
   function tableBox(title,obj,label){const rows=Object.entries(obj).slice(0,12);return `<div class="stats-box"><h3>${esc(title)}</h3><table class="stats-table"><thead><tr><th>${esc(label)}</th><th>Anzahl</th></tr></thead><tbody>${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')||'<tr><td colspan="2">Noch keine Daten</td></tr>'}</tbody></table></div>`;}
   function eventsBox(events){const rows=Object.entries(events).slice(0,18);return `<div class="stats-box"><h3>Buttons & Links</h3><table class="stats-table"><thead><tr><th>Aktion</th><th>Klicks</th></tr></thead><tbody>${rows.map(([k,v])=>`<tr><td>${esc(v.label||k)}<br><small>${esc(v.path||'')}</small></td><td>${esc(v.count||0)}</td></tr>`).join('')||'<tr><td colspan="2">Noch keine Daten</td></tr>'}</tbody></table></div>`;}
 
+  function renderValidation(validation){
+    validationState=validation||{errors:0,warnings:0,issues:[]};
+    if(!contentAudit)return;
+    const issues=validationState.issues||[];
+    if(!issues.length){
+      contentAudit.hidden=false;
+      contentAudit.innerHTML='<div class="content-audit-head"><strong>Inhaltsprüfung</strong><div class="content-audit-counts"><span class="audit-count ok">Keine Probleme</span></div></div>';
+      return;
+    }
+    contentAudit.hidden=false;
+    contentAudit.innerHTML=
+      '<div class="content-audit-head"><strong>Inhaltsprüfung</strong><div class="content-audit-counts">'
+      +(validationState.errors?'<span class="audit-count error">'+esc(validationState.errors)+' Fehler</span>':'')
+      +(validationState.warnings?'<span class="audit-count warning">'+esc(validationState.warnings)+' Hinweise</span>':'')
+      +'</div></div><div class="content-audit-list">'
+      +issues.map(issue=>'<div class="content-audit-item"><span class="audit-dot '+esc(issue.severity)+'"></span><span>'+esc(issue.message)+'</span><button type="button" class="secondary" data-audit-section="'+esc(issue.section||'allgemein')+'">Öffnen</button></div>').join('')
+      +'</div>';
+    contentAudit.querySelectorAll('[data-audit-section]').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.auditSection||'allgemein')));
+  }
+
+  async function validateDraft(){
+    if(!data)return validationState;
+    try{
+      const r=await request('/api/validate.php',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},
+        body:JSON.stringify({data})
+      });
+      renderValidation(r.validation);
+      return r.validation;
+    }catch(err){
+      msg(saveMessage,'Inhaltsprüfung fehlgeschlagen: '+err.message,'warning');
+      return validationState;
+    }
+  }
+  function scheduleValidation(){
+    clearTimeout(validationTimer);
+    validationTimer=setTimeout(()=>validateDraft(),320);
+  }
+  function showConflict(){
+    if(conflictBanner)conflictBanner.hidden=false;
+  }
+  function clearConflict(){
+    if(conflictBanner)conflictBanner.hidden=true;
+  }
+
+  async function loadRevisions(){
+    const box=$('#revisionHistory');
+    const refresh=$('#revisionRefresh');
+    if(refresh&&!refresh.dataset.bound){
+      refresh.dataset.bound='1';
+      refresh.addEventListener('click',loadRevisions);
+    }
+    if(!box)return;
+    box.innerHTML='<p class="muted">Versionen werden geladen …</p>';
+    try{
+      const r=await request('/api/revisions.php');
+      const items=r.revisions||[];
+      box.innerHTML='<div class="revision-list">'
+        +(items.map(item=>'<div class="revision-row"><code>'+esc(item.short_sha||'')+'</code><div class="revision-meta"><strong>'+esc((item.message||'Inhaltsänderung').split('\n')[0])+'</strong><span>'+esc(formatAdminDate(item.date))+(item.author?' · '+esc(item.author):'')+'</span></div><button type="button" class="secondary small restore-revision" data-sha="'+esc(item.sha||'')+'">Wiederherstellen</button></div>').join('')||'<p class="muted">Keine Versionen gefunden.</p>')
+        +'</div>';
+      box.querySelectorAll('.restore-revision').forEach(btn=>btn.addEventListener('click',()=>restoreRevision(btn.dataset.sha)));
+    }catch(err){
+      box.innerHTML='<p class="message error">'+esc(err.message)+'</p>';
+    }
+  }
+  async function restoreRevision(sha){
+    if(!sha)return;
+    if(dirty&&!confirm('Es gibt ungespeicherte Änderungen. Beim Wiederherstellen gehen diese im aktuellen Tab verloren. Fortfahren?'))return;
+    if(!confirm('Diese Version wirklich wiederherstellen? Die aktuelle Version bleibt in GitHub erhalten und kann später erneut wiederhergestellt werden.'))return;
+    try{
+      const r=await request('/api/revisions.php',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},
+        body:JSON.stringify({sha,revision})
+      });
+      revision=r.revision||revision;
+      renderValidation(r.validation);
+      await loadContent();
+      showTab('weitere');
+      msg(saveMessage,'Version wiederhergestellt und neu in GitHub versioniert.','success');
+    }catch(err){
+      if(err.status===409)showConflict();
+      if(err.payload?.validation)renderValidation(err.payload.validation);
+      msg(saveMessage,err.message,'error');
+    }
+  }
+
   async function loadContent(){
     const r=await request('/api/content.php');
-    data=r.data;csrf=r.csrf;dirty=false;
+    data=r.data;csrf=r.csrf;revision=r.revision||'';dirty=false;
+    clearConflict();
+    renderValidation(r.validation);
     loginPanel.hidden=true;editorPanel.hidden=false;logoutBtn.hidden=false;
     document.body.classList.add('admin-editing');
     render();updateDirtyState('saved');syncAdminHeaderHeight();
@@ -639,16 +729,31 @@
   loginForm.addEventListener('submit',async e=>{e.preventDefault();msg(loginMessage,'Anmeldung …');try{const r=await request('/api/auth.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#password').value})});csrf=r.csrf||'';$('#password').value='';await loadContent();msg(loginMessage,'');}catch(err){msg(loginMessage,err.message,'error');}});
   async function saveContent(){
     if(!data||saveBtn.disabled)return;
+    const validation=await validateDraft();
+    if((validation?.errors||0)>0){
+      dirty=true;updateDirtyState('dirty');
+      msg(saveMessage,'Bitte zuerst die blockierenden Inhaltsfehler beheben.','error');
+      return;
+    }
     saveBtn.disabled=true;updateDirtyState('saving');msg(saveMessage,'Änderungen werden gespeichert …');
     try{
-      const r=await request('/api/save.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({data})});
+      const r=await request('/api/save.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({data,revision})});
+      revision=r.revision||revision;
+      renderValidation(r.validation);
+      clearConflict();
       dirty=false;updateDirtyState('saved');
       msg(saveMessage,r.github?.ok?'Gespeichert und in GitHub versioniert.':'Website gespeichert; GitHub-Sicherung fehlgeschlagen: '+(r.github?.warning||''),r.github?.ok?'success':'warning');
     }catch(err){
+      if(err.status===409)showConflict();
+      if(err.payload?.validation)renderValidation(err.payload.validation);
       dirty=true;updateDirtyState('dirty');msg(saveMessage,err.message,'error');
     }finally{saveBtn.disabled=false;}
   }
   saveBtn.addEventListener('click',saveContent);
+  reloadLatestBtn?.addEventListener('click',async()=>{
+    if(dirty&&!confirm('Ungespeicherte Änderungen in diesem Tab verwerfen und die neueste Version laden?'))return;
+    await loadContent();
+  });
   logoutBtn.addEventListener('click',async()=>{try{await request('/api/logout.php',{method:'POST',headers:{'X-CSRF-Token':csrf}});}catch(_){}location.reload();});
   adminMenu?.querySelectorAll('[data-admin-tab]').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.adminTab||'allgemein')));
 
