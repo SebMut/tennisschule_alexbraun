@@ -2,6 +2,7 @@
   const $=s=>document.querySelector(s);
   const loginPanel=$('#loginPanel'),editorPanel=$('#editorPanel'),loginForm=$('#loginForm'),loginMessage=$('#loginMessage');
   const logoutBtn=$('#logoutBtn'),saveBtn=$('#saveBtn'),saveMessage=$('#saveMessage'),editor=$('#editor'),adminMenu=$('#adminMenu');
+  const contentAuditWrap=$('#contentAuditWrap'),contentAuditToggle=$('#contentAuditToggle'),contentAuditSummary=$('#contentAuditSummary');
   const contentAudit=$('#contentAudit'),conflictBanner=$('#conflictBanner'),reloadLatestBtn=$('#reloadLatestBtn');
   const currentSectionTitle=$('#currentSectionTitle'),currentSectionDescription=$('#currentSectionDescription'),dirtyState=$('#dirtyState');
   let storedTab='allgemein';
@@ -629,22 +630,34 @@
 
   function renderValidation(validation){
     validationState=validation||{errors:0,warnings:0,issues:[]};
-    if(!contentAudit)return;
+    if(!contentAudit||!contentAuditWrap)return;
     const issues=validationState.issues||[];
+    const errors=Number(validationState.errors||0);
+    const warnings=Number(validationState.warnings||0);
+
+    contentAuditWrap.hidden=false;
+    if(contentAuditSummary){
+      contentAuditSummary.textContent=issues.length
+        ? [errors?errors+' Fehler':'',warnings?warnings+' Hinweise':''].filter(Boolean).join(' · ')
+        : 'Keine Probleme';
+    }
+
     if(!issues.length){
-      contentAudit.hidden=false;
-      contentAudit.innerHTML='<div class="content-audit-head"><strong>Inhaltsprüfung</strong><div class="content-audit-counts"><span class="audit-count ok">Keine Probleme</span></div></div>';
+      contentAudit.innerHTML='<div class="content-audit-empty">Keine Probleme gefunden.</div>';
       return;
     }
-    contentAudit.hidden=false;
-    contentAudit.innerHTML=
-      '<div class="content-audit-head"><strong>Inhaltsprüfung</strong><div class="content-audit-counts">'
-      +(validationState.errors?'<span class="audit-count error">'+esc(validationState.errors)+' Fehler</span>':'')
-      +(validationState.warnings?'<span class="audit-count warning">'+esc(validationState.warnings)+' Hinweise</span>':'')
-      +'</div></div><div class="content-audit-list">'
+
+    contentAudit.innerHTML='<div class="content-audit-list">'
       +issues.map(issue=>'<div class="content-audit-item"><span class="audit-dot '+esc(issue.severity)+'"></span><span>'+esc(issue.message)+'</span><button type="button" class="secondary" data-audit-section="'+esc(issue.section||'allgemein')+'">Öffnen</button></div>').join('')
       +'</div>';
-    contentAudit.querySelectorAll('[data-audit-section]').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.auditSection||'allgemein')));
+
+    contentAudit.querySelectorAll('[data-audit-section]').forEach(btn=>btn.addEventListener('click',()=>{
+      showTab(btn.dataset.auditSection||'allgemein');
+      if(window.matchMedia('(max-width:700px)').matches){
+        contentAuditWrap.classList.add('is-collapsed');
+        contentAuditToggle?.setAttribute('aria-expanded','false');
+      }
+    }));
   }
 
   async function validateDraft(){
@@ -715,11 +728,31 @@
     }
   }
 
+  function setAuditCollapsed(collapsed){
+    if(!contentAuditWrap||!contentAuditToggle)return;
+    contentAuditWrap.classList.toggle('is-collapsed',collapsed);
+    contentAuditToggle.setAttribute('aria-expanded',collapsed?'false':'true');
+    try{sessionStorage.setItem('ts_admin_audit_collapsed',collapsed?'1':'0');}catch(_){}
+  }
+  function initAuditState(){
+    let stored=null;
+    try{stored=sessionStorage.getItem('ts_admin_audit_collapsed');}catch(_){}
+    if(stored!==null){
+      setAuditCollapsed(stored==='1');
+      return;
+    }
+    setAuditCollapsed(window.matchMedia('(max-width:700px)').matches);
+  }
+  contentAuditToggle?.addEventListener('click',()=>{
+    setAuditCollapsed(!contentAuditWrap?.classList.contains('is-collapsed'));
+  });
+
   async function loadContent(){
     const r=await request('/api/content.php');
     data=r.data;csrf=r.csrf;revision=r.revision||'';dirty=false;
     clearConflict();
     renderValidation(r.validation);
+    initAuditState();
     loginPanel.hidden=true;editorPanel.hidden=false;logoutBtn.hidden=false;
     document.body.classList.add('admin-editing');
     render();updateDirtyState('saved');syncAdminHeaderHeight();
