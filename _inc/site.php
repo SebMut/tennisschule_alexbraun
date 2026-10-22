@@ -49,6 +49,7 @@ function offer_registration_state(array $offer): string {
 
     if($start && $now < $start) return 'upcoming';
     if($end && $now > $end) return 'closed';
+    if($start && !$end && ($offer['status_kind']??'')==='closed') return 'closed';
     if($start || $end) return 'open';
 
     // Backward-compatible fallback for older content until dates are saved.
