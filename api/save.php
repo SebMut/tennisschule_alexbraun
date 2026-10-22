@@ -37,6 +37,15 @@ foreach (($data['offers']['items'] ?? []) as &$offer) {
     } else {
         $offer['registration_open'] = (bool)$offer['registration_open'];
     }
+    if (empty($offer['registration_start'])) {
+        $offer['registration_start'] = (string)($currentOffersById[$id]['registration_start']
+            ?? $offer['booking_date']
+            ?? $currentOffersById[$id]['booking_date']
+            ?? '');
+    }
+    if (!array_key_exists('registration_end', $offer)) {
+        $offer['registration_end'] = (string)($currentOffersById[$id]['registration_end'] ?? '');
+    }
     if (empty($offer['booking_date']) && !empty($currentOffersById[$id]['booking_date'])) {
         $offer['booking_date'] = (string)$currentOffersById[$id]['booking_date'];
     }
