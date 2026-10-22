@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/auth-lib.php';
+require __DIR__ . '/content-validation.php';
 require_auth();
 
 $json = @file_get_contents(site_json_path());
@@ -8,4 +9,10 @@ if ($json === false) json_response(['ok'=>false,'error'=>'Inhaltsdatei konnte ni
 $data = json_decode($json, true);
 if (!is_array($data)) json_response(['ok'=>false,'error'=>'Inhaltsdatei ist ungültig.'], 500);
 
-json_response(['ok'=>true,'data'=>$data,'csrf'=>csrf_token()]);
+json_response([
+    'ok'=>true,
+    'data'=>$data,
+    'csrf'=>csrf_token(),
+    'revision'=>content_revision_from_bytes($json),
+    'validation'=>validate_site_content($data),
+]);
