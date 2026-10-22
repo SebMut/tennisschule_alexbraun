@@ -143,6 +143,50 @@
   updateSiteHeader();
   window.addEventListener('scroll',updateSiteHeader,{passive:true});
 
+  const desktopDropdown=document.querySelector('.main-nav .nav-dropdown');
+  const desktopDropdownTrigger=desktopDropdown?.querySelector(':scope > a');
+  const desktopDropdownMenu=desktopDropdown?.querySelector('.dropdown-menu');
+
+  const setDesktopDropdown=open=>{
+    if(!desktopDropdown||!desktopDropdownTrigger||!desktopDropdownMenu)return;
+    desktopDropdown.classList.toggle('is-open',open);
+    desktopDropdownTrigger.setAttribute('aria-expanded',String(open));
+  };
+
+  if(desktopDropdownTrigger&&desktopDropdownMenu){
+    desktopDropdownTrigger.setAttribute('aria-haspopup','true');
+    desktopDropdownTrigger.setAttribute('aria-expanded','false');
+
+    desktopDropdownTrigger.addEventListener('click',e=>{
+      const isOpen=desktopDropdown.classList.contains('is-open');
+      // First click opens the menu. If it is already open, the normal
+      // "Standorte" link may navigate to the overview page.
+      if(!isOpen){
+        e.preventDefault();
+        setDesktopDropdown(true);
+        desktopDropdownMenu.querySelector('a')?.focus({preventScroll:true});
+      }
+    });
+
+    desktopDropdown.addEventListener('mouseenter',()=>setDesktopDropdown(true));
+    desktopDropdown.addEventListener('mouseleave',()=>setDesktopDropdown(false));
+
+    desktopDropdownMenu.addEventListener('click',e=>{
+      if(e.target.closest('a')) setDesktopDropdown(false);
+    });
+
+    document.addEventListener('pointerdown',e=>{
+      if(!desktopDropdown.contains(e.target)) setDesktopDropdown(false);
+    });
+
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&desktopDropdown.classList.contains('is-open')){
+        setDesktopDropdown(false);
+        desktopDropdownTrigger.focus();
+      }
+    });
+  }
+
   const toggle=document.querySelector('.menu-toggle');
   const mobileMenu=document.getElementById('mobileMenu');
   const mobileOverlay=document.getElementById('mobileOverlay');
