@@ -248,20 +248,25 @@
       <div class="trainer-section-head">
         <div>
           <h2>Trainerteam</h2>
-          <p class="muted">Aktuell ${trainers.length} Trainer im Team.</p>
+          <p class="muted">${trainers.length} Trainer · ${trainers.filter(t=>t.visible!==false).length} sichtbar.</p>
         </div>
         <button type="button" class="add-trainer">+ Trainer hinzufügen</button>
       </div>
 
       <div class="trainer-overview">
         ${trainers.map((t,i)=>`
-          <article class="trainer-overview-card">
+          <article class="trainer-overview-card${t.visible===false?' is-hidden':''}" data-trainer-drop-index="${i}">
+            <button type="button" class="trainer-drag-handle" draggable="true" data-trainer-drag-index="${i}" aria-label="${esc((t.name||'Trainer')+' verschieben')}" title="Ziehen zum Verschieben">⋮⋮</button>
             <img src="${esc(t.image||'/assets/media/logo.png')}" alt="${esc(t.name||'Trainer')}" loading="lazy">
             <div class="trainer-overview-info">
               <strong>${esc(t.name||'Trainer')}</strong>
               <span>${esc(t.role||'')}</span>
+              <span class="trainer-visibility-status ${t.visible===false?'hidden':'visible'}">${t.visible===false?'Ausgeblendet':'Sichtbar'}</span>
             </div>
             <div class="trainer-overview-actions">
+              <button type="button" class="secondary small move-trainer" data-index="${i}" data-direction="-1" ${i===0?'disabled':''} aria-label="Nach oben">↑</button>
+              <button type="button" class="secondary small move-trainer" data-index="${i}" data-direction="1" ${i===trainers.length-1?'disabled':''} aria-label="Nach unten">↓</button>
+              <button type="button" class="secondary small toggle-trainer-visible" data-index="${i}">${t.visible===false?'Einblenden':'Ausblenden'}</button>
               <button type="button" class="secondary small edit-trainer" data-index="${i}">Bearbeiten</button>
               <button type="button" class="danger small remove-trainer" data-index="${i}">Löschen</button>
             </div>
@@ -281,6 +286,7 @@
             <strong>${esc(t.name||'Trainer')}</strong>
             <button type="button" class="danger small remove-trainer" data-index="${i}">Löschen</button>
           </div>
+          ${checkboxField('Auf Website sichtbar',`trainers.items.${i}.visible`,t.visible!==false,'Ausgeblendete Trainer bleiben im CMS erhalten, erscheinen aber nicht öffentlich.')}
           <div class="grid2">
             ${textField('Name',`trainers.items.${i}.name`,t.name)}
             ${textField('Rolle',`trainers.items.${i}.role`,t.role)}
@@ -431,6 +437,12 @@
         render();
         showTab('angebote');
       }
+      if(el.dataset.boolPath.startsWith('trainers.items.')&&el.dataset.boolPath.endsWith('.visible')){
+        const scrollTop=editor.scrollTop;
+        render();
+        showTab('trainerteam');
+        requestAnimationFrame(()=>{editor.scrollTop=scrollTop;});
+      }
     }));
     editor.querySelectorAll('[data-lines]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.lines,el.value.split('\n').map(x=>x.trim()).filter(Boolean))));
     editor.querySelectorAll('.cms-upload').forEach(el=>el.addEventListener('change',uploadImage));
@@ -445,8 +457,65 @@
       }
     };
     editor.querySelectorAll('.remove-trainer').forEach(btn=>btn.addEventListener('click',()=>removeTrainer(Number(btn.dataset.index))));
+
+    const refreshTrainerTab=(scrollTop=editor.scrollTop)=>{
+      markDirty();
+      render();
+      showTab('trainerteam');
+      requestAnimationFrame(()=>{editor.scrollTop=scrollTop;});
+    };
+    const moveTrainer=(from,to)=>{
+      if(from===to||from<0||to<0||from>=data.trainers.items.length||to>=data.trainers.items.length)return;
+      const scrollTop=editor.scrollTop;
+      const [trainer]=data.trainers.items.splice(from,1);
+      data.trainers.items.splice(to,0,trainer);
+      refreshTrainerTab(scrollTop);
+    };
+
+    editor.querySelectorAll('.toggle-trainer-visible').forEach(btn=>btn.addEventListener('click',()=>{
+      const i=Number(btn.dataset.index),trainer=data.trainers.items[i];
+      if(!trainer)return;
+      trainer.visible=trainer.visible===false;
+      refreshTrainerTab();
+    }));
+    editor.querySelectorAll('.move-trainer').forEach(btn=>btn.addEventListener('click',()=>{
+      const from=Number(btn.dataset.index),direction=Number(btn.dataset.direction);
+      moveTrainer(from,from+direction);
+    }));
+
+    let draggedTrainerIndex=null;
+    editor.querySelectorAll('.trainer-drag-handle').forEach(handle=>{
+      handle.addEventListener('dragstart',e=>{
+        draggedTrainerIndex=Number(handle.dataset.trainerDragIndex);
+        e.dataTransfer.effectAllowed='move';
+        e.dataTransfer.setData('text/plain',String(draggedTrainerIndex));
+        handle.closest('.trainer-overview-card')?.classList.add('is-dragging');
+      });
+      handle.addEventListener('dragend',()=>{
+        draggedTrainerIndex=null;
+        editor.querySelectorAll('.trainer-overview-card').forEach(card=>card.classList.remove('is-dragging','drag-over'));
+      });
+    });
+    editor.querySelectorAll('[data-trainer-drop-index]').forEach(card=>{
+      card.addEventListener('dragover',e=>{
+        if(draggedTrainerIndex===null)return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect='move';
+        editor.querySelectorAll('.trainer-overview-card').forEach(x=>x.classList.remove('drag-over'));
+        card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
+      card.addEventListener('drop',e=>{
+        e.preventDefault();
+        const to=Number(card.dataset.trainerDropIndex);
+        const from=draggedTrainerIndex ?? Number(e.dataTransfer.getData('text/plain'));
+        draggedTrainerIndex=null;
+        moveTrainer(from,to);
+      });
+    });
+
     editor.querySelectorAll('.add-trainer').forEach(btn=>btn.addEventListener('click',()=>{
-      data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png',qualifications:'',experience:'',focus:'',bio:''});
+      data.trainers.items.push({name:'Neuer Trainer',role:'Trainer',image:'/assets/media/logo.png',qualifications:'',experience:'',focus:'',bio:'',visible:true});
       markDirty();
       render();
       showTab('trainerteam');
