@@ -441,3 +441,21 @@ textarea{min-height:96px}
   .revision-row{grid-template-columns:1fr}
 }
 
+
+/* Keep CMS dropdown controls clickable above neighbouring content */
+.cms-card,.trainer-page-settings,.contact-info-box{position:relative}
+.cms-card:focus-within,.trainer-page-settings:focus-within,.contact-info-box:focus-within{z-index:12}
+select{
+  position:relative;
+  z-index:2;
+  width:100%;
+  min-height:42px;
+  cursor:pointer;
+}
+select:focus{z-index:20}
+@media(max-width:760px){
+  .admin-sticky-controls{z-index:30}
+  #editor,.content-audit-wrap{position:relative;z-index:1}
+  .cms-section{position:relative;z-index:1}
+  .cms-card:focus-within,.trainer-page-settings:focus-within,.contact-info-box:focus-within{z-index:5}
+}
