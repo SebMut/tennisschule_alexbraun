@@ -53,6 +53,20 @@ staging_access_require(false);
           <h1 id="currentSectionTitle">Allgemein</h1>
           <p id="currentSectionDescription">Grundlegende Website-Einstellungen, Navigation, Hero und Footer.</p>
         </div>
+        <label class="mobile-section-picker" for="mobileSectionSelect">
+          <span>Bereich</span>
+          <select id="mobileSectionSelect" aria-label="CMS-Bereich auswählen">
+            <option value="allgemein">Allgemein</option>
+            <option value="home">Home</option>
+            <option value="angebote">Angebote</option>
+            <option value="trainerteam">Trainerteam</option>
+            <option value="standorte">Standorte</option>
+            <option value="kontakt">Kontakt</option>
+            <option value="newsletter">Newsletter</option>
+            <option value="weitere">Weitere Seiten</option>
+            <option value="statistik">Statistik</option>
+          </select>
+        </label>
         <div class="save-cluster">
           <span id="dirtyState" class="dirty-state saved">Gespeichert</span>
           <button id="saveBtn">Änderungen speichern</button>
