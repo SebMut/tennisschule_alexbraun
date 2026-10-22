@@ -138,7 +138,9 @@
         "featured": false,
         "home_cta_label": "Sommertraining ansehen",
         "home_cta_url": "/angebote/?training=sommer#sommertraining",
-        "booking_date": "2027-03-10"
+        "booking_date": "2027-03-10",
+        "registration_start": "2027-03-10",
+        "registration_end": ""
       },
       {
         "id": "winter",
@@ -165,7 +167,9 @@
         "featured": true,
         "home_cta_label": "Jetzt Wintertraining anmelden",
         "home_cta_url": "/angebote/?training=winter#wintertraining",
-        "booking_date": "2026-08-28"
+        "booking_date": "2026-08-28",
+        "registration_start": "2026-08-28",
+        "registration_end": ""
       },
       {
         "id": "camps",
@@ -193,7 +197,9 @@
         "featured": false,
         "home_cta_label": "Tenniscamps ansehen",
         "home_cta_url": "/angebote/?training=camps#tenniscamps",
-        "booking_date": "2027-03-10"
+        "booking_date": "2027-03-10",
+        "registration_start": "2027-03-10",
+        "registration_end": ""
       }
     ],
     "page_title": "Unser Angebot",
