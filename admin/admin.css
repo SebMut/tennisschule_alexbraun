@@ -459,3 +459,44 @@ select:focus{z-index:20}
   .cms-section{position:relative;z-index:1}
   .cms-card:focus-within,.trainer-page-settings:focus-within,.contact-info-box:focus-within{z-index:5}
 }
+
+/* Final mobile audit placement: above "Aktueller Bereich", never over editor fields */
+.content-audit-wrap{
+  position:relative !important;
+  z-index:1 !important;
+  inset:auto !important;
+  margin:0 0 12px !important;
+  overflow:hidden;
+}
+.content-audit-toggle{
+  position:relative !important;
+  z-index:1 !important;
+  background:#f8fafc !important;
+  color:var(--ink) !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+.content-audit-toggle:hover{
+  background:#f1f5f9 !important;
+  color:var(--ink) !important;
+  filter:none !important;
+}
+.content-audit-toggle strong{color:var(--ink) !important}
+.content-audit-toggle-icon{color:var(--muted)}
+.admin-sticky-controls{
+  position:sticky;
+  z-index:30;
+}
+#editor{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:700px){
+  .content-audit-wrap{
+    margin:0 0 10px !important;
+  }
+  .content-audit-toggle{
+    min-height:46px;
+    padding:9px 12px !important;
+  }
+}
