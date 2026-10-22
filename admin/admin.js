@@ -2,10 +2,11 @@
   const $=s=>document.querySelector(s);
   const loginPanel=$('#loginPanel'),editorPanel=$('#editorPanel'),loginForm=$('#loginForm'),loginMessage=$('#loginMessage');
   const logoutBtn=$('#logoutBtn'),saveBtn=$('#saveBtn'),saveMessage=$('#saveMessage'),editor=$('#editor'),adminMenu=$('#adminMenu');
+  const contentAudit=$('#contentAudit'),conflictBanner=$('#conflictBanner'),reloadLatestBtn=$('#reloadLatestBtn');
   const currentSectionTitle=$('#currentSectionTitle'),currentSectionDescription=$('#currentSectionDescription'),dirtyState=$('#dirtyState');
   let storedTab='allgemein';
   try{storedTab=sessionStorage.getItem('ts_admin_tab')||'allgemein';}catch(_){}
-  let data=null,csrf='',currentTab=storedTab,statsDays=30,dirty=false;
+  let data=null,csrf='',revision='',validationState=null,currentTab=storedTab,statsDays=30,dirty=false,validationTimer=null;
 
   const sectionMeta={
     allgemein:['Allgemein','Grundlegende Website-Einstellungen, Navigation, Hero und Footer.'],
@@ -29,6 +30,7 @@
     if(!data)return;
     dirty=true;
     updateDirtyState('dirty');
+    scheduleValidation();
   }
 
   const syncAdminHeaderHeight=()=>{
@@ -44,7 +46,16 @@
 
   const esc=(v='')=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
   const setPath=(obj,path,value)=>{const p=path.split('.');let c=obj;for(let i=0;i<p.length-1;i++)c=c[p[i]];c[p.at(-1)]=value;markDirty();};
-  async function request(url,options={}){const r=await fetch(url,{credentials:'same-origin',...options});const b=await r.json().catch(()=>({ok:false,error:'Ungültige Serverantwort.'}));if(!r.ok||b.ok===false)throw new Error(b.error||'Fehler');return b;}
+  async function request(url,options={}){
+    const r=await fetch(url,{credentials:'same-origin',...options});
+    const b=await r.json().catch(()=>({ok:false,error:'Ungültige Serverantwort.'}));
+    if(!r.ok||b.ok===false){
+      const err=new Error(b.error||'Fehler');
+      err.status=r.status;err.payload=b;
+      throw err;
+    }
+    return b;
+  }
   function msg(el,text,type=''){el.textContent=text||'';el.className='message'+(type?' '+type:'');}
 
   function textField(label,path,value,textarea=false,note=''){
@@ -75,13 +86,11 @@
     const now=new Date();
     const start=parseAdminDate(offer?.registration_start);
     const end=parseAdminDate(offer?.registration_end,true);
-    if(start&&now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(offer.registration_start),kind:'upcoming'};
-    if(end&&now>end)return {label:'Anmeldung geschlossen',kind:'closed'};
-    if(start&&!end&&offer?.status_kind==='closed')return {label:'Anmeldung geschlossen',kind:'closed',legacy:true};
-    if(start||end)return {label:'Anmeldung geöffnet',kind:'open'};
-    if(offer?.status_kind==='upcoming')return {label:'Bald verfügbar',kind:'upcoming',legacy:true};
-    if(offer?.status_kind==='closed')return {label:'Anmeldung geschlossen',kind:'closed',legacy:true};
-    return {label:offer?.registration_open?'Anmeldung geöffnet':'Anmeldung geschlossen',kind:offer?.registration_open?'open':'closed',legacy:true};
+    if(!start||!end)return {label:'Datumsfenster unvollständig',kind:'closed'};
+    if(end<start)return {label:'Datumsfenster fehlerhaft',kind:'closed'};
+    if(now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(offer.registration_start),kind:'upcoming'};
+    if(now>end)return {label:'Anmeldung geschlossen',kind:'closed'};
+    return {label:'Anmeldung geöffnet',kind:'open'};
   }
   function linesField(label,path,value){return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value||[]).join('\n'))}</textarea></label>`;}
   function preview(value,label='Aktuell verwendetes Bild',wide=false){return value?`<div class="current-image${wide?' wide':''}"><span class="current-image-label">${esc(label)}</span><img src="${esc(value)}" alt="" loading="lazy"></div>`:'';}
@@ -103,6 +112,7 @@
     if(editor)editor.scrollTop=0;
     if(tab==='statistik') loadStats(statsDays);
     if(tab==='newsletter') loadNewsletterAdmin();
+    if(tab==='weitere') loadRevisions();
   }
 
   function render(){
@@ -392,6 +402,11 @@
       <div class="cms-card"><strong>Impressum & Datenschutz</strong>
         ${textField('Seitentitel','legal.page_title',legal.page_title)}${textField('Einleitung','legal.intro',legal.intro,true)}
         ${(legal.sections||[]).map((sec,i)=>`<div class="legal-section-editor">${textField('Überschrift',`legal.sections.${i}.title`,sec.title)}${textField('Text',`legal.sections.${i}.body`,sec.body,true)}</div>`).join('')}
+      </div>
+      <div class="cms-card">
+        <div class="revision-toolbar"><strong>Versionen & Wiederherstellung</strong><button type="button" class="secondary small" id="revisionRefresh">Aktualisieren</button></div>
+        <p class="field-note">Die letzten GitHub-Versionen der Website-Inhalte. Wiederherstellen erzeugt einen neuen Commit und überschreibt die Historie nicht.</p>
+        <div id="revisionHistory"><p class="muted">Versionen werden geladen …</p></div>
       </div>
     </section>
 
