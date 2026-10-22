@@ -73,7 +73,7 @@
         "map_route_label": "Route berechnen",
         "offer_link_url": "/angebote/",
         "team_button_url": "/trainerteam/",
-        "popup_enabled": true,
+        "popup_enabled": false,
         "popup_frequency_days": 7,
         "popup_delay_seconds": 1,
         "popup_close_delay_seconds": 2,
@@ -161,7 +161,7 @@
                 "home_cta_label": "Jetzt Wintertraining anmelden",
                 "home_cta_url": "/angebote/?training=winter#wintertraining",
                 "registration_start": "2026-08-28",
-                "registration_end": "2027-09-12"
+                "registration_end": "2026-10-17"
             },
             {
                 "id": "camps",
