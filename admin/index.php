@@ -35,6 +35,17 @@ staging_access_require(false);
   </section>
 
   <section id="editorPanel" hidden>
+    <section id="contentAuditWrap" class="content-audit-wrap" hidden>
+      <button id="contentAuditToggle" class="content-audit-toggle" type="button" aria-expanded="true" aria-controls="contentAudit">
+        <span>
+          <strong>Inhaltsprüfung</strong>
+          <span id="contentAuditSummary" class="content-audit-summary"></span>
+        </span>
+        <span class="content-audit-toggle-icon" aria-hidden="true">⌃</span>
+      </button>
+      <div id="contentAudit" class="content-audit"></div>
+    </section>
+
     <div class="admin-sticky-controls">
       <div class="editor-top">
         <div class="editor-heading">
@@ -64,17 +75,6 @@ staging_access_require(false);
         <button id="reloadLatestBtn" type="button" class="secondary compact">Neueste Version laden</button>
       </div>
     </div>
-
-    <section id="contentAuditWrap" class="content-audit-wrap" hidden>
-      <button id="contentAuditToggle" class="content-audit-toggle" type="button" aria-expanded="true" aria-controls="contentAudit">
-        <span>
-          <strong>Inhaltsprüfung</strong>
-          <span id="contentAuditSummary" class="content-audit-summary"></span>
-        </span>
-        <span class="content-audit-toggle-icon" aria-hidden="true">⌃</span>
-      </button>
-      <div id="contentAudit" class="content-audit"></div>
-    </section>
 
     <div id="editor"></div>
   </section>
