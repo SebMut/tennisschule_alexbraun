@@ -63,8 +63,19 @@ staging_access_require(false);
         <div><strong>Neuere Inhalte vorhanden</strong><span>Dieser CMS-Tab ist nicht mehr aktuell. Speichern wurde gestoppt, damit keine neueren Änderungen überschrieben werden.</span></div>
         <button id="reloadLatestBtn" type="button" class="secondary compact">Neueste Version laden</button>
       </div>
-      <div id="contentAudit" class="content-audit" hidden></div>
     </div>
+
+    <section id="contentAuditWrap" class="content-audit-wrap" hidden>
+      <button id="contentAuditToggle" class="content-audit-toggle" type="button" aria-expanded="true" aria-controls="contentAudit">
+        <span>
+          <strong>Inhaltsprüfung</strong>
+          <span id="contentAuditSummary" class="content-audit-summary"></span>
+        </span>
+        <span class="content-audit-toggle-icon" aria-hidden="true">⌃</span>
+      </button>
+      <div id="contentAudit" class="content-audit"></div>
+    </section>
+
     <div id="editor"></div>
   </section>
 </main>
