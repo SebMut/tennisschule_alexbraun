@@ -11,23 +11,32 @@ staging_access_require(false);
 <title>Website bearbeiten – Tennisschule Alex Braun</title>
 <link rel="stylesheet" href="/admin/admin.css">
 <style>
+/* Layout-Fix: Die CMS-Steuerung bleibt immer im normalen Dokumentfluss. */
+body.admin-editing{overflow:auto!important}
+body.admin-editing .admin-shell{height:auto!important;min-height:calc(100dvh - var(--admin-header-height,72px))!important;padding-top:10px!important}
+body.admin-editing #editorPanel{height:auto!important;min-height:0!important;display:block!important}
+body.admin-editing #editorPanel[hidden]{display:none!important}
+.content-audit-wrap{position:relative!important;inset:auto!important;margin:0 0 10px!important;z-index:1!important}
+.admin-sticky-controls{position:relative!important;top:auto!important;inset:auto!important;z-index:2!important;margin:0 0 14px!important;padding:0!important;background:transparent!important}
+.admin-sticky-controls:before{display:none!important}
+.editor-top{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:16px!important;align-items:center!important;min-height:0!important;margin:0 0 8px!important;padding:4px 2px!important}
+.editor-heading{min-width:0!important}
+.editor-heading h1{margin:0 0 2px!important}
+.editor-heading p{margin:0!important}
+.save-cluster{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important;position:relative!important}
+.admin-menu{position:relative!important;inset:auto!important;margin:0!important;width:100%!important}
+.admin-sticky-controls .message{position:static!important;margin:6px 0 0!important;width:max-content!important;max-width:100%!important;margin-left:auto!important}
+#editor{position:relative!important;z-index:1!important;overflow:visible!important;min-height:0!important;padding-top:0!important;scroll-margin-top:0!important}
+.mobile-section-picker{display:none!important}
 @media (max-width:760px){
-  body.admin-editing{overflow:auto!important}
-  body.admin-editing .admin-shell{padding-top:0!important}
-  #editorPanel{display:block!important}
-  #editorPanel[hidden]{display:none!important}
-  .content-audit-wrap{position:relative!important;inset:auto!important;margin:0 0 10px!important;z-index:1!important}
-  .admin-sticky-controls{position:relative!important;top:auto!important;inset:auto!important;z-index:1!important;margin:0 0 10px!important;padding:0!important;background:transparent!important}
-  .admin-sticky-controls:before{display:none!important}
-  .editor-top{position:relative!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;align-items:end!important;min-height:0!important;margin:0!important;padding:0!important}
+  body.admin-editing .admin-shell{padding-top:6px!important}
+  .editor-top{grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;align-items:end!important;margin-bottom:8px!important}
   .editor-heading{display:none!important}
   .mobile-section-picker{display:block!important;margin:0!important;min-width:0!important}
   .mobile-section-picker>span{display:block!important;margin:0 0 3px!important}
-  .save-cluster{display:flex!important;align-items:flex-end!important}
+  .save-cluster{align-items:flex-end!important}
   .dirty-state{display:none!important}
   .admin-menu{display:none!important}
-  .admin-sticky-controls .message{position:static!important;margin:6px 0 0!important}
-  #editor{position:relative!important;z-index:1!important;overflow:visible!important;min-height:0!important;padding-top:0!important;scroll-margin-top:0!important}
 }
 </style>
 </head>
