@@ -231,7 +231,6 @@
             ${dateField('Anmeldung endet',`offers.items.${i}.registration_end`,o.registration_end,'Nach diesem Datum erscheint „Anmeldung geschlossen“.')}
           </div>
           <div class="offer-auto-status"><strong>Automatischer Status:</strong> ${esc(state.label)}</div>
-          ${state.legacy?'<div class="field-note offer-status-warning">Bitte noch ein Enddatum eintragen, damit der Status vollständig automatisch läuft.</div>':''}
         </div>
 
         <div class="grid2">
