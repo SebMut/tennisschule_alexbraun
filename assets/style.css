@@ -257,7 +257,7 @@ textarea{min-height:150px;resize:vertical}
 .footer-right p{font-size:14px;color:#404141;margin:10px 0 0}
 
 /* Active WordPress popup: Wintertennistraining */
-.wp-popup-overlay{position:fixed;inset:0;z-index:1999999999;background:rgba(0,0,0,.73);display:none;align-items:center;justify-content:center;padding:35px}
+.wp-popup-overlay{position:fixed;inset:0;z-index:1999999999;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center;padding:35px}
 .wp-popup-overlay.open{display:flex}
 .wp-popup{position:relative;background:#fff;border:14px solid var(--kubio-orange);border-radius:24px;padding:24px;max-width:min(430px,calc(100vw - 48px));box-shadow:0 0 0 0 rgba(2,2,2,0)}
 .wp-popup a{display:block}
@@ -701,8 +701,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 /* Bild-Popup: vollständige Darstellung und klickbare Grafik */
-.wp-popup.wp-popup-image-mode{width:min(640px,calc(100vw - 36px));max-width:100%;max-height:calc(100dvh - 36px);padding:0;border-width:8px;overflow:visible}
+.wp-popup.wp-popup-image-mode{width:min(640px,calc(100vw - 36px));max-width:100%;max-height:calc(100dvh - 36px);padding:0;border:0;border-radius:14px;overflow:visible;box-shadow:0 16px 48px rgba(0,0,0,.18)}
 .wp-popup-image-mode .wp-popup-image-link{display:block;overflow:hidden;border-radius:12px}
 .wp-popup-image-mode .wp-popup-image{display:block;width:100%;height:auto;max-height:calc(100dvh - 54px);object-fit:contain;opacity:1}
-.wp-popup-image-mode .wp-popup-image-link:focus-visible{outline:3px solid var(--kubio-blue);outline-offset:3px}
+.wp-popup-image-mode .wp-popup-image-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .wp-popup .wp-popup-close{z-index:2}
+.wp-popup .wp-popup-close:focus-visible{outline:2px solid #fff;outline-offset:3px}
