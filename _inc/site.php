@@ -148,7 +148,7 @@ function site_footer(): void {
       echo '<a data-track="mobile_cta_contact" class="mobile-sticky-secondary" href="'.h($mobile['secondary_url']??'/kontakt/').'">'.h($mobile['secondary_label']??'Kontakt').'</a>';
       echo '</nav>';
     }
-    echo '<script src="/assets/site.js"></script>';
+    echo '<script src="/assets/site.js?v=20261030-popup24"></script>';
 }
 
 function page_head(string $title,string $description='',bool $mapbox=false): void {
@@ -171,7 +171,7 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261030-popup24"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
       'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,

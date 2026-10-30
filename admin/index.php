@@ -124,6 +124,6 @@ body.admin-editing #editorPanel[hidden]{display:none!important}
     <div id="editor"></div>
   </section>
 </main>
-<script src="/admin/admin.js"></script>
+<script src="/admin/admin.js?v=20261030-popup24"></script>
 </body>
 </html>
