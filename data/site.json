@@ -152,7 +152,7 @@
             },
             {
                 "id": "winter",
-                "title": "Wintertraining",
+                "title": "Wintertraining und Ballschule",
                 "button": "Anmeldung Wintertraining (Ballschule)",
                 "home_text": "Unser Wintertraining ermöglicht es dir, in den kalten Monaten an Technik und Fitness zu arbeiten. In der Halle bieten wir gezieltes Training für einen optimalen Start in die Saison.",
                 "image": "/assets/media/startseite_4.webp",
@@ -164,11 +164,11 @@
                 ],
                 "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSeYDe9JM-f7lOZFqpYiM80vMKf2w7Tcn9MfJ3Zaft0XC3Of2g/viewform?usp=header",
                 "target_group": "Anfänger bis Fortgeschrittene · alle Altersstufen (3 - 99)",
-                "focus": "Technik · Fitness · Hallentraining",
-                "training_scope": "24 Trainingswochen",
+                "focus": "Technik · Fitness · Hallentraining · Ballschule",
+                "training_scope": "bis zu 24 Trainingswochen",
                 "period": "Anfang Oktober bis Ende April",
-                "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
-                "price": "ab 43€ pro Monat",
+                "location": "Tennishalle Kirchheim und/ oder Sporttraum Heimstetten",
+                "price": "ab 39€ pro Monat",
                 "featured": true,
                 "home_cta_label": "Jetzt Wintertraining anmelden",
                 "home_cta_url": "/angebote/?training=winter#wintertraining",
@@ -182,7 +182,7 @@
                         "mode": "modal",
                         "registration_start": "2026-10-02",
                         "registration_end": "2026-10-29",
-                        "unavailable_title": "",
+                        "unavailable_title": "test",
                         "unavailable_message": ""
                     },
                     {
