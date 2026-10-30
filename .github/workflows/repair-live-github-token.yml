@@ -1,0 +1,93 @@
+name: GitHub-Sicherung der Live-Website reparieren
+
+on:
+  push:
+    paths:
+      - ".github/workflows/repair-live-github-token.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hinterlegten GitHub-Token ohne Ausgabe überprüfen
+        env:
+          TS_GITHUB_TOKEN: ${{ secrets.TS_GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TS_GITHUB_TOKEN:-}" ]; then
+            echo "::error::GitHub Secret TS_GITHUB_TOKEN fehlt. Bitte in Repository Settings > Secrets and variables > Actions hinterlegen."
+            exit 1
+          fi
+          status="$(curl -sS --connect-timeout 10 --max-time 25 \
+            -o /dev/null -w '%{http_code}' \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -H "Authorization: Bearer $TS_GITHUB_TOKEN" \
+            https://api.github.com/repos/SebMut/tennisschule_alexbraun/contents/data/site.json)"
+          if [ "$status" != "200" ]; then
+            echo "::error::TS_GITHUB_TOKEN wird für dieses Repository nicht akzeptiert (GitHub HTTP $status). Bitte neuen Fine-grained PAT für SebMut/tennisschule_alexbraun mit Contents: Read and write erstellen und das Secret TS_GITHUB_TOKEN ersetzen. Es wurden keine Live-Dateien geändert."
+            exit 1
+          fi
+          echo "GitHub-Token für das gewünschte Repository authentifiziert."
+
+      - name: SFTP-Werkzeug installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Nur den GitHub-Token in der Live-Konfiguration aktualisieren
+        env:
+          TS_GITHUB_TOKEN: ${{ secrets.TS_GITHUB_TOKEN }}
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+          LIVE_REMOTE_PATH: tennisschulealexbraun
+        run: |
+          set -euo pipefail
+          : "${UD_SFTP_HOST:?UD_SFTP_HOST fehlt}"
+          : "${UD_SFTP_USER:?UD_SFTP_USER fehlt}"
+          : "${UD_SFTP_PASSWORD:?UD_SFTP_PASSWORD fehlt}"
+
+          tmp_dir="$(mktemp -d)"
+          trap 'rm -rf "$tmp_dir"' EXIT
+
+          # Bestehende Konfiguration holen. Nicht ausgeben und nicht als Artefakt sichern.
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          cd "$LIVE_REMOTE_PATH"
+          get config.local.php -o "$tmp_dir/config.current.php"
+          bye
+          LFTP
+
+          # Nur github.token ändern, vorhandene Passwörter und andere Einstellungen beibehalten.
+          php -r '
+            $config = require $argv[1];
+            if (!is_array($config) || !isset($config["github"]) || !is_array($config["github"])) {
+                fwrite(STDERR, "Ungültige Live-Konfiguration; keine Änderung vorgenommen.\n");
+                exit(1);
+            }
+            $token = getenv("TS_GITHUB_TOKEN") ?: "";
+            if ($token === "") exit(1);
+            $config["github"]["token"] = $token;
+            $bytes = "<?php\nreturn " . var_export($config, true) . ";\n";
+            if (file_put_contents($argv[2], $bytes) === false) exit(1);
+            chmod($argv[2], 0600);
+          ' "$tmp_dir/config.current.php" "$tmp_dir/config.new.php"
+
+          # Nur config.local.php zurückschreiben; keine Inhaltsdaten, Medien oder Website-Dateien verändern.
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          cd "$LIVE_REMOTE_PATH"
+          put "$tmp_dir/config.new.php" -o config.local.php
+          bye
+          LFTP
+
+          echo "GitHub-Zugang in der Live-Konfiguration aktualisiert. Andere Einstellungen unverändert."
