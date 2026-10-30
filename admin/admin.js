@@ -472,13 +472,27 @@
   }
 
   function bindEditors(){
-    editor.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{
-      setPath(data,el.dataset.path,el.value);
-      if(el.dataset.path.startsWith('offers.items.')&&(el.dataset.path.endsWith('.registration_start')||el.dataset.path.endsWith('.registration_end'))){
-        render();
-        showTab('angebote');
-      }
-    }));
+    editor.querySelectorAll('[data-path]').forEach(el=>{
+      // Native date inputs send intermediate events while entering a year.
+      // Update data on change without rebuilding the currently focused input.
+      const onUpdate=()=>{
+        const path=el.dataset.path;
+        setPath(data,path,el.value);
+        if(el.type==='date'){
+          const match=path.match(/^offers\.items\.(\d+)\.registration_(?:start|end)$/);
+          if(match){
+            const badge=el.closest('.cms-card')?.querySelector('.offer-admin-status');
+            const offer=data.offers.items[Number(match[1])];
+            if(badge&&offer){
+              const state=offerAdminStatus(offer);
+              badge.textContent=state.label;
+              badge.className='offer-admin-status '+state.kind;
+            }
+          }
+        }
+      };
+      el.addEventListener(el.type==='date'?'change':'input',onUpdate);
+    });
     editor.querySelectorAll('[data-number-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.numberPath,Number(el.value))));
     editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>{
       setPath(data,el.dataset.boolPath,el.checked);
@@ -695,6 +709,7 @@
     const warnings=Number(validationState.warnings||0);
 
     contentAuditWrap.hidden=false;
+    contentAuditWrap.classList.toggle('has-blocking-errors',errors>0);
     if(contentAuditSummary){
       contentAuditSummary.textContent=issues.length
         ? [errors?errors+' Fehler':'',warnings?warnings+' Hinweise':''].filter(Boolean).join(' · ')
@@ -706,16 +721,26 @@
       return;
     }
 
-    contentAudit.innerHTML='<div class="content-audit-list">'
-      +issues.map(issue=>'<div class="content-audit-item"><span class="audit-dot '+esc(issue.severity)+'"></span><span>'+esc(issue.message)+'</span><button type="button" class="secondary" data-audit-section="'+esc(issue.section||'allgemein')+'">Öffnen</button></div>').join('')
+    contentAudit.innerHTML=(errors>0
+        ? '<div class="content-audit-blocking-notice" role="alert"><strong>Speichern nicht möglich:</strong> Bitte zuerst die blockierenden Inhaltsfehler beheben.</div>'
+        : '')
+      +'<div class="content-audit-list">'
+      +issues.map(issue=>'<div class="content-audit-item '+(issue.severity==='error'?'is-error':'')+'"><span class="audit-dot '+esc(issue.severity)+'"></span><span>'+esc(issue.message)+'</span><button type="button" class="secondary" data-audit-section="'+esc(issue.section||'allgemein')+'" data-audit-path="'+esc(issue.path||'')+'">Öffnen</button></div>').join('')
       +'</div>';
 
     contentAudit.querySelectorAll('[data-audit-section]').forEach(btn=>btn.addEventListener('click',()=>{
       showTab(btn.dataset.auditSection||'allgemein');
-      if(window.matchMedia('(max-width:700px)').matches){
-        contentAuditWrap.classList.add('is-collapsed');
-        contentAuditToggle?.setAttribute('aria-expanded','false');
-      }
+      if(window.matchMedia('(max-width:700px)').matches)setAuditCollapsed(true);
+      const path=btn.dataset.auditPath||'';
+      if(!path)return;
+      requestAnimationFrame(()=>{
+        const field=[...editor.querySelectorAll('[data-path],[data-number-path],[data-bool-path],[data-lines]')]
+          .find(el=>el.dataset.path===path||el.dataset.numberPath===path||el.dataset.boolPath===path||el.dataset.lines===path);
+        if(field){
+          field.scrollIntoView({behavior:'smooth',block:'center'});
+          field.focus({preventScroll:true});
+        }
+      });
     }));
   }
 
@@ -823,7 +848,12 @@
     const validation=await validateDraft();
     if((validation?.errors||0)>0){
       dirty=true;updateDirtyState('dirty');
-      msg(saveMessage,'Bitte zuerst die blockierenden Inhaltsfehler beheben.','error');
+      msg(saveMessage,'Bitte zuerst die blockierenden Inhaltsfehler beheben.','error blocking-save-error');
+      setAuditCollapsed(false);
+      requestAnimationFrame(()=>{
+        contentAuditWrap?.scrollIntoView({behavior:'smooth',block:'start'});
+        contentAuditToggle?.focus({preventScroll:true});
+      });
       return;
     }
     saveBtn.disabled=true;updateDirtyState('saving');msg(saveMessage,'Änderungen werden gespeichert …');
@@ -836,7 +866,13 @@
       msg(saveMessage,r.github?.ok?'Gespeichert und in GitHub versioniert.':'Website gespeichert; GitHub-Sicherung fehlgeschlagen: '+(r.github?.warning||''),r.github?.ok?'success':'warning');
     }catch(err){
       if(err.status===409)showConflict();
-      if(err.payload?.validation)renderValidation(err.payload.validation);
+      if(err.payload?.validation){
+        renderValidation(err.payload.validation);
+        if((err.payload.validation.errors||0)>0){
+          setAuditCollapsed(false);
+          requestAnimationFrame(()=>contentAuditWrap?.scrollIntoView({behavior:'smooth',block:'start'}));
+        }
+      }
       dirty=true;updateDirtyState('dirty');msg(saveMessage,err.message,'error');
     }finally{saveBtn.disabled=false;}
   }

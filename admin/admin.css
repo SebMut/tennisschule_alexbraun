@@ -611,3 +611,33 @@ select:focus{z-index:20}
 .offer-booking-button-editor .grid2{margin-bottom:9px}
 .offer-booking-button-group>.field-note{display:block;margin:8px 0 13px}
 .offer-booking-button-group>.add-offer-booking-button{margin-top:4px}
+
+/* Blockierende Fehler: deutlich rot, beim Speichern angesprungen. */
+.content-audit-wrap.has-blocking-errors{
+  border:2px solid #be2436 !important;
+  scroll-margin-top:calc(var(--admin-header-height,72px) + 16px);
+  box-shadow:0 4px 22px rgba(160,27,45,.15) !important;
+}
+.content-audit-wrap.has-blocking-errors .content-audit-toggle{
+  background:#ffe7ea !important;
+  color:#8e1726 !important;
+}
+.content-audit-wrap.has-blocking-errors .content-audit-toggle strong,
+.content-audit-wrap.has-blocking-errors .content-audit-summary{color:#9e1729 !important}
+.content-audit-blocking-notice{
+  padding:14px 16px;background:#b42336;color:#fff;
+  font-size:14px;font-weight:700;line-height:1.55;
+  border-bottom:1px solid #90192a
+}
+.content-audit-blocking-notice strong{color:#fff}
+.content-audit-item.is-error{background:#fff5f6;color:#811c2a}
+.admin-sticky-controls #saveMessage.blocking-save-error{
+  display:block !important;width:100% !important;max-width:none !important;
+  margin:10px 0 0 !important;padding:12px 16px !important;
+  border:2px solid #b42336 !important;border-radius:9px !important;
+  background:#ffe7ea !important;color:#8e1726 !important;
+  box-shadow:0 4px 16px rgba(160,27,45,.1) !important;
+  font-weight:800 !important;font-size:14px !important;
+  opacity:1 !important;text-align:left !important;
+}
+input[type="date"]{min-height:44px;cursor:text}
