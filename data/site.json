@@ -143,8 +143,8 @@
                         "label": "Anmeldung Sommertraining",
                         "url": "",
                         "mode": "modal",
-                        "registration_start": "2026-03-10",
-                        "registration_end": "2026-05-01",
+                        "registration_start": "2027-03-10",
+                        "registration_end": "2027-05-01",
                         "unavailable_title": "",
                         "unavailable_message": ""
                     }
@@ -170,18 +170,28 @@
                 "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
                 "price": "ab 43€ pro Monat",
                 "featured": true,
-                "home_cta_label": "Jetzt Wintertraining anmelden (BALLSCHULE)",
+                "home_cta_label": "Jetzt Wintertraining anmelden",
                 "home_cta_url": "/angebote/?training=winter#wintertraining",
                 "registration_start": "2026-08-28",
                 "registration_end": "2026-11-08",
                 "buttons": [
                     {
                         "id": "winter",
-                        "label": "Anmeldung Wintertraining (Ballschule)",
+                        "label": "Anmeldung Wintertraining",
+                        "url": "",
+                        "mode": "modal",
+                        "registration_start": "2026-10-02",
+                        "registration_end": "2026-10-29",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    },
+                    {
+                        "id": "button-qttc9h99",
+                        "label": "Anmeldung Ballschule",
                         "url": "https://docs.google.com/forms/d/e/1FAIpQLSeYDe9JM-f7lOZFqpYiM80vMKf2w7Tcn9MfJ3Zaft0XC3Of2g/viewform?usp=header",
                         "mode": "modal",
-                        "registration_start": "",
-                        "registration_end": "",
+                        "registration_start": "2026-10-29",
+                        "registration_end": "2026-11-08",
                         "unavailable_title": "",
                         "unavailable_message": ""
                     }
@@ -218,8 +228,8 @@
                         "label": "Anmeldung Tenniscamps\nTSV Feldkirchen",
                         "url": "",
                         "mode": "modal",
-                        "registration_start": "",
-                        "registration_end": "",
+                        "registration_start": "2027-03-10",
+                        "registration_end": "2027-05-01",
                         "unavailable_title": "",
                         "unavailable_message": ""
                     },
@@ -228,8 +238,8 @@
                         "label": "Anmeldung Tenniscamps\nSV Heimstetten",
                         "url": "",
                         "mode": "modal",
-                        "registration_start": "",
-                        "registration_end": "",
+                        "registration_start": "2027-03-10",
+                        "registration_end": "2027-05-01",
                         "unavailable_title": "",
                         "unavailable_message": ""
                     }
