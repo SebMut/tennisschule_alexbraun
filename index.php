@@ -83,20 +83,33 @@ site_header('home');
   ],JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)?></script>
 </div></section>
 
-<?php if(($home['popup_enabled']??true)): ?>
+<?php if(!empty($home['popup_enabled'])):
+  $popupMode = ($home['popup_mode'] ?? 'image') === 'html' ? 'html' : 'image';
+  $popupLink = trim((string)($home['popup_link'] ?? '/angebote/'));
+  if (!preg_match('~^(?:/(?!/)|https?://)~i', $popupLink)) $popupLink = '/angebote/';
+  $popupImage = (string)($home['popup_image'] ?? '');
+  $popupAlt = (string)($home['popup_alt'] ?? 'Aktuelle Information der Tennisschule');
+?>
 <div class="wp-popup-overlay" id="winterPopup" aria-hidden="true"
- data-frequency-days="<?=h((string)($home['popup_frequency_days']??7))?>"
  data-delay-seconds="<?=h((string)($home['popup_delay_seconds']??1))?>"
- data-close-delay-seconds="<?=h((string)($home['popup_close_delay_seconds']??2))?>"
- data-popup-key="<?=h(md5((string)($home['popup_image']??'').(string)($home['popup_link']??'')))?>">
-  <div class="wp-popup<?= ($home['popup_mode']??'html')==='html'?' wp-popup-html':'' ?>" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-    <button class="wp-popup-close" type="button" aria-label="Schließen">X</button>
-    <?php if(!empty($home['popup_image'])): ?><img class="wp-popup-image" src="<?=h($home['popup_image'])?>" alt="<?=h($home['popup_alt']??'')?>"><?php endif; ?>
-    <?php if(($home['popup_mode']??'html')==='html'): ?><div class="wp-popup-copy">
-      <h2 id="popupTitle"><?=h($home['popup_heading']??'')?></h2>
-      <p><?=h($home['popup_text']??'')?></p>
-      <a class="kubio-btn" data-track="popup_click" href="<?=h($home['popup_link']??'/angebote/')?>"><?=h($home['popup_button_text']??'Mehr erfahren')?></a>
-    </div><?php else: ?><a data-track="popup_click" href="<?=h($home['popup_link']??'/angebote/')?>"><?=h($home['popup_button_text']??'Mehr erfahren')?></a><?php endif; ?>
+ data-close-delay-seconds="<?=h((string)($home['popup_close_delay_seconds']??0))?>">
+  <div class="wp-popup <?= $popupMode==='image' ? 'wp-popup-image-mode' : 'wp-popup-html' ?>"
+       role="dialog" aria-modal="true" <?= $popupMode==='image' ? 'aria-label="Aktuelle Information der Tennisschule"' : 'aria-labelledby="popupTitle"' ?>>
+    <button class="wp-popup-close" type="button" aria-label="Popup schließen">&times;</button>
+    <?php if($popupMode==='image'): ?>
+      <a class="wp-popup-image-link" data-track="popup_click" href="<?=h($popupLink)?>" aria-label="<?=h($popupAlt)?>">
+        <?php if($popupImage!==''): ?>
+          <img class="wp-popup-image" src="<?=h($popupImage)?>" alt="<?=h($popupAlt)?>">
+        <?php else: ?><span><?=h($home['popup_button_text']??'Mehr erfahren')?></span><?php endif; ?>
+      </a>
+    <?php else: ?>
+      <?php if($popupImage!==''): ?><img class="wp-popup-image" src="<?=h($popupImage)?>" alt="<?=h($popupAlt)?>"><?php endif; ?>
+      <div class="wp-popup-copy">
+        <h2 id="popupTitle"><?=h($home['popup_heading']??'')?></h2>
+        <p><?=h($home['popup_text']??'')?></p>
+        <a class="kubio-btn" data-track="popup_click" href="<?=h($popupLink)?>"><?=h($home['popup_button_text']??'Mehr erfahren')?></a>
+      </div>
+    <?php endif; ?>
   </div>
 </div>
 <?php endif; ?>

@@ -11,7 +11,8 @@
 
   const sectionMeta={
     allgemein:['Allgemein','Grundlegende Website-Einstellungen, Navigation, Hero und Footer.'],
-    home:['Home','Startseite, Vertrauensbereiche, Angebote-Teaser, Trainerteaser, Popup und Bilder.'],
+    home:['Home','Startseite, Vertrauensbereiche, Angebote-Teaser, Trainerteaser und Bilder.'],
+    popup:['Popup','Popup-Bild, Klickziel und Sichtbarkeit verwalten.'],
     angebote:['Angebote','Trainingsangebote, Status, Preise, Anmeldungen, FAQ und Galerie.'],
     trainerteam:['Trainerteam','Trainer verwalten, hinzufügen, löschen und Detailinformationen bearbeiten.'],
     standorte:['Standorte','Vereine, Standorttexte, Links, Logos, Karten und Routen bearbeiten.'],
@@ -184,20 +185,26 @@
       <div class="cms-card"><strong>Standorte & Mapbox</strong>
         ${textField('Überschrift','home.locations_title',h.locations_title)}${textField('Marker-Text','home.map_route_label',h.map_route_label)}
       </div>
-      <div class="cms-card"><strong>Popup</strong>
-        ${checkboxField('Popup aktiv','home.popup_enabled',h.popup_enabled,'Wenn deaktiviert, wird es Besuchern gar nicht angezeigt.')}
+    </section>
+
+    <section class="cms-section" data-admin-section="popup" hidden>
+      <h2>Popup verwalten</h2>
+      <p class="field-note">Nach der ersten Anzeige wird das Popup pro Browser und Gerät 24 Stunden nicht erneut angezeigt.</p>
+      <div class="cms-card"><strong>Bild und Verlinkung</strong>
+        ${checkboxField('Popup aktiv','home.popup_enabled',h.popup_enabled,'Erst aktivieren, wenn Bild und Ziel-Link stimmen.')}
+        ${imageField('Popup-Bild','home.popup_image',h.popup_image,true)}
+        ${textField('Ziel-Link beim Klick auf das Bild','home.popup_link',h.popup_link,false,'Interner Pfad wie /angebote/ oder vollständiger https://-Link.')}
+        ${textField('Bildbeschreibung (Alternativtext)','home.popup_alt',h.popup_alt)}
+        ${selectField('Darstellung','home.popup_mode',h.popup_mode,[{value:'image',label:'Klickbares Bild-Popup'},{value:'html',label:'Bild mit Text und Button'}])}
         <div class="grid2">
-          ${numberField('Erneut anzeigen nach Tagen','home.popup_frequency_days',h.popup_frequency_days,0,365,'7 = höchstens einmal alle 7 Tage; 0 = bei jedem Besuch.')}
           ${numberField('Öffnen nach Sekunden','home.popup_delay_seconds',h.popup_delay_seconds,0,60)}
           ${numberField('Schließen-X nach Sekunden','home.popup_close_delay_seconds',h.popup_close_delay_seconds,0,30)}
-          ${textField('Popup-Ziel','home.popup_link',h.popup_link)}
         </div>
-        ${selectField('Popup-Darstellung','home.popup_mode',h.popup_mode,[{value:'html',label:'Modernes HTML-Popup'},{value:'image',label:'Bild-Fokus'}])}
+      </div>
+      <div class="cms-card"><strong>Optionaler Text (nur bei Bild mit Text und Button)</strong>
         ${textField('Überschrift','home.popup_heading',h.popup_heading)}
         ${textField('Text','home.popup_text',h.popup_text,true)}
         ${textField('Buttontext','home.popup_button_text',h.popup_button_text)}
-        ${textField('Alternativtext','home.popup_alt',h.popup_alt)}
-        ${imageField('Popup-Bild','home.popup_image',h.popup_image,true)}
       </div>
     </section>
 

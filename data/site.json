@@ -74,9 +74,9 @@
         "offer_link_url": "/angebote/",
         "team_button_url": "/trainerteam/",
         "popup_enabled": false,
-        "popup_frequency_days": 7,
+        "popup_frequency_days": 1,
         "popup_delay_seconds": 1,
-        "popup_close_delay_seconds": 2,
+        "popup_close_delay_seconds": 0,
         "popup_alt": "Wintertennistraining",
         "trust_enabled": true,
         "trust_items": [
@@ -106,7 +106,7 @@
                 "text": "Sommertraining, Wintertraining und Camps ergänzen sich über das Jahr."
             }
         ],
-        "popup_mode": "html",
+        "popup_mode": "image",
         "popup_heading": "Wintertraining 2026/2027",
         "popup_text": "Die Anmeldung zum Wintertraining ist geöffnet.",
         "popup_button_text": "Zum Wintertraining"

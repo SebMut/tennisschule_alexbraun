@@ -87,6 +87,7 @@ body.admin-editing #editorPanel[hidden]{display:none!important}
           <select id="mobileSectionSelect" aria-label="CMS-Bereich auswählen">
             <option value="allgemein">Allgemein</option>
             <option value="home">Home</option>
+            <option value="popup">Popup</option>
             <option value="angebote">Angebote</option>
             <option value="trainerteam">Trainerteam</option>
             <option value="standorte">Standorte</option>
@@ -104,6 +105,7 @@ body.admin-editing #editorPanel[hidden]{display:none!important}
       <nav class="admin-menu" id="adminMenu" aria-label="Bereiche">
         <button type="button" class="admin-menu-item active" data-admin-tab="allgemein">Allgemein</button>
         <button type="button" class="admin-menu-item" data-admin-tab="home">Home</button>
+        <button type="button" class="admin-menu-item" data-admin-tab="popup">Popup</button>
         <button type="button" class="admin-menu-item" data-admin-tab="angebote">Angebote</button>
         <button type="button" class="admin-menu-item" data-admin-tab="trainerteam">Trainerteam</button>
         <button type="button" class="admin-menu-item" data-admin-tab="standorte">Standorte</button>

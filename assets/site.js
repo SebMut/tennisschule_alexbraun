@@ -549,30 +549,30 @@
   if(winterPopup){
     const close=winterPopup.querySelector('.wp-popup-close');
     let popupReturnFocus=null;
-    const frequency=Math.max(0,Number(winterPopup.dataset.frequencyDays||7))*86400000;
+    const frequency=24*60*60*1000; // 24 Stunden ab Anzeige
     const delay=Math.max(0,Number(winterPopup.dataset.delaySeconds||1))*1000;
     const closeDelay=Math.max(0,Number(winterPopup.dataset.closeDelaySeconds||2))*1000;
-    const storageKey='ts-popup-closed-'+(winterPopup.dataset.popupKey||'default');
-    let mayShow=true;
-    try{const closedAt=Number(localStorage.getItem(storageKey)||0);if(frequency>0&&closedAt&&Date.now()-closedAt<frequency)mayShow=false;}catch(_){}
+    const storageKey='ts-popup-last-shown-v1';
+    const shownWithin24h=()=>{try{const t=Number(localStorage.getItem(storageKey)||0);return t>0&&Date.now()-t<frequency;}catch(_){return false;}};
     const closePopup=()=>{
       winterPopup.classList.remove('open');winterPopup.setAttribute('aria-hidden','true');body.classList.remove('popup-open');
       track('popup_close','popup_close','Popup geschlossen','');
-      try{localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
       if(popupReturnFocus instanceof HTMLElement)popupReturnFocus.focus();
       popupReturnFocus=null;
     };
     close?.addEventListener('click',closePopup);
     winterPopup.addEventListener('click',e=>{if(e.target===winterPopup)closePopup();});
-    if(mayShow){
-      if(close) close.style.visibility='hidden';
+    if(!shownWithin24h()){
+      if(close && closeDelay>0) close.style.visibility='hidden';
       setTimeout(()=>{
+        if(shownWithin24h())return;
         popupReturnFocus=document.activeElement;
         winterPopup.classList.add('open');winterPopup.setAttribute('aria-hidden','false');body.classList.add('popup-open');
-        close?.focus();
+        if(close && closeDelay===0)close.focus();
+        else winterPopup.querySelector('.wp-popup-image-link, .wp-popup-copy a')?.focus();
         track('popup_view','popup_view','Popup angezeigt','');
-        try{if(frequency>0)localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
-        setTimeout(()=>{if(close)close.style.visibility='visible';},closeDelay);
+        try{localStorage.setItem(storageKey,String(Date.now()));}catch(_){}
+        if(close && closeDelay>0)setTimeout(()=>{close.style.visibility='visible';},closeDelay);
       },delay);
     }
   }

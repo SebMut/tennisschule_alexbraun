@@ -699,3 +699,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   .nav-dropdown:hover .dropdown-menu{display:none}
   .nav-dropdown.is-open .dropdown-menu{display:block}
 }
+
+/* Bild-Popup: vollständige Darstellung und klickbare Grafik */
+.wp-popup.wp-popup-image-mode{width:min(640px,calc(100vw - 36px));max-width:100%;max-height:calc(100dvh - 36px);padding:0;border-width:8px;overflow:visible}
+.wp-popup-image-mode .wp-popup-image-link{display:block;overflow:hidden;border-radius:12px}
+.wp-popup-image-mode .wp-popup-image{display:block;width:100%;height:auto;max-height:calc(100dvh - 54px);object-fit:contain;opacity:1}
+.wp-popup-image-mode .wp-popup-image-link:focus-visible{outline:3px solid var(--kubio-blue);outline-offset:3px}
+.wp-popup .wp-popup-close{z-index:2}
