@@ -82,6 +82,23 @@ function offer_unavailable_message(array $offer): string {
     return 'Die Anmeldung ist geöffnet.';
 }
 
+function offer_booking_buttons(array $offer): array {
+    if (isset($offer['buttons']) && is_array($offer['buttons'])) return $offer['buttons'];
+    $id=(string)($offer['id']??'');
+    if($id==='camps') return [
+        ['id'=>'camp-feldkirchen','label'=>$offer['button_feldkirchen']??'Tenniscamp Feldkirchen','url'=>$offer['form_url_feldkirchen']??'','mode'=>'modal'],
+        ['id'=>'camp-heimstetten','label'=>$offer['button_heimstetten']??'Tenniscamp Heimstetten','url'=>$offer['form_url_heimstetten']??'','mode'=>'modal']
+    ];
+    return [['id'=>$id,'label'=>$offer['button']??'Jetzt anmelden','url'=>$offer['form_url']??'','mode'=>'modal']];
+}
+function offer_button_as_offer(array $offer,array $button): array {
+    foreach(['registration_start','registration_end'] as $key) {
+        $date=trim((string)($button[$key]??''));
+        if($date!=='') $offer[$key]=$date;
+    }
+    return $offer;
+}
+
 function site_header(string $active = ''): void {
     $d=site_data(); $s=$d['site']??[]; $n=$s['navigation']??[]; $loc=$d['locations']??[];
     $logo=$s['logo']??'/assets/media/logo.png'; $name=$s['name']??'Tennisschule Alex Braun';
@@ -148,7 +165,7 @@ function site_footer(): void {
       echo '<a data-track="mobile_cta_contact" class="mobile-sticky-secondary" href="'.h($mobile['secondary_url']??'/kontakt/').'">'.h($mobile['secondary_label']??'Kontakt').'</a>';
       echo '</nav>';
     }
-    echo '<script src="/assets/site.js?v=20261030-popup-visual2"></script>';
+    echo '<script src="/assets/site.js?v=20261030-trainbtn"></script>';
 }
 
 function page_head(string $title,string $description='',bool $mapbox=false): void {

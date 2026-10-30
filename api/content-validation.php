@@ -144,16 +144,56 @@ function validate_site_content(array $data): array {
         }
 
         $state = validation_offer_state($offer);
-        if ($state === 'open') {
-            if ($id === 'camps') {
-                if (trim((string)($offer['form_url_feldkirchen'] ?? '')) === '') {
-                    $add('error','angebote','camp_form_feldkirchen_missing',$title.': Anmeldung ist geöffnet, aber die Formular-URL für Feldkirchen fehlt.',"offers.items.$i.form_url_feldkirchen");
+        if (isset($offer['buttons']) && is_array($offer['buttons'])) {
+            if (count($offer['buttons']) > 12) {
+                $add('error','angebote','offer_buttons_limit',$title.': Maximal 12 Buchungsbuttons.',"offers.items.$i.buttons");
+            }
+            foreach ($offer['buttons'] as $j => $button) {
+                if (!is_array($button)) {
+                    $add('error','angebote','offer_button_invalid',$title.': Ungültiger Button.',"offers.items.$i.buttons.$j");
+                    continue;
                 }
-                if (trim((string)($offer['form_url_heimstetten'] ?? '')) === '') {
-                    $add('error','angebote','camp_form_heimstetten_missing',$title.': Anmeldung ist geöffnet, aber die Formular-URL für Heimstetten fehlt.',"offers.items.$i.form_url_heimstetten");
+                $buttonLabel = trim((string)($button['label'] ?? ''));
+                $buttonUrl = trim((string)($button['url'] ?? ''));
+                $buttonPath = "offers.items.$i.buttons.$j";
+                if ($buttonLabel === '') {
+                    $add('error','angebote','offer_button_label_missing',$title.': Button '.($j+1).' braucht einen Text.',"$buttonPath.label");
                 }
-            } elseif (trim((string)($offer['form_url'] ?? '')) === '') {
-                $add('error','angebote','offer_form_missing',$title.': Anmeldung ist geöffnet, aber es ist keine Formular-URL hinterlegt.',"offers.items.$i.form_url");
+                if ($buttonUrl !== '' && !preg_match('~^(?:https?://[^\s]+|/(?!/)[^\s]*)$~i',$buttonUrl)) {
+                    $add('error','angebote','offer_button_url_invalid',$title.': Button '.($j+1).' hat eine ungültige URL.',"$buttonPath.url");
+                }
+                $buttonStart = trim((string)($button['registration_start'] ?? ''));
+                $buttonEnd = trim((string)($button['registration_end'] ?? ''));
+                foreach (['registration_start'=>$buttonStart,'registration_end'=>$buttonEnd] as $dateKey=>$dateVal) {
+                    if ($dateVal !== '' && (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$dateVal) || !checkdate((int)substr($dateVal,5,2),(int)substr($dateVal,8,2),(int)substr($dateVal,0,4)))) {
+                        $add('error','angebote','offer_button_date_invalid',$title.': Button '.($j+1).' hat ein ungültiges Datum.',"$buttonPath.$dateKey");
+                    }
+                }
+                $effectiveStart = $buttonStart !== '' ? $buttonStart : $startRaw;
+                $effectiveEnd = $buttonEnd !== '' ? $buttonEnd : $endRaw;
+                if ($effectiveStart > $effectiveEnd) {
+                    $add('error','angebote','offer_button_date_order',$title.': Bei Button '.($j+1).' liegt das Enddatum vor dem Startdatum.',"$buttonPath.registration_end");
+                }
+                $buttonState = validation_offer_state(array_merge($offer,['registration_start'=>$effectiveStart,'registration_end'=>$effectiveEnd]));
+                if ($buttonState === 'open' && $buttonUrl === '') {
+                    $add('error','angebote','offer_button_url_missing',$title.': Buchbarer Button '.($j+1).' braucht einen Ziel-Link.',"$buttonPath.url");
+                }
+                if (!in_array((string)($button['mode']??'modal'),['modal','link'],true)) {
+                    $add('error','angebote','offer_button_mode_invalid',$title.': Ungültige Button-Aktion.',"$buttonPath.mode");
+                }
+            }
+        } else {
+            if ($state === 'open') {
+                if ($id === 'camps') {
+                    if (trim((string)($offer['form_url_feldkirchen'] ?? '')) === '') {
+                        $add('error','angebote','camp_form_feldkirchen_missing',$title.': Anmeldung ist geöffnet, aber die Formular-URL für Feldkirchen fehlt.',"offers.items.$i.form_url_feldkirchen");
+                    }
+                    if (trim((string)($offer['form_url_heimstetten'] ?? '')) === '') {
+                        $add('error','angebote','camp_form_heimstetten_missing',$title.': Anmeldung ist geöffnet, aber die Formular-URL für Heimstetten fehlt.',"offers.items.$i.form_url_heimstetten");
+                    }
+                } elseif (trim((string)($offer['form_url'] ?? '')) === '') {
+                    $add('error','angebote','offer_form_missing',$title.': Anmeldung ist geöffnet, aber es ist keine Formular-URL hinterlegt.',"offers.items.$i.form_url");
+                }
             }
         }
 

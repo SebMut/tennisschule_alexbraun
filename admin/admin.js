@@ -118,6 +118,18 @@
     if(tab==='weitere') loadRevisions();
   }
 
+  function offerBookingButtons(offer){
+    if(Array.isArray(offer.buttons))return offer.buttons;
+    const make=(id,label,url)=>({id,label,url,mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
+    if(offer.id==='camps'){
+      offer.buttons=[
+        make('camp-feldkirchen',offer.button_feldkirchen||'Tenniscamp Feldkirchen',offer.form_url_feldkirchen||''),
+        make('camp-heimstetten',offer.button_heimstetten||'Tenniscamp Heimstetten',offer.form_url_heimstetten||'')
+      ];
+    }else offer.buttons=[make(offer.id||'training',offer.button||'Jetzt anmelden',offer.form_url||'')];
+    return offer.buttons;
+  }
+
   function render(){
     if(!data)return;
     const s=data.site||{}, nav=s.navigation||{}, foot=s.footer||{}, h=data.home||{}, offers=data.offers?.items||[], trainers=data.trainers?.items||[];
@@ -214,12 +226,9 @@
       ${textField('Einleitung','offers.intro',data.offers?.intro,true)}
       ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
 
-      ${offers.map((o,i)=>{const state=offerAdminStatus(o);return `<div class="cms-card">
+      ${offers.map((o,i)=>{const state=offerAdminStatus(o),bookingButtons=offerBookingButtons(o);return `<div class="cms-card">
         <div class="item-head"><strong>${esc(o.title||'Angebot')}</strong><span class="offer-admin-status ${esc(state.kind)}">${esc(state.label)}</span></div>
-        <div class="grid2">
-          ${textField('Titel',`offers.items.${i}.title`,o.title)}
-          ${textField('Buttontext',`offers.items.${i}.button`,o.button)}
-        </div>
+        ${textField('Titel',`offers.items.${i}.title`,o.title)}
 
         ${textField('Beschreibung',`offers.items.${i}.home_text`,o.home_text,true)}
         ${imageField('Bild',`offers.items.${i}.image`,o.image,true)}
@@ -247,8 +256,25 @@
           ${textField('Startseite: CTA-Ziel',`offers.items.${i}.home_cta_url`,o.home_cta_url)}
         </div>
 
-        ${o.id!=='camps'?textField('Formular-URL',`offers.items.${i}.form_url`,o.form_url):''}
-        ${o.id==='camps'?'<div class="grid2">'+textField('Camp-Button Feldkirchen',`offers.items.${i}.button_feldkirchen`,o.button_feldkirchen,true)+textField('Formular-URL Feldkirchen',`offers.items.${i}.form_url_feldkirchen`,o.form_url_feldkirchen)+textField('Camp-Button Heimstetten',`offers.items.${i}.button_heimstetten`,o.button_heimstetten,true)+textField('Formular-URL Heimstetten',`offers.items.${i}.form_url_heimstetten`,o.form_url_heimstetten)+'</div>':''}
+        <div class="offer-booking-button-group" data-offer-button-group="${i}">
+          <div class="item-head"><strong>Buchungsbuttons (${bookingButtons.length})</strong></div>
+          <p class="field-note">Du kannst beliebige Buttons hinzufügen oder entfernen (maximal 12). Jeder Button erhält einen eigenen Link oder ein eigenes Anmelde-Modal. Solange die Anmeldung geschlossen ist, erscheint stattdessen ein frei formulierbarer Hinweis.</p>
+          ${bookingButtons.map((b,j)=>'<div class="offer-booking-button-editor">'
+            +'<div class="item-head"><strong>Button '+(j+1)+'</strong><button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button></div>'
+            +'<div class="grid2">'
+              +textField('Beschriftung','offers.items.'+i+'.buttons.'+j+'.label',b.label)
+              +textField('Eigene URL','offers.items.'+i+'.buttons.'+j+'.url',b.url,false,'https://... oder /angebote/')
+            +'</div>'
+            +selectField('Beim Klick, wenn buchbar','offers.items.'+i+'.buttons.'+j+'.mode',b.mode||'modal',[{value:'modal',label:'Buchungsformular in einem Modal öffnen'},{value:'link',label:'Zur URL weiterleiten'}])
+            +'<div class="grid2">'
+              +dateField('Dieser Button: Buchbar ab (optional)','offers.items.'+i+'.buttons.'+j+'.registration_start',b.registration_start,'Leer = Datum des Trainings')
+              +dateField('Dieser Button: Buchbar bis (optional)','offers.items.'+i+'.buttons.'+j+'.registration_end',b.registration_end,'Leer = Datum des Trainings')
+            +'</div>'
+            +textField('Titel im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_title',b.unavailable_title)
+            +textField('Text im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_message',b.unavailable_message,true,'Wird angezeigt, wenn dieser Button gerade nicht buchbar ist.')
+            +'</div>').join('')}
+          <button type="button" class="secondary add-offer-booking-button" data-offer-index="${i}">+ Button hinzufügen</button>
+        </div>
       </div>`}).join('')}
 
       <div class="cms-card"><strong>FAQ</strong>
@@ -469,6 +495,31 @@
     }));
     editor.querySelectorAll('[data-lines]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.lines,el.value.split('\n').map(x=>x.trim()).filter(Boolean))));
     editor.querySelectorAll('.cms-upload').forEach(el=>el.addEventListener('change',uploadImage));
+    const refreshBookingButtons=(index)=>{
+      markDirty();
+      render();
+      showTab('angebote');
+      const target=editor.querySelector('[data-offer-button-group="'+index+'"]');
+      requestAnimationFrame(()=>target?.scrollIntoView({block:'center',behavior:'auto'}));
+    };
+    editor.querySelectorAll('.add-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
+      const i=Number(el.dataset.offerIndex),offer=data.offers.items[i];
+      if(!offer)return;
+      const buttons=offerBookingButtons(offer);
+      if(buttons.length>=12){alert('Maximal 12 Buttons pro Training.');return;}
+      buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
+      refreshBookingButtons(i);
+    }));
+    editor.querySelectorAll('.remove-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
+      const i=Number(el.dataset.offerIndex),j=Number(el.dataset.bookingIndex),offer=data.offers.items[i];
+      if(!offer)return;
+      const buttons=offerBookingButtons(offer);
+      if(!buttons[j])return;
+      if(confirm('Button „'+(buttons[j].label||'Ohne Titel')+'“ wirklich entfernen?')){
+        buttons.splice(j,1);
+        refreshBookingButtons(i);
+      }
+    }));
     const removeTrainer=(i)=>{
       const trainer=data.trainers.items[i];
       if(!trainer)return;

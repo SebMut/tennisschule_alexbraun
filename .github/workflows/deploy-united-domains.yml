@@ -184,6 +184,9 @@ jobs:
           get _inc/site.php -o "$RUNNER_TEMP/live-popup-backup/site.php"
           get assets/site.js -o "$RUNNER_TEMP/live-popup-backup/assets-site.js"
           get assets/style.css -o "$RUNNER_TEMP/live-popup-backup/assets-style.css"
+          get angebote/index.php -o "$RUNNER_TEMP/live-popup-backup/angebote-index.php"
+          get api/content-validation.php -o "$RUNNER_TEMP/live-popup-backup/content-validation.php"
+          get admin/admin.css -o "$RUNNER_TEMP/live-popup-backup/admin-css.css"
           bye
           LFTP
           grep -Fq "site_data()" "$RUNNER_TEMP/live-popup-backup/index.php"
@@ -197,7 +200,7 @@ jobs:
           path: ${{ runner.temp }}/live-popup-backup/
           retention-days: 14
 
-      - name: Live-Popup – nur sechs Quellcodedateien aktualisieren
+      - name: Live-Popup und Trainingsbuttons – ausgewählte Quellcodedateien aktualisieren
         if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
         env:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
@@ -218,6 +221,9 @@ jobs:
           put _inc/site.php -o _inc/site.php
           put assets/site.js -o assets/site.js
           put assets/style.css -o assets/style.css
+          put angebote/index.php -o angebote/index.php
+          put api/content-validation.php -o api/content-validation.php
+          put admin/admin.css -o admin/admin.css
           bye
           LFTP
 
@@ -226,7 +232,8 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" | grep -Fq 'data-admin-tab="popup"'
-          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-assets=${{ github.run_id }}" | grep -Fq 'popup24'
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-assets=${{ github.run_id }}" | grep -Fq 'trainbtn'
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" | grep -Fq 'data-booking-mode'
 
 # Admin secret refresh trigger
 

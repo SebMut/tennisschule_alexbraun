@@ -603,3 +603,11 @@ select:focus{z-index:20}
 @media(min-width:761px){
   .mobile-section-picker{display:none !important}
 }
+
+/* Training buttons: einzeln verwaltbare Buchungswege */
+.offer-booking-button-group{margin:18px 0;padding:16px;border:1px solid #dfe5ed;border-radius:12px;background:#f8fafc}
+.offer-booking-button-editor{padding:15px;margin:12px 0;border:1px solid #e1e6ef;border-radius:10px;background:#fff}
+.offer-booking-button-editor .item-head{margin-bottom:12px}
+.offer-booking-button-editor .grid2{margin-bottom:9px}
+.offer-booking-button-group>.field-note{display:block;margin:8px 0 13px}
+.offer-booking-button-group>.add-offer-booking-button{margin-top:4px}

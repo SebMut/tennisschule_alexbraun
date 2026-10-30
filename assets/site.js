@@ -245,9 +245,9 @@
   };
   const buildTrainingInfoCard=(btn,errorMsg)=>{
     const id=String(btn.dataset.trainingId||'');
-    const name=trainingDisplayName(id);
+    const name=btn.dataset.unavailableTitle||btn.dataset.trainingTitle||trainingDisplayName(id);
     const dateMatch=String(errorMsg).match(/(\d{2}\.\d{2}\.\d{4})/);
-    const isUpcoming=Boolean(dateMatch);
+    const isUpcoming=btn.dataset.registrationState==='upcoming'||(btn.dataset.registrationState!=='closed'&&Boolean(dateMatch));
     const card=document.createElement('div');
     card.className='training-info-card';
 
@@ -266,13 +266,13 @@
 
     const message=document.createElement('p');
     message.className='training-info-copy';
-    message.textContent=isUpcoming
+    message.textContent=btn.dataset.unavailableText||(isUpcoming
       ? 'Die Anmeldung ist noch nicht geöffnet.'
-      : 'Für dieses Training ist die Anmeldung derzeit geschlossen.';
+      : 'Für dieses Training ist die Anmeldung derzeit geschlossen.');
 
     const date=document.createElement('div');
     date.className='training-info-date';
-    if(isUpcoming){
+    if(isUpcoming&&dateMatch){
       const label=document.createElement('span');
       label.textContent='Voraussichtlich buchbar ab';
       const strong=document.createElement('strong');
@@ -300,6 +300,11 @@
     if(!btn||!trainingModal||!trainingModalContent)return;
     const formUrl=btn.dataset.trainingUrl||'', errorMsg=btn.dataset.trainingError||'Die Anmeldung ist aktuell nicht verfügbar.';
     const registrationOpen=btn.dataset.registrationOpen==='1';
+    if(registrationOpen&&formUrl&&btn.dataset.bookingMode==='link'){
+      track('training_link','training_link:'+String(btn.dataset.trainingId||'unknown'),(btn.textContent||'').trim(),formUrl);
+      window.location.assign(formUrl);
+      return;
+    }
     trainingReturnFocus=btn;
     const modalCard=trainingModal.querySelector('.trainings-modal-content');
     const isForm=Boolean(formUrl&&registrationOpen);
@@ -308,7 +313,7 @@
     if(modalCard){
       if(isForm){
         modalCard.removeAttribute('aria-labelledby');
-        modalCard.setAttribute('aria-label',trainingDisplayName(String(btn.dataset.trainingId||''))+' Anmeldung');
+        modalCard.setAttribute('aria-label',(btn.dataset.trainingTitle||trainingDisplayName(String(btn.dataset.trainingId||'')))+' Anmeldung');
       }else{
         modalCard.removeAttribute('aria-label');
         modalCard.setAttribute('aria-labelledby','trainingModalTitle');
@@ -316,7 +321,7 @@
     }
     trainingModal.classList.add('active'); trainingModal.setAttribute('aria-hidden','false'); body.classList.add('popup-open');
     if(formUrl&&registrationOpen){
-      const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;iframe.title=trainingDisplayName(String(btn.dataset.trainingId||''))+' Anmeldung';trainingModalContent.replaceChildren(iframe);
+      const iframe=document.createElement('iframe');iframe.src=formUrl;iframe.frameBorder='0';iframe.allowFullscreen=true;iframe.title=(btn.dataset.trainingTitle||trainingDisplayName(String(btn.dataset.trainingId||'')))+' Anmeldung';trainingModalContent.replaceChildren(iframe);
     }else{
       trainingModalContent.replaceChildren(buildTrainingInfoCard(btn,errorMsg));
     }

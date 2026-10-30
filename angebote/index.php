@@ -45,12 +45,33 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
         </dl>
 
         <div class="offer-actions">
-        <?php if($id==='camps'): ?>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-feldkirchen" data-track="training_camp_feldkirchen" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url_feldkirchen'])): ?>data-training-url="<?=h($offer['form_url_feldkirchen'])?>"<?php endif; ?> data-registration-open="<?= $registrationOpen?'1':'0' ?>" data-training-error="<?=h($unavailableMessage)?>"><?=hbr($offer['button_feldkirchen']??$offer['button']??'')?></button></div>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="camp-heimstetten" data-track="training_camp_heimstetten" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url_heimstetten'])): ?>data-training-url="<?=h($offer['form_url_heimstetten'])?>"<?php endif; ?> data-registration-open="<?= $registrationOpen?'1':'0' ?>" data-training-error="<?=h($unavailableMessage)?>"><?=hbr($offer['button_heimstetten']??$offer['button']??'')?></button></div>
-        <?php else: ?>
-          <div class="trainings-btn-wrapper"><button class="trainings-btn" data-training-id="<?=h($id)?>" data-track="training_<?=h($id)?>" type="button" data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>" <?php if(!empty($offer['form_url'])): ?>data-training-url="<?=h($offer['form_url'])?>"<?php endif; ?> data-registration-open="<?= $registrationOpen?'1':'0' ?>" data-training-error="<?=h($unavailableMessage)?>"><?=h($offer['button']??'')?></button></div>
-        <?php endif; ?>
+        <?php foreach(offer_booking_buttons($offer) as $btnIdx=>$book):
+          if(!is_array($book)) continue;
+          $buttonLabel=trim((string)($book['label']??''));
+          if($buttonLabel==='') continue;
+          $buttonOffer=offer_button_as_offer($offer,$book);
+          $buttonOpen=offer_registration_open($buttonOffer);
+          $buttonState=offer_registration_state($buttonOffer);
+          $buttonUrl=trim((string)($book['url']??''));
+          if($buttonUrl!==''&&!preg_match('~^(?:/(?!/)|https?://)~i',$buttonUrl)) $buttonUrl='';
+          $buttonMode=($book['mode']??'modal')==='link'?'link':'modal';
+          $buttonId=(string)($book['id']??($id.'-'.$btnIdx));
+          $buttonError=trim((string)($book['unavailable_message']??''))?:offer_unavailable_message($buttonOffer);
+        ?>
+          <div class="trainings-btn-wrapper"><button class="trainings-btn"
+            data-training-id="<?=h($buttonId)?>"
+            data-training-title="<?=h((string)($offer['title']??'Tennistraining'))?>"
+            data-track="training_<?=h($buttonId)?>"
+            data-booking-mode="<?=h($buttonMode)?>"
+            data-hover="<?=h($o['hover_text']??'Jetzt anmelden!')?>"
+            data-training-url="<?=h($buttonUrl)?>"
+            data-registration-open="<?= $buttonOpen?'1':'0' ?>"
+            data-registration-state="<?=h($buttonState)?>"
+            data-training-error="<?=h($buttonError)?>"
+            data-unavailable-title="<?=h((string)($book['unavailable_title']??''))?>"
+            data-unavailable-text="<?=h((string)($book['unavailable_message']??''))?>"
+            type="button"><?=hbr($buttonLabel)?></button></div>
+        <?php endforeach; ?>
         </div>
       </div>
     </article>
