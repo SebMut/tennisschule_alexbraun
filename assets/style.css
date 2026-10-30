@@ -707,3 +707,21 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .wp-popup-image-mode .wp-popup-image-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .wp-popup .wp-popup-close{z-index:2}
 .wp-popup .wp-popup-close:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+/* Angebote: alle Buchungsbuttons mit derselben Breite und Höhe,
+   unabhängig davon, ob der Text eine oder zwei Zeilen hat. */
+.offer-detail-card .trainings-btn{
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:60px;
+  min-height:60px;
+  padding:8px 12px !important;
+  border:1px solid #F17C20 !important;
+  line-height:1.2 !important;
+  text-align:center;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
