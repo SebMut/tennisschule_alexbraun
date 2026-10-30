@@ -158,6 +158,74 @@ jobs:
           grep -Fq "Seite nicht gefunden" /tmp/ts-404.html
           rm -f "$COOKIE_JAR"
 
+      # Einmaliger, nicht-destruktiver Live-Patch der Popup-Oberfläche.
+      # Nur bei einem explizit markierten Commit; CMS-Daten/Uploads/Secrets bleiben unangetastet.
+      - name: Live-Popup – bisherige Quellcodes sichern
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+          LIVE_REMOTE_PATH: tennisschulealexbraun
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/live-popup-backup"
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          cd "$LIVE_REMOTE_PATH"
+          get index.php -o "$RUNNER_TEMP/live-popup-backup/index.php"
+          get admin/index.php -o "$RUNNER_TEMP/live-popup-backup/admin-index.php"
+          get admin/admin.js -o "$RUNNER_TEMP/live-popup-backup/admin-admin.js"
+          get _inc/site.php -o "$RUNNER_TEMP/live-popup-backup/site.php"
+          get assets/site.js -o "$RUNNER_TEMP/live-popup-backup/assets-site.js"
+          get assets/style.css -o "$RUNNER_TEMP/live-popup-backup/assets-style.css"
+          bye
+          LFTP
+          grep -Fq "site_data()" "$RUNNER_TEMP/live-popup-backup/index.php"
+          grep -Fq "admin/admin.js" "$RUNNER_TEMP/live-popup-backup/admin-index.php"
+
+      - name: Live-Popup – Sicherheitskopie als Artefakt ablegen
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-popup-before-${{ github.run_id }}
+          path: ${{ runner.temp }}/live-popup-backup/
+          retention-days: 14
+
+      - name: Live-Popup – nur sechs Quellcodedateien aktualisieren
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+          LIVE_REMOTE_PATH: tennisschulealexbraun
+        run: |
+          set -euo pipefail
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          set net:timeout 20
+          cd "$LIVE_REMOTE_PATH"
+          put index.php -o index.php
+          put admin/index.php -o admin/index.php
+          put admin/admin.js -o admin/admin.js
+          put _inc/site.php -o _inc/site.php
+          put assets/site.js -o assets/site.js
+          put assets/style.css -o assets/style.css
+          bye
+          LFTP
+
+      - name: Live-Popup – neue Admin-Oberfläche prüfen
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" | grep -Fq 'data-admin-tab="popup"'
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-assets=${{ github.run_id }}" | grep -Fq 'popup24'
+
 # Admin secret refresh trigger
 
 
