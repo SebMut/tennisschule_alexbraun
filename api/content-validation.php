@@ -15,7 +15,8 @@ function normalize_site_content(array $data, array $current = []): array {
         if ($id !== '') $currentOffers[$id] = $offer;
     }
 
-    foreach (($data['offers']['items'] ?? []) as &$offer) {
+    if (!isset($data['offers']['items']) || !is_array($data['offers']['items'])) $data['offers']['items'] = [];
+    foreach ($data['offers']['items'] as &$offer) {
         $id = (string)($offer['id'] ?? '');
         $old = $currentOffers[$id] ?? [];
 
