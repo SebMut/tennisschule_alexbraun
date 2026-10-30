@@ -182,7 +182,7 @@
                         "mode": "modal",
                         "registration_start": "2026-10-02",
                         "registration_end": "2026-10-29",
-                        "unavailable_title": "test",
+                        "unavailable_title": "",
                         "unavailable_message": ""
                     },
                     {
