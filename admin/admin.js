@@ -279,9 +279,14 @@
 
         <div class="offer-booking-button-group" data-offer-button-group="${i}">
           <div class="item-head"><strong>Buchungsbuttons (${bookingButtons.length})</strong></div>
-          <p class="field-note">Jeder Button hat einen eigenen Anmeldestart und ein eigenes Anmeldeende. Außerhalb seines Zeitraums öffnet sich stattdessen sein Hinweis-Modal (maximal 12 Buttons).</p>
+          <p class="field-note">Mit „Nach oben“ und „Nach unten“ bestimmst du die Reihenfolge auf der Angebotsseite. Jeder Button hat seinen eigenen Anmeldezeitraum und Hinweis-Modal (maximal 12 Buttons).</p>
           ${bookingButtons.map((b,j)=>'<div class="offer-booking-button-editor">'
-            +'<div class="item-head"><strong>Button '+(j+1)+'</strong><span class="offer-button-admin-status '+esc(bookingWindowStatus(b.registration_start,b.registration_end).kind)+'">'+esc(bookingWindowStatus(b.registration_start,b.registration_end).label)+'</span><button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button></div>'
+            +'<div class="item-head"><strong>Button '+(j+1)+'</strong><span class="offer-button-admin-status '+esc(bookingWindowStatus(b.registration_start,b.registration_end).kind)+'">'+esc(bookingWindowStatus(b.registration_start,b.registration_end).label)+'</span>'
+            +'<div class="offer-booking-button-controls">'
+              +'<button type="button" class="secondary small move-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'" data-move-direction="-1" aria-label="Button '+(j+1)+' nach oben verschieben" '+(j===0?'disabled':'')+'>↑ Nach oben</button>'
+              +'<button type="button" class="secondary small move-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'" data-move-direction="1" aria-label="Button '+(j+1)+' nach unten verschieben" '+(j===bookingButtons.length-1?'disabled':'')+'>↓ Nach unten</button>'
+              +'<button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button>'
+            +'</div></div>'
             +'<div class="grid2">'
               +textField('Beschriftung','offers.items.'+i+'.buttons.'+j+'.label',b.label)
               +textField('Eigene URL','offers.items.'+i+'.buttons.'+j+'.url',b.url,false,'https://... oder /angebote/')
@@ -541,12 +546,23 @@
     }));
     editor.querySelectorAll('[data-lines]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.lines,el.value.split('\n').map(x=>x.trim()).filter(Boolean))));
     editor.querySelectorAll('.cms-upload').forEach(el=>el.addEventListener('change',uploadImage));
-    const refreshBookingButtons=(index)=>{
+    const refreshBookingButtons=(index,focusIndex=null)=>{
       markDirty();
       render();
       showTab('angebote');
       const target=editor.querySelector('[data-offer-button-group="'+index+'"]');
-      requestAnimationFrame(()=>target?.scrollIntoView({block:'center',behavior:'auto'}));
+      requestAnimationFrame(()=>{
+        if(focusIndex!==null){
+          const row=target?.querySelectorAll('.offer-booking-button-editor')[focusIndex];
+          if(row){
+            row.scrollIntoView({block:'center',behavior:'auto'});
+            const focusTarget=row.querySelector('.move-offer-booking-button:not(:disabled)');
+            focusTarget?.focus({preventScroll:true});
+            return;
+          }
+        }
+        target?.scrollIntoView({block:'center',behavior:'auto'});
+      });
     };
     editor.querySelectorAll('.add-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
       const i=Number(el.dataset.offerIndex),offer=data.offers.items[i];
@@ -555,6 +571,17 @@
       if(buttons.length>=12){alert('Maximal 12 Buttons pro Training.');return;}
       buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
       refreshBookingButtons(i);
+    }));
+    editor.querySelectorAll('.move-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
+      const i=Number(el.dataset.offerIndex),j=Number(el.dataset.bookingIndex);
+      const direction=Number(el.dataset.moveDirection),offer=data.offers.items[i];
+      if(!offer||![-1,1].includes(direction))return;
+      const buttons=offerBookingButtons(offer),newIndex=j+direction;
+      if(j<0||j>=buttons.length||newIndex<0||newIndex>=buttons.length)return;
+      // Das ganze Button-Objekt verschieben: URL, Zeitraum, Modus und Hinweise bleiben zusammen.
+      const [moved]=buttons.splice(j,1);
+      buttons.splice(newIndex,0,moved);
+      refreshBookingButtons(i,newIndex);
     }));
     editor.querySelectorAll('.remove-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
       const i=Number(el.dataset.offerIndex),j=Number(el.dataset.bookingIndex),offer=data.offers.items[i];
