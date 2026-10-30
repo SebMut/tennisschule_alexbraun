@@ -176,22 +176,22 @@
                 "registration_end": "2026-11-08",
                 "buttons": [
                     {
-                        "id": "winter",
-                        "label": "Anmeldung Wintertraining",
-                        "url": "",
-                        "mode": "modal",
-                        "registration_start": "2026-10-02",
-                        "registration_end": "2026-10-29",
-                        "unavailable_title": "",
-                        "unavailable_message": ""
-                    },
-                    {
                         "id": "button-qttc9h99",
                         "label": "Anmeldung Ballschule",
                         "url": "https://docs.google.com/forms/d/e/1FAIpQLSeYDe9JM-f7lOZFqpYiM80vMKf2w7Tcn9MfJ3Zaft0XC3Of2g/viewform?usp=header",
                         "mode": "modal",
                         "registration_start": "2026-10-29",
                         "registration_end": "2026-11-08",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    },
+                    {
+                        "id": "winter",
+                        "label": "Anmeldung Wintertraining",
+                        "url": "",
+                        "mode": "modal",
+                        "registration_start": "2026-10-02",
+                        "registration_end": "2026-10-29",
                         "unavailable_title": "",
                         "unavailable_message": ""
                     }
