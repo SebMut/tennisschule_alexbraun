@@ -225,6 +225,7 @@ jobs:
           put _inc/site.php -o _inc/site.php
           put assets/site.js -o assets/site.js
           put assets/style.css -o assets/style.css
+          put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
           put angebote/index.php -o angebote/index.php
           put api/content-validation.php -o api/content-validation.php
           put admin/admin.css -o admin/admin.css
@@ -242,6 +243,9 @@ jobs:
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
           grep -Fq 'admin.js?v=20261030-button-reorder' "$admin_page"
           grep -Fq 'data-booking-mode' "$offers_page"
+          grep -Fq 'Gehostet und entwickelt von' "$offers_page"
+          grep -Fq 'smartwerk-footer-logo.png' "$offers_page"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null
           rm -f "$admin_page" "$offers_page"
 
 # Admin secret refresh trigger

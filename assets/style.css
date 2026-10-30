@@ -725,3 +725,35 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   white-space:normal;
   overflow-wrap:anywhere;
 }
+
+
+/* Dezenter Entwickler- und Hosting-Hinweis im Footer, passend zur Vorlage. */
+.footer-smartwerk-credit{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:13px;
+  color:#555a68;
+  font-size:12px;
+  font-weight:400;
+  line-height:1.4;
+}
+.footer-smartwerk-credit span{white-space:normal}
+.footer-smartwerk-credit a{
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+  border-radius:4px;
+}
+.footer-smartwerk-credit img{
+  display:block;
+  width:153px;
+  height:auto;
+  max-width:100%;
+  object-fit:contain;
+}
+.footer-smartwerk-credit a:focus-visible{outline:2px solid #2b5bb2;outline-offset:3px}
+@media (max-width:767px){
+  .footer-smartwerk-credit{justify-content:center;gap:7px 10px}
+}

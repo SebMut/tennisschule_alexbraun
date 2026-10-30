@@ -177,7 +177,11 @@ function site_footer(): void {
     echo '<div class="footer-right"><nav class="footer-links" aria-label="Footer Navigation">';
     foreach(($f['links']??[]) as $link) echo '<a data-track="footer_link_'.h(preg_replace('/[^a-z0-9]+/i','_',strtolower((string)($link['label']??'')))).'" href="'.h($link['url']??'#').'">'.h($link['label']??'').'</a>';
     echo '<a data-track="footer_legal" href="/impressum-datenschutzerklaerung/">'.h($f['legal_label']??'Impressum & Datenschutzerklärung').'</a></nav>';
-    echo '<p>© '.date('Y').' '.h($f['copyright_name']??'Tennisschule Alex Braun').'.</p></div></div></footer>';
+    echo '<p>© '.date('Y').' '.h($f['copyright_name']??'Tennisschule Alex Braun').'.</p>';
+    echo '<div class="footer-smartwerk-credit"><span>Gehostet und entwickelt von</span>';
+    echo '<a data-track="footer_smartwerk" href="https://www.smartwerk.art/" target="_blank" rel="noopener noreferrer" aria-label="SmartWerk.art – Website besuchen">';
+    echo '<img src="/assets/media/smartwerk-footer-logo.png" alt="SmartWerk.art – 3D Druck" width="153" height="37" loading="lazy" decoding="async"></a></div>';
+    echo '</div></div></footer>';
     if(!empty($mobile['enabled'])){
       echo '<nav class="mobile-sticky-cta" aria-label="Schnellaktionen">';
       echo '<a data-track="mobile_cta_training" class="mobile-sticky-primary" href="'.h($mobile['primary_url']??'/angebote/').'">'.h($mobile['primary_label']??'Training buchen').'</a>';
@@ -207,7 +211,7 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261030-equal-booking-buttons"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261030-smartwerk-footer"><link rel="stylesheet" href="/assets/trainings-anmeldung.css"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
       'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,
