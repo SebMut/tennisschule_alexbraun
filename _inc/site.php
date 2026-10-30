@@ -91,14 +91,6 @@ function offer_booking_buttons(array $offer): array {
     ];
     return [['id'=>$id,'label'=>$offer['button']??'Jetzt anmelden','url'=>$offer['form_url']??'','mode'=>'modal']];
 }
-function offer_button_as_offer(array $offer,array $button): array {
-    foreach(['registration_start','registration_end'] as $key) {
-        $date=trim((string)($button[$key]??''));
-        if($date!=='') $offer[$key]=$date;
-    }
-    return $offer;
-}
-
 function site_header(string $active = ''): void {
     $d=site_data(); $s=$d['site']??[]; $n=$s['navigation']??[]; $loc=$d['locations']??[];
     $logo=$s['logo']??'/assets/media/logo.png'; $name=$s['name']??'Tennisschule Alex Braun';

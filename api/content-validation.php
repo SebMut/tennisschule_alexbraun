@@ -33,6 +33,14 @@ function normalize_site_content(array $data, array $current = []): array {
         ));
         $offer['featured'] = !empty($offer['featured']);
 
+        // Alte doppelte Buchungszeiträume je Button beim nächsten Speichern bereinigen.
+        if (isset($offer['buttons']) && is_array($offer['buttons'])) {
+            foreach ($offer['buttons'] as &$button) {
+                if (is_array($button)) unset($button['registration_start'], $button['registration_end']);
+            }
+            unset($button);
+        }
+
         unset(
             $offer['status'],
             $offer['status_kind'],
@@ -162,19 +170,8 @@ function validate_site_content(array $data): array {
                 if ($buttonUrl !== '' && !preg_match('~^(?:https?://[^\s]+|/(?!/)[^\s]*)$~i',$buttonUrl)) {
                     $add('error','angebote','offer_button_url_invalid',$title.': Button '.($j+1).' hat eine ungültige URL.',"$buttonPath.url");
                 }
-                $buttonStart = trim((string)($button['registration_start'] ?? ''));
-                $buttonEnd = trim((string)($button['registration_end'] ?? ''));
-                foreach (['registration_start'=>$buttonStart,'registration_end'=>$buttonEnd] as $dateKey=>$dateVal) {
-                    if ($dateVal !== '' && (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$dateVal) || !checkdate((int)substr($dateVal,5,2),(int)substr($dateVal,8,2),(int)substr($dateVal,0,4)))) {
-                        $add('error','angebote','offer_button_date_invalid',$title.': Button '.($j+1).' hat ein ungültiges Datum.',"$buttonPath.$dateKey");
-                    }
-                }
-                $effectiveStart = $buttonStart !== '' ? $buttonStart : $startRaw;
-                $effectiveEnd = $buttonEnd !== '' ? $buttonEnd : $endRaw;
-                if ($effectiveStart > $effectiveEnd) {
-                    $add('error','angebote','offer_button_date_order',$title.': Bei Button '.($j+1).' liegt das Enddatum vor dem Startdatum.',"$buttonPath.registration_end");
-                }
-                $buttonState = validation_offer_state(array_merge($offer,['registration_start'=>$effectiveStart,'registration_end'=>$effectiveEnd]));
+                // Die Buchbarkeit wird ausschließlich vom Trainingszeitraum bestimmt.
+                $buttonState=$state;
                 if ($buttonState === 'open' && $buttonUrl === '') {
                     $add('error','angebote','offer_button_url_missing',$title.': Buchbarer Button '.($j+1).' braucht einen Ziel-Link.',"$buttonPath.url");
                 }

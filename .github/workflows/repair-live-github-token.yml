@@ -91,3 +91,5 @@ jobs:
           LFTP
 
           echo "GitHub-Zugang in der Live-Konfiguration aktualisiert. Andere Einstellungen unverändert."
+
+# Reparatur nach manueller Aktualisierung des Secrets TS_GITHUB_TOKEN (2026-10-30).

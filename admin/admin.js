@@ -120,7 +120,7 @@
 
   function offerBookingButtons(offer){
     if(Array.isArray(offer.buttons))return offer.buttons;
-    const make=(id,label,url)=>({id,label,url,mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
+    const make=(id,label,url)=>({id,label,url,mode:'modal',unavailable_title:'',unavailable_message:''});
     if(offer.id==='camps'){
       offer.buttons=[
         make('camp-feldkirchen',offer.button_feldkirchen||'Tenniscamp Feldkirchen',offer.form_url_feldkirchen||''),
@@ -245,8 +245,8 @@
         <div class="offer-switch-panel">
           ${checkboxField('Auf Startseite hervorheben',`offers.items.${i}.featured`,o.featured,'Nur die optische Hervorhebung wird manuell gesteuert.')}
           <div class="grid2">
-            ${dateField('Anmeldung startet',`offers.items.${i}.registration_start`,o.registration_start,'Vor diesem Datum erscheint „Bald verfügbar“.')}
-            ${dateField('Anmeldung endet',`offers.items.${i}.registration_end`,o.registration_end,'Nach diesem Datum erscheint „Anmeldung geschlossen“.')}
+            ${dateField('Anmeldung startet (gilt für alle Buttons)',`offers.items.${i}.registration_start`,o.registration_start,'Vor diesem Datum erscheint „Bald verfügbar“.')}
+            ${dateField('Anmeldung endet (gilt für alle Buttons)',`offers.items.${i}.registration_end`,o.registration_end,'Nach diesem Datum erscheint „Anmeldung geschlossen“.')}
           </div>
           <div class="offer-auto-status"><strong>Automatischer Status:</strong> ${esc(state.label)}</div>
         </div>
@@ -258,7 +258,7 @@
 
         <div class="offer-booking-button-group" data-offer-button-group="${i}">
           <div class="item-head"><strong>Buchungsbuttons (${bookingButtons.length})</strong></div>
-          <p class="field-note">Du kannst beliebige Buttons hinzufügen oder entfernen (maximal 12). Jeder Button erhält einen eigenen Link oder ein eigenes Anmelde-Modal. Solange die Anmeldung geschlossen ist, erscheint stattdessen ein frei formulierbarer Hinweis.</p>
+          <p class="field-note">Alle Buttons dieses Trainings verwenden den gemeinsamen Anmeldezeitraum oben. Hier kannst du pro Button Text, Ziel-URL, Link oder Formular-Modal sowie den Hinweis bei geschlossener Anmeldung festlegen (maximal 12 Buttons).</p>
           ${bookingButtons.map((b,j)=>'<div class="offer-booking-button-editor">'
             +'<div class="item-head"><strong>Button '+(j+1)+'</strong><button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button></div>'
             +'<div class="grid2">'
@@ -266,10 +266,6 @@
               +textField('Eigene URL','offers.items.'+i+'.buttons.'+j+'.url',b.url,false,'https://... oder /angebote/')
             +'</div>'
             +selectField('Beim Klick, wenn buchbar','offers.items.'+i+'.buttons.'+j+'.mode',b.mode||'modal',[{value:'modal',label:'Buchungsformular in einem Modal öffnen'},{value:'link',label:'Zur URL weiterleiten'}])
-            +'<div class="grid2">'
-              +dateField('Dieser Button: Buchbar ab (optional)','offers.items.'+i+'.buttons.'+j+'.registration_start',b.registration_start,'Leer = Datum des Trainings')
-              +dateField('Dieser Button: Buchbar bis (optional)','offers.items.'+i+'.buttons.'+j+'.registration_end',b.registration_end,'Leer = Datum des Trainings')
-            +'</div>'
             +textField('Titel im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_title',b.unavailable_title)
             +textField('Text im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_message',b.unavailable_message,true,'Wird angezeigt, wenn dieser Button gerade nicht buchbar ist.')
             +'</div>').join('')}
@@ -521,7 +517,7 @@
       if(!offer)return;
       const buttons=offerBookingButtons(offer);
       if(buttons.length>=12){alert('Maximal 12 Buttons pro Training.');return;}
-      buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
+      buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',unavailable_title:'',unavailable_message:''});
       refreshBookingButtons(i);
     }));
     editor.querySelectorAll('.remove-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{
