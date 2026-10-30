@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: united-domains-staging
+  # Staging-Uploads dürfen gezielte Live-Updates nicht blockieren.
+  group: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') && 'united-domains-live' || 'united-domains-staging' }}
   cancel-in-progress: true
 
 jobs:
