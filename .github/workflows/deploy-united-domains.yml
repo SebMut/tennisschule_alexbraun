@@ -31,6 +31,9 @@ jobs:
           node --check assets/site.js
           node --check admin/admin.js
 
+      - name: Buchungszeiträume pro Button testen
+        run: php tests/booking-windows.php
+
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
@@ -236,7 +239,7 @@ jobs:
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" -o "$admin_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" -o "$offers_page"
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
-          grep -Fq 'admin.js?v=20261030-single-period' "$admin_page"
+          grep -Fq 'admin.js?v=20261030-button-periods' "$admin_page"
           grep -Fq 'data-booking-mode' "$offers_page"
           rm -f "$admin_page" "$offers_page"
 

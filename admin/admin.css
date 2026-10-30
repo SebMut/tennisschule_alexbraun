@@ -641,3 +641,17 @@ select:focus{z-index:20}
   opacity:1 !important;text-align:left !important;
 }
 input[type="date"]{min-height:44px;cursor:text}
+
+/* Jeder Buchungsbutton erhält seinen eigenen Status und Zeitraum. */
+.offer-button-admin-status{
+  display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;
+  font-size:11px;font-weight:750;line-height:1.3;margin-left:auto;
+}
+.offer-button-admin-status.open{background:#e5f5e9;color:#256331}
+.offer-button-admin-status.upcoming{background:#fff0dc;color:#8c5014}
+.offer-button-admin-status.closed{background:#fde9e9;color:#9e2b2b}
+.offer-booking-button-editor input[type="date"]{min-width:0}
+@media (max-width:760px){
+  .offer-booking-button-editor .item-head{flex-wrap:wrap}
+  .offer-button-admin-status{order:3;width:100%;margin-left:0}
+}

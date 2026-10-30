@@ -43,22 +43,41 @@ function offer_parse_date(string $raw, bool $endOfDay=false): ?DateTimeImmutable
     return $date instanceof DateTimeImmutable ? $date : null;
 }
 function offer_registration_state(array $offer): string {
+    if(isset($offer['buttons'])&&is_array($offer['buttons'])){
+        $upcoming=false;
+        foreach($offer['buttons'] as $button){
+            if(!is_array($button)) continue;
+            $state=offer_registration_state(offer_button_as_offer($offer,$button));
+            if($state==='open') return 'open';
+            if($state==='upcoming') $upcoming=true;
+        }
+        return $upcoming?'upcoming':'closed';
+    }
     $start=offer_parse_date(trim((string)($offer['registration_start']??'')));
     $end=offer_parse_date(trim((string)($offer['registration_end']??'')),true);
     $now=new DateTimeImmutable('now',new DateTimeZone('Europe/Berlin'));
 
-    // Invalid/missing windows never open registration by accident.
-    if(!$start || !$end) return 'closed';
-    if($end < $start) return $now < $start ? 'upcoming' : 'closed';
-    if($now < $start) return 'upcoming';
-    if($now > $end) return 'closed';
+    if(!$start || !$end || $end<$start) return 'closed';
+    if($now<$start) return 'upcoming';
+    if($now>$end) return 'closed';
     return 'open';
 }
 function offer_registration_open(array $offer): bool {
     return offer_registration_state($offer)==='open';
 }
 function offer_registration_start_label(array $offer): string {
-    $raw=trim((string)($offer['registration_start']??''));
+    if(isset($offer['buttons'])&&is_array($offer['buttons'])){
+        $dates=[];
+        foreach($offer['buttons'] as $button){
+            if(!is_array($button)) continue;
+            $single=offer_button_as_offer($offer,$button);
+            if(offer_registration_state($single)==='upcoming') $dates[]=(string)($single['registration_start']??'');
+        }
+        sort($dates);
+        $raw=$dates[0]??'';
+    }else{
+        $raw=trim((string)($offer['registration_start']??''));
+    }
     if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$raw,$m)) return $m[3].'.'.$m[2].'.'.$m[1];
     return '';
 }
@@ -85,11 +104,19 @@ function offer_unavailable_message(array $offer): string {
 function offer_booking_buttons(array $offer): array {
     if (isset($offer['buttons']) && is_array($offer['buttons'])) return $offer['buttons'];
     $id=(string)($offer['id']??'');
+    $legacyDates=['registration_start'=>$offer['registration_start']??'','registration_end'=>$offer['registration_end']??''];
     if($id==='camps') return [
-        ['id'=>'camp-feldkirchen','label'=>$offer['button_feldkirchen']??'Tenniscamp Feldkirchen','url'=>$offer['form_url_feldkirchen']??'','mode'=>'modal'],
-        ['id'=>'camp-heimstetten','label'=>$offer['button_heimstetten']??'Tenniscamp Heimstetten','url'=>$offer['form_url_heimstetten']??'','mode'=>'modal']
+        array_merge($legacyDates,['id'=>'camp-feldkirchen','label'=>$offer['button_feldkirchen']??'Tenniscamp Feldkirchen','url'=>$offer['form_url_feldkirchen']??'','mode'=>'modal']),
+        array_merge($legacyDates,['id'=>'camp-heimstetten','label'=>$offer['button_heimstetten']??'Tenniscamp Heimstetten','url'=>$offer['form_url_heimstetten']??'','mode'=>'modal'])
     ];
-    return [['id'=>$id,'label'=>$offer['button']??'Jetzt anmelden','url'=>$offer['form_url']??'','mode'=>'modal']];
+    return [array_merge($legacyDates,['id'=>$id,'label'=>$offer['button']??'Jetzt anmelden','url'=>$offer['form_url']??'','mode'=>'modal'])];
+}
+function offer_button_as_offer(array $offer,array $button): array {
+    unset($offer['buttons']);
+    foreach(['registration_start','registration_end'] as $key){
+        if(array_key_exists($key,$button)) $offer[$key]=(string)$button[$key];
+    }
+    return $offer;
 }
 function site_header(string $active = ''): void {
     $d=site_data(); $s=$d['site']??[]; $n=$s['navigation']??[]; $loc=$d['locations']??[];

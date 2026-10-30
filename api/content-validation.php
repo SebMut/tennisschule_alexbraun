@@ -33,10 +33,18 @@ function normalize_site_content(array $data, array $current = []): array {
         ));
         $offer['featured'] = !empty($offer['featured']);
 
-        // Alte doppelte Buchungszeiträume je Button beim nächsten Speichern bereinigen.
+        // Migration: Nur fehlende Daten aus dem bisherigen Trainingszeitraum
+        // übernehmen. Vorhandene individuelle Button-Daten niemals überschreiben.
         if (isset($offer['buttons']) && is_array($offer['buttons'])) {
             foreach ($offer['buttons'] as &$button) {
-                if (is_array($button)) unset($button['registration_start'], $button['registration_end']);
+                if (!is_array($button)) continue;
+                foreach (['registration_start','registration_end'] as $dateField) {
+                    if (!array_key_exists($dateField,$button)) {
+                        $button[$dateField] = (string)($offer[$dateField] ?? '');
+                    } else {
+                        $button[$dateField] = trim((string)$button[$dateField]);
+                    }
+                }
             }
             unset($button);
         }
@@ -98,6 +106,21 @@ function normalize_site_content(array $data, array $current = []): array {
 }
 
 function validation_offer_state(array $offer): string {
+    if (isset($offer['buttons']) && is_array($offer['buttons'])) {
+        $upcoming = false;
+        foreach ($offer['buttons'] as $button) {
+            if (!is_array($button)) continue;
+            $single = $offer;
+            unset($single['buttons']);
+            foreach (['registration_start','registration_end'] as $key) {
+                if (array_key_exists($key,$button)) $single[$key]=(string)$button[$key];
+            }
+            $state = validation_offer_state($single);
+            if ($state === 'open') return 'open';
+            if ($state === 'upcoming') $upcoming = true;
+        }
+        return $upcoming ? 'upcoming' : 'closed';
+    }
     $tz = new DateTimeZone('Europe/Berlin');
     $now = new DateTimeImmutable('now', $tz);
     $startRaw = trim((string)($offer['registration_start'] ?? ''));
@@ -109,7 +132,7 @@ function validation_offer_state(array $offer): string {
         ? DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $endRaw.' 23:59:59', $tz)
         : false;
 
-    if (!$start || !$end) return 'invalid';
+    if (!$start || !$end || $end < $start) return 'invalid';
     if ($now < $start) return 'upcoming';
     if ($now > $end) return 'closed';
     return 'open';
@@ -131,24 +154,29 @@ function validate_site_content(array $data): array {
         $title = trim((string)($offer['title'] ?? 'Angebot'));
         if ($id !== '') $offersById[$id] = $offer;
 
-        $startRaw = trim((string)($offer['registration_start'] ?? ''));
-        $endRaw = trim((string)($offer['registration_end'] ?? ''));
-        if ($startRaw === '') {
-            $add('error','angebote','offer_start_missing',$title.': Startdatum der Anmeldung fehlt.',"offers.items.$i.registration_start");
-        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$startRaw)) {
-            $add('error','angebote','offer_start_invalid',$title.': Startdatum ist ungültig.',"offers.items.$i.registration_start");
-        }
-        if ($endRaw === '') {
-            $add('error','angebote','offer_end_missing',$title.': Enddatum der Anmeldung fehlt.',"offers.items.$i.registration_end");
-        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$endRaw)) {
-            $add('error','angebote','offer_end_invalid',$title.': Enddatum ist ungültig.',"offers.items.$i.registration_end");
-        }
-        if (
-            preg_match('/^\d{4}-\d{2}-\d{2}$/',$startRaw)
-            && preg_match('/^\d{4}-\d{2}-\d{2}$/',$endRaw)
-            && $endRaw < $startRaw
-        ) {
-            $add('error','angebote','offer_date_order',$title.': Enddatum liegt vor dem Startdatum.',"offers.items.$i.registration_end");
+        // Gemeinsame Datumsfelder nur für ältere Angebote ohne Button-Liste prüfen.
+        if (!isset($offer['buttons']) || !is_array($offer['buttons'])) {
+            $startRaw = trim((string)($offer['registration_start'] ?? ''));
+            $endRaw = trim((string)($offer['registration_end'] ?? ''));
+            if ($startRaw === '') {
+                $add('error','angebote','offer_start_missing',$title.': Startdatum der Anmeldung fehlt.',"offers.items.$i.registration_start");
+            } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$startRaw)) {
+                $add('error','angebote','offer_start_invalid',$title.': Startdatum ist ungültig.',"offers.items.$i.registration_start");
+            }
+            if ($endRaw === '') {
+                $add('error','angebote','offer_end_missing',$title.': Enddatum der Anmeldung fehlt.',"offers.items.$i.registration_end");
+            } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$endRaw)) {
+                $add('error','angebote','offer_end_invalid',$title.': Enddatum ist ungültig.',"offers.items.$i.registration_end");
+            }
+            if (
+                preg_match('/^\d{4}-\d{2}-\d{2}$/',$startRaw)
+                && preg_match('/^\d{4}-\d{2}-\d{2}$/',$endRaw)
+                && $endRaw < $startRaw
+            ) {
+                $add('error','angebote','offer_date_order',$title.': Enddatum liegt vor dem Startdatum.',"offers.items.$i.registration_end");
+            }
+
+
         }
 
         $state = validation_offer_state($offer);
@@ -170,8 +198,28 @@ function validate_site_content(array $data): array {
                 if ($buttonUrl !== '' && !preg_match('~^(?:https?://[^\s]+|/(?!/)[^\s]*)$~i',$buttonUrl)) {
                     $add('error','angebote','offer_button_url_invalid',$title.': Button '.($j+1).' hat eine ungültige URL.',"$buttonPath.url");
                 }
-                // Die Buchbarkeit wird ausschließlich vom Trainingszeitraum bestimmt.
-                $buttonState=$state;
+                // Jeder Button hat seinen eigenen Zeitraum. Fehlende Legacy-Werte
+                // werden beim nächsten Speichern aus dem alten Training übernommen.
+                $buttonStart = trim((string)($button['registration_start'] ?? $offer['registration_start'] ?? ''));
+                $buttonEnd = trim((string)($button['registration_end'] ?? $offer['registration_end'] ?? ''));
+                $datesValid = true;
+                foreach (['registration_start'=>$buttonStart,'registration_end'=>$buttonEnd] as $dateKey=>$dateRaw) {
+                    if ($dateRaw === '') {
+                        $add('error','angebote','button_date_missing',$title.': Button '.($j+1).' braucht ein '.($dateKey==='registration_start'?'Startdatum.':'Enddatum.'),"$buttonPath.$dateKey");
+                        $datesValid = false;
+                    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$dateRaw)
+                        || !checkdate((int)substr($dateRaw,5,2),(int)substr($dateRaw,8,2),(int)substr($dateRaw,0,4))) {
+                        $add('error','angebote','button_date_invalid',$title.': Button '.($j+1).' hat ein ungültiges Datum.',"$buttonPath.$dateKey");
+                        $datesValid = false;
+                    }
+                }
+                if ($datesValid && $buttonEnd < $buttonStart) {
+                    $add('error','angebote','button_date_order',$title.': Button '.($j+1).' endet vor seinem Anmeldestart.',"$buttonPath.registration_end");
+                    $datesValid = false;
+                }
+                $buttonState = $datesValid ? validation_offer_state([
+                    'registration_start'=>$buttonStart,'registration_end'=>$buttonEnd
+                ]) : 'invalid';
                 if ($buttonState === 'open' && $buttonUrl === '') {
                     $add('error','angebote','offer_button_url_missing',$title.': Buchbarer Button '.($j+1).' braucht einen Ziel-Link.',"$buttonPath.url");
                 }

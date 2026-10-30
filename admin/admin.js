@@ -84,15 +84,24 @@
     const m=String(raw||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
     return m?m[3]+'.'+m[2]+'.'+m[1]:'';
   }
-  function offerAdminStatus(offer){
+  function bookingWindowStatus(startValue,endValue){
+    const start=parseAdminDate(startValue);
+    const end=parseAdminDate(endValue,true);
     const now=new Date();
-    const start=parseAdminDate(offer?.registration_start);
-    const end=parseAdminDate(offer?.registration_end,true);
     if(!start||!end)return {label:'Datumsfenster unvollständig',kind:'closed'};
     if(end<start)return {label:'Datumsfenster fehlerhaft',kind:'closed'};
-    if(now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(offer.registration_start),kind:'upcoming'};
+    if(now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(startValue),kind:'upcoming',start};
     if(now>end)return {label:'Anmeldung geschlossen',kind:'closed'};
     return {label:'Anmeldung geöffnet',kind:'open'};
+  }
+  function offerAdminStatus(offer){
+    const buttons=offerBookingButtons(offer);
+    if(!buttons.length)return {label:'Keine Buchungsbuttons',kind:'closed'};
+    const states=buttons.map(button=>bookingWindowStatus(button.registration_start,button.registration_end));
+    if(states.some(s=>s.kind==='open'))return {label:'Mindestens eine Anmeldung geöffnet',kind:'open'};
+    const upcoming=states.filter(s=>s.kind==='upcoming').sort((a,b)=>a.start-b.start);
+    if(upcoming.length)return {label:upcoming[0].label,kind:'upcoming'};
+    return {label:'Alle Anmeldungen geschlossen',kind:'closed'};
   }
   function linesField(label,path,value){return `<label>${esc(label)}<textarea data-lines="${esc(path)}">${esc((value||[]).join('\n'))}</textarea></label>`;}
   function preview(value,label='Aktuell verwendetes Bild',wide=false){return value?`<div class="current-image${wide?' wide':''}"><span class="current-image-label">${esc(label)}</span><img src="${esc(value)}" alt="" loading="lazy"></div>`:'';}
@@ -119,8 +128,24 @@
   }
 
   function offerBookingButtons(offer){
-    if(Array.isArray(offer.buttons))return offer.buttons;
-    const make=(id,label,url)=>({id,label,url,mode:'modal',unavailable_title:'',unavailable_message:''});
+    // Einmalige Migration alter Trainings- und Buttondaten: fehlende Buttondaten
+    // erhalten den bisherigen Trainingszeitraum. Bereits gesetzte individuelle
+    // Buchungszeiträume bleiben unverändert.
+    const inheritDates=button=>{
+      if(!button||typeof button!=='object')return button;
+      if(!Object.prototype.hasOwnProperty.call(button,'registration_start')){
+        button.registration_start=offer.registration_start||'';
+      }
+      if(!Object.prototype.hasOwnProperty.call(button,'registration_end')){
+        button.registration_end=offer.registration_end||'';
+      }
+      return button;
+    };
+    if(Array.isArray(offer.buttons)){
+      offer.buttons.forEach(inheritDates);
+      return offer.buttons;
+    }
+    const make=(id,label,url)=>inheritDates({id,label,url,mode:'modal',unavailable_title:'',unavailable_message:''});
     if(offer.id==='camps'){
       offer.buttons=[
         make('camp-feldkirchen',offer.button_feldkirchen||'Tenniscamp Feldkirchen',offer.form_url_feldkirchen||''),
@@ -226,7 +251,7 @@
       ${textField('Einleitung','offers.intro',data.offers?.intro,true)}
       ${textField('Hover-Text der Anmeldebuttons','offers.hover_text',data.offers?.hover_text)}
 
-      ${offers.map((o,i)=>{const state=offerAdminStatus(o),bookingButtons=offerBookingButtons(o);return `<div class="cms-card">
+      ${offers.map((o,i)=>{const bookingButtons=offerBookingButtons(o),state=offerAdminStatus(o);return `<div class="cms-card">
         <div class="item-head"><strong>${esc(o.title||'Angebot')}</strong><span class="offer-admin-status ${esc(state.kind)}">${esc(state.label)}</span></div>
         ${textField('Titel',`offers.items.${i}.title`,o.title)}
 
@@ -244,11 +269,7 @@
 
         <div class="offer-switch-panel">
           ${checkboxField('Auf Startseite hervorheben',`offers.items.${i}.featured`,o.featured,'Nur die optische Hervorhebung wird manuell gesteuert.')}
-          <div class="grid2">
-            ${dateField('Anmeldung startet (gilt für alle Buttons)',`offers.items.${i}.registration_start`,o.registration_start,'Vor diesem Datum erscheint „Bald verfügbar“.')}
-            ${dateField('Anmeldung endet (gilt für alle Buttons)',`offers.items.${i}.registration_end`,o.registration_end,'Nach diesem Datum erscheint „Anmeldung geschlossen“.')}
-          </div>
-          <div class="offer-auto-status"><strong>Automatischer Status:</strong> ${esc(state.label)}</div>
+          <div class="offer-auto-status"><strong>Status der Buttons:</strong> ${esc(state.label)}</div>
         </div>
 
         <div class="grid2">
@@ -258,14 +279,18 @@
 
         <div class="offer-booking-button-group" data-offer-button-group="${i}">
           <div class="item-head"><strong>Buchungsbuttons (${bookingButtons.length})</strong></div>
-          <p class="field-note">Alle Buttons dieses Trainings verwenden den gemeinsamen Anmeldezeitraum oben. Hier kannst du pro Button Text, Ziel-URL, Link oder Formular-Modal sowie den Hinweis bei geschlossener Anmeldung festlegen (maximal 12 Buttons).</p>
+          <p class="field-note">Jeder Button hat einen eigenen Anmeldestart und ein eigenes Anmeldeende. Außerhalb seines Zeitraums öffnet sich stattdessen sein Hinweis-Modal (maximal 12 Buttons).</p>
           ${bookingButtons.map((b,j)=>'<div class="offer-booking-button-editor">'
-            +'<div class="item-head"><strong>Button '+(j+1)+'</strong><button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button></div>'
+            +'<div class="item-head"><strong>Button '+(j+1)+'</strong><span class="offer-button-admin-status '+esc(bookingWindowStatus(b.registration_start,b.registration_end).kind)+'">'+esc(bookingWindowStatus(b.registration_start,b.registration_end).label)+'</span><button type="button" class="danger small remove-offer-booking-button" data-offer-index="'+i+'" data-booking-index="'+j+'">Entfernen</button></div>'
             +'<div class="grid2">'
               +textField('Beschriftung','offers.items.'+i+'.buttons.'+j+'.label',b.label)
               +textField('Eigene URL','offers.items.'+i+'.buttons.'+j+'.url',b.url,false,'https://... oder /angebote/')
             +'</div>'
             +selectField('Beim Klick, wenn buchbar','offers.items.'+i+'.buttons.'+j+'.mode',b.mode||'modal',[{value:'modal',label:'Buchungsformular in einem Modal öffnen'},{value:'link',label:'Zur URL weiterleiten'}])
+            +'<div class="grid2">'
+              +dateField('Anmeldung startet','offers.items.'+i+'.buttons.'+j+'.registration_start',b.registration_start,'Ab diesem Tag ist dieser Button buchbar.')
+              +dateField('Anmeldung endet','offers.items.'+i+'.buttons.'+j+'.registration_end',b.registration_end,'Bis einschließlich diesem Tag buchbar.')
+            +'</div>'
             +textField('Titel im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_title',b.unavailable_title)
             +textField('Text im Hinweis-Modal (optional)','offers.items.'+i+'.buttons.'+j+'.unavailable_message',b.unavailable_message,true,'Wird angezeigt, wenn dieser Button gerade nicht buchbar ist.')
             +'</div>').join('')}
@@ -475,14 +500,25 @@
         const path=el.dataset.path;
         setPath(data,path,el.value);
         if(el.type==='date'){
-          const match=path.match(/^offers\.items\.(\d+)\.registration_(?:start|end)$/);
+          const match=path.match(/^offers\.items\.(\d+)\.buttons\.(\d+)\.registration_(?:start|end)$/);
           if(match){
-            const badge=el.closest('.cms-card')?.querySelector('.offer-admin-status');
             const offer=data.offers.items[Number(match[1])];
-            if(badge&&offer){
-              const state=offerAdminStatus(offer);
-              badge.textContent=state.label;
-              badge.className='offer-admin-status '+state.kind;
+            if(offer){
+              const button=offerBookingButtons(offer)[Number(match[2])];
+              const buttonBadge=el.closest('.offer-booking-button-editor')?.querySelector('.offer-button-admin-status');
+              if(buttonBadge&&button){
+                const buttonState=bookingWindowStatus(button.registration_start,button.registration_end);
+                buttonBadge.textContent=buttonState.label;
+                buttonBadge.className='offer-button-admin-status '+buttonState.kind;
+              }
+              const badge=el.closest('.cms-card')?.querySelector('.offer-admin-status');
+              if(badge){
+                const state=offerAdminStatus(offer);
+                badge.textContent=state.label;
+                badge.className='offer-admin-status '+state.kind;
+                const statusText=el.closest('.cms-card')?.querySelector('.offer-auto-status strong');
+                if(statusText)statusText.nextSibling.textContent=' '+state.label;
+              }
             }
           }
         }
@@ -517,7 +553,7 @@
       if(!offer)return;
       const buttons=offerBookingButtons(offer);
       if(buttons.length>=12){alert('Maximal 12 Buttons pro Training.');return;}
-      buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',unavailable_title:'',unavailable_message:''});
+      buttons.push({id:'button-'+Math.random().toString(36).slice(2,10),label:'Neuer Button',url:'',mode:'modal',registration_start:'',registration_end:'',unavailable_title:'',unavailable_message:''});
       refreshBookingButtons(i);
     }));
     editor.querySelectorAll('.remove-offer-booking-button').forEach(el=>el.addEventListener('click',()=>{

@@ -49,13 +49,14 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
           if(!is_array($book)) continue;
           $buttonLabel=trim((string)($book['label']??''));
           if($buttonLabel==='') continue;
-          $buttonOpen=$registrationOpen;
-          $buttonState=$statusKind;
+          $buttonOffer=offer_button_as_offer($offer,$book);
+          $buttonOpen=offer_registration_open($buttonOffer);
+          $buttonState=offer_status_kind($buttonOffer);
           $buttonUrl=trim((string)($book['url']??''));
           if($buttonUrl!==''&&!preg_match('~^(?:/(?!/)|https?://)~i',$buttonUrl)) $buttonUrl='';
           $buttonMode=($book['mode']??'modal')==='link'?'link':'modal';
           $buttonId=(string)($book['id']??($id.'-'.$btnIdx));
-          $buttonError=$unavailableMessage;
+          $buttonError=offer_unavailable_message($buttonOffer);
         ?>
           <div class="trainings-btn-wrapper"><button class="trainings-btn"
             data-training-id="<?=h($buttonId)?>"

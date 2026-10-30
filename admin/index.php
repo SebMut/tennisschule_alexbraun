@@ -9,7 +9,7 @@ staging_access_require(false);
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Website bearbeiten – Tennisschule Alex Braun</title>
-<link rel="stylesheet" href="/admin/admin.css?v=20261030-validation-datefix">
+<link rel="stylesheet" href="/admin/admin.css?v=20261030-button-periods">
 <style>
 /* Layout-Fix: Die CMS-Steuerung bleibt immer im normalen Dokumentfluss. */
 body.admin-editing{overflow:auto!important}
@@ -124,6 +124,6 @@ body.admin-editing #editorPanel[hidden]{display:none!important}
     <div id="editor"></div>
   </section>
 </main>
-<script src="/admin/admin.js?v=20261030-single-period"></script>
+<script src="/admin/admin.js?v=20261030-button-periods"></script>
 </body>
 </html>
