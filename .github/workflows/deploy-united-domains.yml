@@ -227,13 +227,18 @@ jobs:
           bye
           LFTP
 
-      - name: Live-Popup – neue Admin-Oberfläche prüfen
+      - name: Live-Popup und Trainingsbuttons – Website prüfen
         if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
         run: |
           set -euo pipefail
-          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" | grep -Fq 'data-admin-tab="popup"'
-          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-assets=${{ github.run_id }}" | grep -Fq 'trainbtn'
-          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" | grep -Fq 'data-booking-mode'
+          admin_page="$(mktemp)"
+          offers_page="$(mktemp)"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" -o "$admin_page"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" -o "$offers_page"
+          grep -Fq 'data-admin-tab="popup"' "$admin_page"
+          grep -Fq 'admin.js?v=20261030-trainbtn' "$admin_page"
+          grep -Fq 'data-booking-mode' "$offers_page"
+          rm -f "$admin_page" "$offers_page"
 
 # Admin secret refresh trigger
 

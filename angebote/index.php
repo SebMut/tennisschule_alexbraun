@@ -56,7 +56,7 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
           if($buttonUrl!==''&&!preg_match('~^(?:/(?!/)|https?://)~i',$buttonUrl)) $buttonUrl='';
           $buttonMode=($book['mode']??'modal')==='link'?'link':'modal';
           $buttonId=(string)($book['id']??($id.'-'.$btnIdx));
-          $buttonError=trim((string)($book['unavailable_message']??''))?:offer_unavailable_message($buttonOffer);
+          $buttonError=offer_unavailable_message($buttonOffer);
         ?>
           <div class="trainings-btn-wrapper"><button class="trainings-btn"
             data-training-id="<?=h($buttonId)?>"
