@@ -655,3 +655,22 @@ input[type="date"]{min-height:44px;cursor:text}
   .offer-booking-button-editor .item-head{flex-wrap:wrap}
   .offer-button-admin-status{order:3;width:100%;margin-left:0}
 }
+
+/* Reihenfolge der Buchungsbuttons: per Tastatur und Touch bedienbar. */
+.offer-booking-button-controls{
+  display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px;
+}
+.offer-booking-button-controls button{white-space:nowrap}
+.offer-booking-button-controls .move-offer-booking-button{
+  color:#21589d;background:#edf3ff;border:1px solid #cedbf0;
+}
+.offer-booking-button-controls .move-offer-booking-button:not(:disabled):hover{background:#dceaff}
+.offer-booking-button-controls .move-offer-booking-button:disabled{
+  cursor:default;opacity:.45;filter:none;
+}
+.offer-booking-button-editor .item-head{flex-wrap:wrap}
+.offer-booking-button-editor .item-head .offer-button-admin-status{margin-left:auto}
+@media(max-width:760px){
+  .offer-booking-button-controls{width:100%;justify-content:flex-start}
+  .offer-booking-button-editor .item-head .offer-button-admin-status{margin-left:0}
+}
