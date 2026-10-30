@@ -74,6 +74,7 @@ jobs:
           '
 
       - name: Auf United-Domains-Testwebspace übertragen
+        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') }}
         env:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
           UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
@@ -102,6 +103,7 @@ jobs:
           LFTP
 
       - name: Testdomain technisch prüfen
+        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') }}
         continue-on-error: true
         env:
           TS_ADMIN_PASSWORD: ${{ secrets.TS_ADMIN_PASSWORD }}
