@@ -68,15 +68,15 @@
         "team_image": "/assets/media/trainerteam_2024.webp",
         "team_button_text": "Zur TrainerÜbersicht",
         "locations_title": "Unsere Standorte",
-        "popup_image": "/assets/media/popup_wintertraining_2026_2027-2.png",
-        "popup_link": "/angebote/",
+        "popup_image": "/assets/media/cms/20261030-132307-4c217d51.webp",
+        "popup_link": "/angebote/?training=winter#wintertraining",
         "map_route_label": "Route berechnen",
         "offer_link_url": "/angebote/",
         "team_button_url": "/trainerteam/",
-        "popup_enabled": false,
-        "popup_frequency_days": 1,
+        "popup_enabled": true,
+        "popup_frequency_days": 7,
         "popup_delay_seconds": 1,
-        "popup_close_delay_seconds": 0,
+        "popup_close_delay_seconds": 2,
         "popup_alt": "Wintertennistraining",
         "trust_enabled": true,
         "trust_items": [
@@ -135,13 +135,25 @@
                 "featured": false,
                 "home_cta_label": "Sommertraining ansehen",
                 "home_cta_url": "/angebote/?training=sommer#sommertraining",
-                "registration_start": "2027-03-10",
-                "registration_end": "2027-04-18"
+                "registration_start": "2027-03-01",
+                "registration_end": "2027-04-18",
+                "buttons": [
+                    {
+                        "id": "sommer",
+                        "label": "Anmeldung Sommertraining",
+                        "url": "",
+                        "mode": "modal",
+                        "registration_start": "2026-03-10",
+                        "registration_end": "2026-05-01",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    }
+                ]
             },
             {
                 "id": "winter",
                 "title": "Wintertraining",
-                "button": "Anmeldung Wintertraining",
+                "button": "Anmeldung Wintertraining (Ballschule)",
                 "home_text": "Unser Wintertraining ermöglicht es dir, in den kalten Monaten an Technik und Fitness zu arbeiten. In der Halle bieten wir gezieltes Training für einen optimalen Start in die Saison.",
                 "image": "/assets/media/startseite_4.webp",
                 "details": [
@@ -150,18 +162,30 @@
                     "Tennishalle Kirchheim und Sporttraum Heimstetten",
                     "ab 43€ pro Monat"
                 ],
-                "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSc_Fct_pc8R9KGUg8YF5Vp74Mz7lX1x6GMRE15QQRTOLrAGzA/viewform?pli=1/viewform?embedded=true",
-                "target_group": "",
+                "form_url": "https://docs.google.com/forms/d/e/1FAIpQLSeYDe9JM-f7lOZFqpYiM80vMKf2w7Tcn9MfJ3Zaft0XC3Of2g/viewform?usp=header",
+                "target_group": "Kinder / Jugendliche /Erwachsene",
                 "focus": "Technik · Fitness · Hallentraining",
                 "training_scope": "24 Trainingswochen",
                 "period": "Anfang Oktober bis Ende April",
                 "location": "Tennishalle Kirchheim und Sporttraum Heimstetten",
                 "price": "ab 43€ pro Monat",
                 "featured": true,
-                "home_cta_label": "Jetzt Wintertraining anmelden",
+                "home_cta_label": "Jetzt Wintertraining anmelden (BALLSCHULE)",
                 "home_cta_url": "/angebote/?training=winter#wintertraining",
                 "registration_start": "2026-08-28",
-                "registration_end": "2026-10-17"
+                "registration_end": "2026-11-08",
+                "buttons": [
+                    {
+                        "id": "winter",
+                        "label": "Anmeldung Wintertraining (Ballschule)",
+                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSeYDe9JM-f7lOZFqpYiM80vMKf2w7Tcn9MfJ3Zaft0XC3Of2g/viewform?usp=header",
+                        "mode": "modal",
+                        "registration_start": "",
+                        "registration_end": "",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    }
+                ]
             },
             {
                 "id": "camps",
@@ -187,7 +211,29 @@
                 "home_cta_label": "Tenniscamps ansehen",
                 "home_cta_url": "/angebote/?training=camps#tenniscamps",
                 "registration_start": "2027-03-10",
-                "registration_end": "2027-09-12"
+                "registration_end": "2027-09-12",
+                "buttons": [
+                    {
+                        "id": "camp-feldkirchen",
+                        "label": "Anmeldung Tenniscamps\nTSV Feldkirchen",
+                        "url": "",
+                        "mode": "modal",
+                        "registration_start": "",
+                        "registration_end": "",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    },
+                    {
+                        "id": "camp-heimstetten",
+                        "label": "Anmeldung Tenniscamps\nSV Heimstetten",
+                        "url": "",
+                        "mode": "modal",
+                        "registration_start": "",
+                        "registration_end": "",
+                        "unavailable_title": "",
+                        "unavailable_message": ""
+                    }
+                ]
             }
         ],
         "page_title": "Unser Angebot",
