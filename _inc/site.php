@@ -188,26 +188,17 @@ function site_hero(bool $home=false): void {
     echo '</div></section>';
 }
 
-function social_icon(string $type): string {
-    $i=[
-      'phone'=>'<svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.8 3.5 3.1 4.8 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.8 21 3 13.2 3 3.7c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1l-2.2 2.2z"/></svg>',
-      'whatsapp'=>'<svg viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.4-1.7a11.8 11.8 0 0 0 5.6 1.4h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.3-6.2-3.6-8.4z"/></svg>',
-      'mail'=>'<svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>',
-      'instagram'=>'<svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10z"/></svg>'
-    ]; return $i[$type]??'';
-}
-
 function site_footer(): void {
     $d=site_data(); $f=$d['site']['footer']??[]; $mobile=$d['mobile_cta']??[];
     $phone=$f['phone']??'+49 172 2104 303'; $email=$f['email']??'info@tennisschule-alexbraun.de';
     echo '<footer class="site-footer"><div class="container footer-grid"><div class="footer-left">';
     echo '<a class="footer-name" href="/">'.h($f['name']??'Tennisschule Alex Braun').'</a>';
     echo '<div class="footer-contact-lines"><a data-track="footer_phone_text" href="tel:'.h(preg_replace('/\s+/','',$phone)).'">'.h($phone).'</a><a data-track="footer_email_text" href="mailto:'.h($email).'">'.h($email).'</a></div>';
-    echo '<div class="footer-social">';
-    echo '<a data-track="footer_phone" href="tel:'.h(preg_replace('/\s+/','',$phone)).'" aria-label="Telefon">'.social_icon('phone').'</a>';
-    echo '<a data-track="footer_whatsapp" href="https://wa.me/'.h(preg_replace('/\D+/','',$phone)).'" aria-label="WhatsApp">'.social_icon('whatsapp').'</a>';
-    echo '<a data-track="footer_email" href="mailto:'.h($email).'" aria-label="E-Mail">'.social_icon('mail').'</a>';
-    echo '<a data-track="footer_instagram" href="'.h($f['instagram']??'').'" target="_blank" rel="noopener" aria-label="Instagram">'.social_icon('instagram').'</a></div></div>';
+    echo '<div class="footer-social" aria-label="Kontakt und soziale Medien">';
+    echo '<a data-track="footer_phone" href="tel:'.h(preg_replace('/\s+/','',$phone)).'" aria-label="Jetzt anrufen" title="Anrufen"><img class="footer-social-icon" src="/assets/media/footer-telefon.webp" width="64" height="64" alt="" loading="lazy" decoding="async"></a>';
+    echo '<a data-track="footer_whatsapp" href="https://wa.me/'.h(preg_replace('/\D+/','',$phone)).'" target="_blank" rel="noopener noreferrer" aria-label="Über WhatsApp schreiben" title="WhatsApp"><img class="footer-social-icon" src="/assets/media/footer-whatsapp.webp" width="64" height="64" alt="" loading="lazy" decoding="async"></a>';
+    echo '<a data-track="footer_email" href="mailto:'.h($email).'" aria-label="E-Mail schreiben" title="E-Mail"><img class="footer-social-icon" src="/assets/media/footer-email.webp" width="64" height="47" alt="" loading="lazy" decoding="async"></a>';
+    echo '<a data-track="footer_instagram" href="'.h($f['instagram']??'https://www.instagram.com/tennisschule_alexbraun/').'" target="_blank" rel="noopener noreferrer" aria-label="Instagram-Profil ansehen" title="Instagram"><img class="footer-social-icon" src="/assets/media/footer-instagram.webp" width="64" height="64" alt="" loading="lazy" decoding="async"></a></div></div>';
     echo '<div class="footer-right"><nav class="footer-links" aria-label="Footer Navigation">';
     foreach(($f['links']??[]) as $link) echo '<a data-track="footer_link_'.h(preg_replace('/[^a-z0-9]+/i','_',strtolower((string)($link['label']??'')))).'" href="'.h($link['url']??'#').'">'.h($link['label']??'').'</a>';
     echo '<a data-track="footer_legal" href="/impressum-datenschutzerklaerung/">'.h($f['legal_label']??'Impressum & Datenschutzerklärung').'</a></nav>';
@@ -245,7 +236,7 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261101-page-headings"><link rel="stylesheet" href="/assets/trainings-anmeldung.css?v=20261101-booking-availability"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261101-footer-contact-icons"><link rel="stylesheet" href="/assets/trainings-anmeldung.css?v=20261101-booking-availability"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
       'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,

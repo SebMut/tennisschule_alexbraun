@@ -243,6 +243,10 @@ jobs:
           put assets/style.css -o assets/style.css
           put assets/trainings-anmeldung.css -o assets/trainings-anmeldung.css
           put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
+          put assets/media/footer-telefon.webp -o assets/media/footer-telefon.webp
+          put assets/media/footer-whatsapp.webp -o assets/media/footer-whatsapp.webp
+          put assets/media/footer-email.webp -o assets/media/footer-email.webp
+          put assets/media/footer-instagram.webp -o assets/media/footer-instagram.webp
           put angebote/index.php -o angebote/index.php
           put trainerteam/index.php -o trainerteam/index.php
           put standorte/index.php -o standorte/index.php
@@ -285,6 +289,18 @@ jobs:
           rm -f "$css_file"
           grep -Fq 'Gehostet und entwickelt von' "$offers_page"
           grep -Fq 'smartwerk-footer-logo.png' "$offers_page"
+          grep -Fq 'style.css?v=20261101-footer-contact-icons' "$offers_page"
+          for icon in telefon whatsapp email instagram; do
+            grep -Fq "footer-${icon}.webp" "$offers_page"
+            icon_path="$(mktemp)"
+            curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/footer-${icon}.webp?v=${{ github.run_id }}" -o "$icon_path"
+            test "$(wc -c < "$icon_path")" -gt 300
+            rm -f "$icon_path"
+          done
+          grep -Fq 'data-track="footer_phone" href="tel:+491722104303"' "$offers_page"
+          grep -Fq 'data-track="footer_whatsapp" href="https://wa.me/491722104303"' "$offers_page"
+          grep -Fq 'data-track="footer_email" href="mailto:info@tennisschule-alexbraun.de"' "$offers_page"
+          grep -Fq 'data-track="footer_instagram" href="https://www.instagram.com/tennisschule_alexbraun' "$offers_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null
           grep -Fq 'success-card' "$success_page"
           grep -Fq 'success-action-primary' "$success_page"

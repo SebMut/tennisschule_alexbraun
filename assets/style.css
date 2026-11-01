@@ -881,3 +881,30 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(max-width:767px){
   .page-hero .hero-title{font-size:clamp(1.8rem,6.4vw,2.4rem)}
 }
+
+
+/* Kontakt-Icons aus den vier bereitgestellten Originalbildern.
+   Einheitliche Touchflächen, erkennbare Markenfarben, barrierefreie Links. */
+.footer-social{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:10px}
+.footer-social a{
+  flex:0 0 46px;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin:0;
+  background:#f7f8fa;border:1px solid #e8ebf0;border-radius:11px;
+  color:var(--kubio-dark);
+  text-decoration:none;
+  transition:background-color .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.footer-social .footer-social-icon{
+  display:block;width:34px;height:34px;max-width:34px;
+  object-fit:contain;
+}
+.footer-social a:hover{
+  background:#fff3e8;border-color:#f17c20;
+  box-shadow:0 4px 12px rgba(43,45,66,.08);transform:translateY(-2px);
+}
+.footer-social a:focus-visible,.footer-contact-lines a:focus-visible{
+  outline:3px solid #2f7cff;outline-offset:3px;
+}
+.footer-contact-lines a:hover{color:var(--kubio-orange);text-decoration:underline}
+@media(prefers-reduced-motion:reduce){.footer-social a{transition:none}.footer-social a:hover{transform:none}}
