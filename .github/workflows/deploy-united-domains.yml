@@ -188,6 +188,7 @@ jobs:
           get _inc/site.php -o "$RUNNER_TEMP/live-popup-backup/site.php"
           get assets/site.js -o "$RUNNER_TEMP/live-popup-backup/assets-site.js"
           get assets/style.css -o "$RUNNER_TEMP/live-popup-backup/assets-style.css"
+          get assets/trainings-anmeldung.css -o "$RUNNER_TEMP/live-popup-backup/trainings-anmeldung.css"
           get angebote/index.php -o "$RUNNER_TEMP/live-popup-backup/angebote-index.php"
           get api/content-validation.php -o "$RUNNER_TEMP/live-popup-backup/content-validation.php"
           get admin/admin.css -o "$RUNNER_TEMP/live-popup-backup/admin-css.css"
@@ -225,6 +226,7 @@ jobs:
           put _inc/site.php -o _inc/site.php
           put assets/site.js -o assets/site.js
           put assets/style.css -o assets/style.css
+          put assets/trainings-anmeldung.css -o assets/trainings-anmeldung.css
           put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
           put angebote/index.php -o angebote/index.php
           put api/content-validation.php -o api/content-validation.php
@@ -243,6 +245,11 @@ jobs:
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
           grep -Fq 'admin.js?v=20261030-button-reorder' "$admin_page"
           grep -Fq 'data-booking-mode' "$offers_page"
+          grep -Fq 'trainings-anmeldung.css?v=20261101-booking-availability' "$offers_page"
+          css_file="$(mktemp)"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/trainings-anmeldung.css?v=${{ github.run_id }}" -o "$css_file"
+          grep -Fq 'booking-availability-colors-v1' "$css_file"
+          rm -f "$css_file"
           grep -Fq 'Gehostet und entwickelt von' "$offers_page"
           grep -Fq 'smartwerk-footer-logo.png' "$offers_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null

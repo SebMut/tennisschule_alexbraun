@@ -277,3 +277,21 @@
     }
 }
 
+
+/* booking-availability-colors-v1: nicht buchbare Termine sind bewusst nicht orange.
+   Die Buttons bleiben anklickbar, um den Hinweis-Dialog anzuzeigen. */
+.offer-detail-card .trainings-btn[data-registration-open="0"]{
+    background-color:#6b7280 !important;
+    border-color:#6b7280 !important;
+    color:#fff !important;
+}
+.offer-detail-card .trainings-btn[data-registration-state="upcoming"][data-registration-open="0"]{
+    background-color:#50749b !important;
+    border-color:#50749b !important;
+}
+.offer-detail-card .trainings-btn[data-registration-open="0"]:hover,
+.offer-detail-card .trainings-btn[data-registration-open="0"]:focus-visible{
+    background-color:#344255 !important;
+    border-color:#344255 !important;
+    color:#fff !important;
+}
