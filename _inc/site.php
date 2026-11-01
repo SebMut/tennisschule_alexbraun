@@ -131,21 +131,55 @@ function site_header(string $active = ''): void {
     echo '<a data-track="nav_trainers" class="'.trim(nav_active($active,'trainerteam')).'" href="/trainerteam/">'.h($n['trainers']??'Trainerteam').'</a>';
     echo '<div class="nav-dropdown'.nav_active($active,'standorte').'"><a data-track="nav_locations" href="/standorte/">'.h($n['locations']??'Standorte').' <span class="nav-caret" aria-hidden="true">⌄</span></a>';
     echo '<div class="dropdown-menu"><a data-track="nav_location_feldkirchen" href="/tsv-feldkirchen/">'.h($f).'</a><a data-track="nav_location_heimstetten" href="/sv-heimstetten/">'.h($h).'</a></div></div>';
-    echo '<a data-track="nav_shop" href="'.h($shopUrl).'">'.h($n['shop']??'Shop').'</a>';
+    echo '<a data-track="nav_shop" href="'.h($shopUrl).'" target="_blank" rel="noopener noreferrer">'.h($n['shop']??'Shop').'</a>';
     echo '<a data-track="nav_contact" class="'.trim(nav_active($active,'kontakt')).'" href="/kontakt/">'.h($n['contact']??'Kontakt').'</a>';
     echo '</nav><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Menü öffnen"><span></span><span></span><span></span></button></div>';
     echo '<div class="mobile-overlay" id="mobileOverlay"></div><aside class="mobile-menu" id="mobileMenu" aria-hidden="true">';
     echo '<div class="mobile-menu-head"><a class="mobile-brand" href="/"><img src="'.h($logo).'" alt="'.h($name).'"></a><button class="mobile-close" type="button" aria-label="Menü schließen">×</button></div>';
     echo '<nav class="mobile-nav"><a href="/">'.h($n['home']??'Home').'</a><a href="/angebote/">'.h($n['offers']??'Angebote').'</a><a href="/trainerteam/">'.h($n['trainers']??'Trainerteam').'</a>';
     echo '<details><summary>'.h($n['locations']??'Standorte').'</summary><a href="/standorte/">'.h($n['locations_overview']??'Übersicht').'</a><a href="/tsv-feldkirchen/">'.h($f).'</a><a href="/sv-heimstetten/">'.h($h).'</a></details>';
-    echo '<a href="'.h($shopUrl).'">'.h($n['shop']??'Shop').'</a><a href="/kontakt/">'.h($n['contact']??'Kontakt').'</a></nav></aside></header>';
+    echo '<a href="'.h($shopUrl).'" target="_blank" rel="noopener noreferrer">'.h($n['shop']??'Shop').'</a><a href="/kontakt/">'.h($n['contact']??'Kontakt').'</a></nav></aside></header>';
+}
+
+/**
+ * Die Seitenüberschrift des Tennisbilds kommt aus den bereits gepflegten
+ * CMS-Seitentiteln. Der Startseiten-Claim bleibt davon unberührt.
+ */
+function site_hero_page_title(array $data): string {
+    $path=parse_url((string)($_SERVER['REQUEST_URI']??'/'),PHP_URL_PATH) ?: '/';
+    $title=match($path) {
+        '/angebote/' => $data['offers']['page_title']??'Unser Angebot',
+        '/trainerteam/' => $data['trainers']['page_title']??'Trainerteam',
+        '/standorte/' => $data['locations']['page_title']??'Unsere Standorte',
+        '/tsv-feldkirchen/' => $data['locations']['feldkirchen']['name']??'TSV Feldkirchen',
+        '/sv-heimstetten/' => $data['locations']['heimstetten']['name']??'SV Heimstetten',
+        '/kontakt/' => $data['contact']['page_title']??'Kontakt',
+        '/impressum-datenschutzerklaerung/' => $data['legal']['page_title']??'Impressum & Datenschutzerklärung',
+        '/newsletter/' => $data['newsletter']['page_title']??'Newsletter',
+        '/newsletter/bestaetigen/' => 'Newsletter bestätigen',
+        '/newsletter/abmelden/' => $data['newsletter']['unsubscribe_page_title']??'Newsletter abmelden',
+        '/nachricht-erfolgreich-zugestellt/' => $data['success']['page_title']??'Nachricht erfolgreich zugestellt',
+        default => http_response_code()===404
+          ? ($data['not_found']['title']??'Seite nicht gefunden')
+          : ($data['site']['hero_title']??'Tennisschule Alex Braun'),
+    };
+    $title=trim((string)$title);
+    return $title!==''?$title:'Tennisschule Alex Braun';
 }
 
 function site_hero(bool $home=false): void {
     $d=site_data(); $s=$d['site']??[];
     $img=str_replace(["'",'"',')','\\'],'',(string)($s['hero_image']??'/assets/media/header_bild.jpg'));
     echo '<section class="hero '.($home?'home-hero':'page-hero').'" style="'.h("--hero-image:url('".$img."')").'"><div class="hero-overlay"></div><div class="container hero-content">';
-    echo '<h1 class="hero-title"><span class="hero-title-desktop">'.h($s['hero_title']??'Tennisschule Alex Braun').'</span><span class="hero-title-mobile">'.hbr($s['hero_title_mobile']??"Tennisschule\nAlex Braun").'</span></h1>';
+    if($home){
+        $desktopTitle=h($s['hero_title']??'Tennisschule Alex Braun');
+        $mobileTitle=hbr($s['hero_title_mobile']??"Tennisschule\nAlex Braun");
+    }else{
+        $pageTitle=h(site_hero_page_title($d));
+        $desktopTitle=$pageTitle;
+        $mobileTitle=$pageTitle;
+    }
+    echo '<h1 class="hero-title"><span class="hero-title-desktop">'.$desktopTitle.'</span><span class="hero-title-mobile">'.$mobileTitle.'</span></h1>';
     if($home){
       echo '<p class="hero-lead">'.h($s['tagline']??'').'</p><p class="hero-copy">'.h($s['hero_copy']??'').'</p><div class="hero-actions">';
       echo '<a data-track="hero_primary" class="btn hero-btn hero-btn-orange" href="'.h($s['hero_primary_url']??'/angebote/').'">'.h($s['hero_primary_button']??'Anmeldung').'</a>';
@@ -211,7 +245,7 @@ function page_head(string $title,string $description='',bool $mapbox=false): voi
     echo '<title>'.h($finalTitle).'</title><meta name="description" content="'.h($finalDescription).'"><link rel="canonical" href="'.h($canonical).'">';
     echo '<meta property="og:type" content="website"><meta property="og:site_name" content="'.h($siteName).'"><meta property="og:title" content="'.h($finalTitle).'"><meta property="og:description" content="'.h($finalDescription).'"><meta property="og:url" content="'.h($canonical).'"><meta property="og:image" content="'.h($og).'">';
     if($staging||$errorPage) echo '<meta name="robots" content="noindex,nofollow,noarchive">';
-    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261101-contact-thank-you"><link rel="stylesheet" href="/assets/trainings-anmeldung.css?v=20261101-booking-availability"></head><body>';
+    echo '<link rel="stylesheet" href="/assets/fonts/fonts.css"><link rel="stylesheet" href="/assets/style.css?v=20261101-page-headings"><link rel="stylesheet" href="/assets/trainings-anmeldung.css?v=20261101-booking-availability"></head><body>';
     render_json_ld([
       '@context'=>'https://schema.org','@type'=>'Organization','name'=>$siteName,'url'=>$base.'/',
       'email'=>$d['site']['footer']['email']??null,'telephone'=>$d['site']['footer']['phone']??null,

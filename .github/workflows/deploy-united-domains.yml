@@ -38,6 +38,9 @@ jobs:
       - name: Branding und Escaping der Kontakt-E-Mails testen
         run: php tests/contact-email.php
 
+      - name: Seitentitel und Shop-Link testen
+        run: php tests/page-hero.php
+
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
@@ -273,7 +276,9 @@ jobs:
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null
           grep -Fq 'success-card' "$success_page"
           grep -Fq 'success-action-primary' "$success_page"
-          grep -Fq 'style.css?v=20261101-contact-thank-you' "$success_page"
+          grep -Fq 'style.css?v=20261101-page-headings' "$success_page"
+          grep -Fq 'style.css?v=20261101-page-headings' "$offers_page"
+          grep -Eq 'data-track="nav_shop"[^>]*target="_blank"[^>]*rel="noopener noreferrer"' "$offers_page"
           rm -f "$admin_page" "$offers_page" "$success_page"
 
 # Admin secret refresh trigger

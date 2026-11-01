@@ -868,3 +868,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
   .success-action{transition:none}
   .success-action:hover{transform:none}
 }
+
+
+/* Dynamische Seitentitel bleiben auch bei langen Namen gut lesbar. */
+.page-hero .hero-title{
+  font-size:clamp(1.8rem,4vw,3rem);
+  line-height:1.18;
+  overflow-wrap:anywhere;
+  hyphens:auto;
+  text-wrap:balance;
+}
+@media(max-width:767px){
+  .page-hero .hero-title{font-size:clamp(1.8rem,6.4vw,2.4rem)}
+}
