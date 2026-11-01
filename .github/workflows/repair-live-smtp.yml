@@ -1,0 +1,74 @@
+name: Kontaktformular SMTP-Passwort auf Live-Website reparieren
+
+on:
+  push:
+    paths:
+      - ".github/workflows/repair-live-smtp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Sicher hinterlegtes SMTP-Passwort überprüfen
+        env:
+          TS_SMTP_PASSWORD: ${{ secrets.TS_SMTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$TS_SMTP_PASSWORD" ]; then
+            echo "::error::Das Secret TS_SMTP_PASSWORD fehlt oder ist leer. Lege in GitHub > Settings > Secrets and variables > Actions das Passwort des United-Domains-Mailpostfachs an. Keine Live-Dateien geändert."
+            exit 1
+          fi
+          echo "SMTP-Passwort ist als Secret hinterlegt. Es wird nicht ausgegeben."
+
+      - name: SFTP installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Ausschließlich das SMTP-Passwort der Live-Website ersetzen
+        env:
+          TS_SMTP_PASSWORD: ${{ secrets.TS_SMTP_PASSWORD }}
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${UD_SFTP_HOST:?Missing SFTP host}"
+          : "${UD_SFTP_USER:?Missing SFTP user}"
+          : "${UD_SFTP_PASSWORD:?Missing SFTP password}"
+          tmp_dir="$(mktemp -d)"
+          trap 'rm -rf "$tmp_dir"' EXIT
+          umask 077
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          cd tennisschulealexbraun
+          get config.local.php -o "$tmp_dir/config.before.php"
+          bye
+          LFTP
+          php -r '
+            $config=require $argv[1];
+            if(!is_array($config) || !isset($config["smtp"]) || !is_array($config["smtp"])) {
+                fwrite(STDERR,"Ungültige SMTP-Konfiguration. Keine Änderung vorgenommen.\n");
+                exit(1);
+            }
+            $password=getenv("TS_SMTP_PASSWORD");
+            if($password===false || $password==="")exit(1);
+            $config["smtp"]["password"]=$password;
+            $content="<?php\nreturn ".var_export($config,true).";\n";
+            if(file_put_contents($argv[2],$content)===false)exit(1);
+            chmod($argv[2],0600);
+          ' "$tmp_dir/config.before.php" "$tmp_dir/config.after.php"
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          cd tennisschulealexbraun
+          put "$tmp_dir/config.after.php" -o config.local.php
+          bye
+          LFTP
+          echo "SMTP-Passwort in der Live-Konfiguration ergänzt. Keine anderen Einstellungen geändert."
