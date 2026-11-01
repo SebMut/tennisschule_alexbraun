@@ -196,6 +196,12 @@ jobs:
           get assets/style.css -o "$RUNNER_TEMP/live-popup-backup/assets-style.css"
           get assets/trainings-anmeldung.css -o "$RUNNER_TEMP/live-popup-backup/trainings-anmeldung.css"
           get angebote/index.php -o "$RUNNER_TEMP/live-popup-backup/angebote-index.php"
+          get trainerteam/index.php -o "$RUNNER_TEMP/live-popup-backup/trainerteam-index.php"
+          get standorte/index.php -o "$RUNNER_TEMP/live-popup-backup/standorte-index.php"
+          get tsv-feldkirchen/index.php -o "$RUNNER_TEMP/live-popup-backup/tsv-feldkirchen-index.php"
+          get sv-heimstetten/index.php -o "$RUNNER_TEMP/live-popup-backup/sv-heimstetten-index.php"
+          get kontakt/index.php -o "$RUNNER_TEMP/live-popup-backup/kontakt-index.php"
+          get impressum-datenschutzerklaerung/index.php -o "$RUNNER_TEMP/live-popup-backup/impressum-index.php"
           get nachricht-erfolgreich-zugestellt/index.php -o "$RUNNER_TEMP/live-popup-backup/success-index.php"
           get api/content-validation.php -o "$RUNNER_TEMP/live-popup-backup/content-validation.php"
           get api/contact.php -o "$RUNNER_TEMP/live-popup-backup/contact.php"
@@ -238,6 +244,12 @@ jobs:
           put assets/trainings-anmeldung.css -o assets/trainings-anmeldung.css
           put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
           put angebote/index.php -o angebote/index.php
+          put trainerteam/index.php -o trainerteam/index.php
+          put standorte/index.php -o standorte/index.php
+          put tsv-feldkirchen/index.php -o tsv-feldkirchen/index.php
+          put sv-heimstetten/index.php -o sv-heimstetten/index.php
+          put kontakt/index.php -o kontakt/index.php
+          put impressum-datenschutzerklaerung/index.php -o impressum-datenschutzerklaerung/index.php
           put nachricht-erfolgreich-zugestellt/index.php -o nachricht-erfolgreich-zugestellt/index.php
           put api/content-validation.php -o api/content-validation.php
           put api/smtp.php -o api/smtp.php
@@ -279,6 +291,27 @@ jobs:
           grep -Fq 'style.css?v=20261101-page-headings' "$success_page"
           grep -Fq 'style.css?v=20261101-page-headings' "$offers_page"
           grep -Eq 'data-track="nav_shop"[^>]*target="_blank"[^>]*rel="noopener noreferrer"' "$offers_page"
+          # Jede Unterseite hat bereits einen H1-Titel im Bild; H2-Dopplungen darunter sind entfernt.
+          if grep -Fq '<h2>Unser Angebot</h2>' "$offers_page"; then
+            echo "::error::Doppelte Überschrift unter Angebote"; exit 1
+          fi
+          check_single_heading() {
+            local slug="$1" title="$2"
+            local page
+            page="$(mktemp)"
+            curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/${slug}/?check=${{ github.run_id }}" -o "$page"
+            grep -Fq 'class="hero-title"' "$page"
+            if grep -Fq "<h2>${title}</h2>" "$page"; then
+              echo "::error::Doppelte Überschrift unter ${slug}: ${title}"; rm -f "$page"; exit 1
+            fi
+            rm -f "$page"
+          }
+          check_single_heading "trainerteam" "Trainerteam"
+          check_single_heading "standorte" "Unsere Standorte"
+          check_single_heading "tsv-feldkirchen" "TSV Feldkirchen"
+          check_single_heading "sv-heimstetten" "SV Heimstetten"
+          check_single_heading "kontakt" "Kontakt"
+          check_single_heading "impressum-datenschutzerklaerung" "Impressum & Datenschutzerklärung"
           rm -f "$admin_page" "$offers_page" "$success_page"
 
 # Admin secret refresh trigger

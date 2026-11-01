@@ -3,7 +3,7 @@ require dirname(__DIR__) . '/_inc/site.php';
 $d=site_data(); $all=$d['locations']??[]; $loc=$all['feldkirchen']??[];
 page_head($loc['name']??'Standort'); site_header('standorte');
 ?><main><?php site_hero(); ?><section class="club-detail"><div class="container">
-<div class="club-content"><h2><?=h($loc['name']??'')?></h2><p><?=h($loc['description']??'')?><?php if(!empty($loc['description_2'])): ?> <?=h($loc['description_2'])?><?php endif; ?></p>
+<div class="club-content"><p><?=h($loc['description']??'')?><?php if(!empty($loc['description_2'])): ?> <?=h($loc['description_2'])?><?php endif; ?></p>
 <div class="button-row"><a class="kubio-btn" data-track="club_feldkirchen_website" href="<?=h($loc['website']??'#')?>" target="_blank" rel="noopener"><?=h($loc['button_website']??'Website')?></a>
 <a class="kubio-btn" data-track="club_feldkirchen_membership" href="<?=h($loc['membership']??'#')?>" target="_blank" rel="noopener noreferrer"><?=h($loc['button_membership']??'Mitgliedsantrag')?></a>
 <a class="kubio-btn club-training-cta" data-track="club_feldkirchen_training" href="<?=h($all['cta_url']??'/kontakt/')?>"><?=h($all['cta_label']??'Training anfragen')?></a></div></div>

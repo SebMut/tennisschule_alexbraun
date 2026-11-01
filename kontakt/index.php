@@ -4,7 +4,7 @@ $d=site_data(); $c=$d['contact']??[]; $labels=$c['labels']??[];
 page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['status']??'';
 ?><main><?php site_hero(); ?><section class="contact-section"><div class="container"><div class="contact-card">
 <div class="contact-photo" style="<?=h("--contact-image:url('".str_replace(["'",'"',')','\\'],'',(string)($c['image']??''))."')")?>" role="img" aria-label="<?=h($c['heading']??'Kontakt')?>"></div>
-<div class="contact-form-col"><h2><?=h($c['heading']??'Kontakt')?></h2>
+<div class="contact-form-col">
 <?php if($status==='sent'): ?><div class="form-notice success"><?=h($c['success_message']??'')?></div><?php endif; ?>
 <?php if($status==='error'): ?><div class="form-notice error"><?=h($c['error_message']??'')?></div><?php endif; ?>
 <form action="/api/contact.php" method="post" accept-charset="UTF-8" data-track-form="contact">

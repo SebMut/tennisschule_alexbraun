@@ -5,7 +5,6 @@ page_head($o['page_title']??'Angebote'); site_header('angebote');
 ?>
 <main><?php site_hero(); ?>
 <section class="offers-page-section"><div class="container">
-  <h2><?=h($o['page_title']??'Unser Angebot')?></h2>
   <div class="section-heading"><p><?=h($o['intro']??'')?></p></div>
 
   <div class="offer-grid offer-grid-detailed">
