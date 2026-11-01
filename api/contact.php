@@ -49,8 +49,6 @@ $mailBody =
 
 try {
     smtp_send([
-        // Temporärer Empfänger für Funktionstest; nach dem Test wieder entfernen.
-        'to' => 'sebastian.mutter@outlook.com',
         'subject' => 'Website: ' . $topic,
         'reply_to' => $email,
         'body' => $mailBody,
