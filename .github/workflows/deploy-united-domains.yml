@@ -193,6 +193,7 @@ jobs:
           get assets/style.css -o "$RUNNER_TEMP/live-popup-backup/assets-style.css"
           get assets/trainings-anmeldung.css -o "$RUNNER_TEMP/live-popup-backup/trainings-anmeldung.css"
           get angebote/index.php -o "$RUNNER_TEMP/live-popup-backup/angebote-index.php"
+          get nachricht-erfolgreich-zugestellt/index.php -o "$RUNNER_TEMP/live-popup-backup/success-index.php"
           get api/content-validation.php -o "$RUNNER_TEMP/live-popup-backup/content-validation.php"
           get api/contact.php -o "$RUNNER_TEMP/live-popup-backup/contact.php"
           get api/smtp.php -o "$RUNNER_TEMP/live-popup-backup/smtp.php"
@@ -234,6 +235,7 @@ jobs:
           put assets/trainings-anmeldung.css -o assets/trainings-anmeldung.css
           put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
           put angebote/index.php -o angebote/index.php
+          put nachricht-erfolgreich-zugestellt/index.php -o nachricht-erfolgreich-zugestellt/index.php
           put api/content-validation.php -o api/content-validation.php
           put api/smtp.php -o api/smtp.php
           put api/contact-mail-templates.php -o api/contact-mail-templates.php
@@ -254,8 +256,10 @@ jobs:
           set -euo pipefail
           admin_page="$(mktemp)"
           offers_page="$(mktemp)"
+          success_page="$(mktemp)"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" -o "$admin_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" -o "$offers_page"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/nachricht-erfolgreich-zugestellt/?landing-check=${{ github.run_id }}" -o "$success_page"
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
           grep -Fq 'admin.js?v=20261030-button-reorder' "$admin_page"
           grep -Fq 'data-booking-mode' "$offers_page"
@@ -267,7 +271,10 @@ jobs:
           grep -Fq 'Gehostet und entwickelt von' "$offers_page"
           grep -Fq 'smartwerk-footer-logo.png' "$offers_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null
-          rm -f "$admin_page" "$offers_page"
+          grep -Fq 'success-card' "$success_page"
+          grep -Fq 'success-action-primary' "$success_page"
+          grep -Fq 'style.css?v=20261101-contact-thank-you' "$success_page"
+          rm -f "$admin_page" "$offers_page" "$success_page"
 
 # Admin secret refresh trigger
 
