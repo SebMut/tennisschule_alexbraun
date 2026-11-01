@@ -304,8 +304,8 @@ jobs:
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/assets/media/smartwerk-footer-logo.png" -o /dev/null
           grep -Fq 'success-card' "$success_page"
           grep -Fq 'success-action-primary' "$success_page"
-          grep -Fq 'style.css?v=20261101-page-headings' "$success_page"
-          grep -Fq 'style.css?v=20261101-page-headings' "$offers_page"
+          grep -Fq 'style.css?v=20261101-footer-contact-icons' "$success_page"
+          grep -Fq 'style.css?v=20261101-footer-contact-icons' "$offers_page"
           grep -Eq 'data-track="nav_shop"[^>]*target="_blank"[^>]*rel="noopener noreferrer"' "$offers_page"
           # Jede Unterseite hat bereits einen H1-Titel im Bild; H2-Dopplungen darunter sind entfernt.
           if grep -Fq '<h2>Unser Angebot</h2>' "$offers_page"; then
