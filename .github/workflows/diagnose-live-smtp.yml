@@ -1,0 +1,130 @@
+name: Contact SMTP preflight on live host
+
+on:
+  push:
+    paths:
+      - ".github/workflows/diagnose-live-smtp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Install SFTP client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Secure and temporary SMTP preflight (no email sent)
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${UD_SFTP_HOST:?Missing SFTP host}"
+          : "${UD_SFTP_USER:?Missing SFTP user}"
+          : "${UD_SFTP_PASSWORD:?Missing SFTP password}"
+          CHECK_TOKEN="$(openssl rand -hex 32)"
+          REMOTE_FILE="api/.smtpcheck-${GITHUB_RUN_ID}.php"
+          TMP_FILE="$(mktemp)"
+          cleanup() {
+            lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP || true
+          set sftp:auto-confirm yes
+          set net:max-retries 1
+          cd tennisschulealexbraun
+          rm -f "$REMOTE_FILE"
+          bye
+          LFTP
+            rm -f "$TMP_FILE"
+          }
+          trap cleanup EXIT
+          cat > "$TMP_FILE" <<'PHP'
+          <?php
+          declare(strict_types=1);
+          if (!hash_equals('NONCE_PLACEHOLDER', (string)($_SERVER['HTTP_X_CHECK_TOKEN'] ?? ''))) {
+              http_response_code(404);
+              exit;
+          }
+          header('Content-Type: application/json; charset=utf-8');
+          header('Cache-Control: no-store');
+          $status=['password_present'=>false,'username_present'=>false,'phase'=>'configuration','result'=>'error'];
+          $fp=null;
+          try {
+              require_once __DIR__ . '/smtp.php';
+              $cfg=app_config()['smtp']??[];
+              $host=(string)($cfg['host']??'');
+              $port=(int)($cfg['port']??0);
+              $encryption=strtolower((string)($cfg['encryption']??''));
+              $username=(string)($cfg['username']??'');
+              $password=(string)($cfg['password']??'');
+              $from=(string)($cfg['from']??'');
+              $status['password_present']=$password!=='';
+              $status['username_present']=$username!=='';
+              $status['settings_valid']=$host==='smtps.udag.de' && in_array($port,[465,587],true);
+              if (!$status['settings_valid'] || !$status['password_present'] || !$status['username_present']) {
+                  $status['result']='missing_configuration';
+              } else {
+                  $status['phase']='connect';
+                  $address=($encryption==='ssl'?'ssl://':'tcp://').$host.':'.$port;
+                  $fp=@stream_socket_client($address,$eno,$estr,12,STREAM_CLIENT_CONNECT);
+                  if(!$fp) throw new RuntimeException('CONNECT');
+                  stream_set_timeout($fp,12);
+                  smtp_expect($fp,[220]);
+                  $status['phase']='ehlo';
+                  $ehlo='EHLO tennisschule-alexbraun.de';
+                  smtp_command($fp,$ehlo,[250]);
+                  if($encryption==='tls'){
+                      $status['phase']='starttls';
+                      smtp_command($fp,'STARTTLS',[220]);
+                      if(!stream_socket_enable_crypto($fp,true,STREAM_CRYPTO_METHOD_TLS_CLIENT))throw new RuntimeException('TLS');
+                      smtp_command($fp,$ehlo,[250]);
+                  }
+                  $status['phase']='authenticate';
+                  smtp_command($fp,'AUTH LOGIN',[334]);
+                  smtp_command($fp,base64_encode($username),[334]);
+                  smtp_command($fp,base64_encode($password),[235]);
+                  $status['phase']='sender';
+                  smtp_command($fp,'MAIL FROM:<'.$from.'>',[250]);
+                  $status['phase']='recipient';
+                  smtp_command($fp,'RCPT TO:<sebastian.mutter@outlook.com>',[250,251]);
+                  smtp_command($fp,'RSET',[250]);
+                  $status['phase']='complete';
+                  $status['result']='authenticated_and_recipient_accepted_no_mail_sent';
+              }
+          } catch(Throwable $error) {
+              $message=$error->getMessage();
+              if (preg_match('/SMTP-Fehler:\s*([0-9]{3})/',$message,$m)) {
+                  $status['smtp_response_code']=$m[1];
+                  $status['result']='smtp_rejected';
+              } elseif($message==='CONNECT') {
+                  $status['result']='connection_failed';
+              } elseif($message==='TLS') {
+                  $status['result']='tls_failed';
+              } else {
+                  $status['result']='internal_error';
+                  $status['error_type']=get_class($error);
+              }
+          } finally {
+              if(is_resource($fp)) fclose($fp);
+          }
+          echo json_encode($status,JSON_UNESCAPED_SLASHES);
+          PHP
+          CHECK_TOKEN="$CHECK_TOKEN" php -r '
+            $path=$argv[1];
+            $source=file_get_contents($path);
+            $source=str_replace("NONCE_PLACEHOLDER",getenv("CHECK_TOKEN"),$source);
+            file_put_contents($path,$source);
+          ' "$TMP_FILE"
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          set net:max-retries 2
+          cd tennisschulealexbraun
+          put "$TMP_FILE" -o "$REMOTE_FILE"
+          bye
+          LFTP
+          curl -fsS --connect-timeout 10 --max-time 60 \
+            -H "X-Check-Token: $CHECK_TOKEN" -H "Cache-Control: no-store" \
+            "https://www.tennisschule-alexbraun.de/$REMOTE_FILE" | python3 -m json.tool
