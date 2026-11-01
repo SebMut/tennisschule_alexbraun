@@ -74,11 +74,14 @@ function smtp_send(array $mail): void {
         smtp_command($fp, 'RCPT TO:<' . $to . '>', [250,251]);
         smtp_command($fp, 'DATA', [354]);
 
-        $replyTo = str_replace(["\r","\n"], '', (string)($mail['reply_to'] ?? ''));
+        $replyTo = trim(str_replace(["\r","\n"], '', (string)($mail['reply_to'] ?? '')));
+        if ($replyTo !== '' && !filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException('Ungültige Antwortadresse.');
+        }
         $subject = smtp_header_value((string)($mail['subject'] ?? 'Kontaktanfrage'));
         $body = str_replace(["\r\n","\r"], "\n", (string)($mail['body'] ?? ''));
         $body = str_replace("\n", "\r\n", $body);
-        $body = preg_replace('/^\./m', '..', $body);
+        $html = (string)($mail['html'] ?? '');
 
         $headers = [
             'Date: ' . date(DATE_RFC2822),
@@ -86,11 +89,32 @@ function smtp_send(array $mail): void {
             'To: <' . $to . '>',
             'Subject: ' . $subject,
             'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: 8bit',
         ];
         if ($replyTo !== '') $headers[] = 'Reply-To: <' . $replyTo . '>';
+        if (!empty($mail['auto_response'])) {
+            $headers[] = 'Auto-Submitted: auto-replied';
+            $headers[] = 'X-Auto-Response-Suppress: All';
+        }
 
+        if ($html !== '') {
+            // Multipart: lesbare Textversion und gestaltete HTML-Version.
+            // Base64 hält UTF-8 und lange HTML-Zeilen SMTP-sicher.
+            $boundary = '=_tsab_' . bin2hex(random_bytes(12));
+            $headers[] = 'Content-Type: multipart/alternative; boundary="' . $boundary . '"';
+            $body = '--' . $boundary . "\r\n"
+                . "Content-Type: text/plain; charset=UTF-8\r\n"
+                . "Content-Transfer-Encoding: base64\r\n\r\n"
+                . chunk_split(base64_encode($body), 76, "\r\n")
+                . "\r\n--" . $boundary . "\r\n"
+                . "Content-Type: text/html; charset=UTF-8\r\n"
+                . "Content-Transfer-Encoding: base64\r\n\r\n"
+                . chunk_split(base64_encode($html), 76, "\r\n")
+                . "\r\n--" . $boundary . '--';
+        } else {
+            $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+            $headers[] = 'Content-Transfer-Encoding: 8bit';
+        }
+        $body = preg_replace('/^\./m', '..', $body);
         fwrite($fp, implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.\r\n");
         smtp_expect($fp, [250]);
         smtp_command($fp, 'QUIT', [221]);

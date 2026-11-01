@@ -38,24 +38,77 @@ if ($last > 0 && (time() - $last) < 30) {
 }
 @file_put_contents($rateFile, (string)time(), LOCK_EX);
 
-$clean = static fn(string $v): string => str_replace(["\r","\n"], ' ', $v);
-$mailBody =
-    "Neue Kontaktanfrage über tennisschule-alexbraun.de\n\n" .
-    "Name: " . $clean($name) . "\n" .
-    "E-Mail: " . $clean($email) . "\n" .
-    "Telefon: " . ($phone !== '' ? $clean($phone) : 'nicht angegeben') . "\n" .
-    "Anliegen: " . $clean($topic) . "\n\n" .
-    "Nachricht:\n" . $message . "\n";
+$clean = static fn(string $v): string => trim(str_replace(["\r","\n"], ' ', $v));
+$senderName = $clean($name);
+$senderPhone = $clean($phone);
+$ownerEmail = (string)(app_config()['smtp']['to'] ?? 'info@tennisschule-alexbraun.de');
+$adminFields = [
+    'Name' => $senderName,
+    'E-Mail' => $email,
+    'Telefon' => $senderPhone !== '' ? $senderPhone : 'nicht angegeben',
+    'Anliegen' => $topic,
+];
 
+require __DIR__ . '/contact-mail-templates.php';
+
+// Zuerst zuverlässig an die Tennisschule senden. Nur danach erfolgt eine Bestätigung.
 try {
     smtp_send([
-        'subject' => 'Website: ' . $topic,
+        'to' => $ownerEmail,
+        'subject' => 'Neue Kontaktanfrage: ' . $topic,
         'reply_to' => $email,
-        'body' => $mailBody,
+        'body' => contact_mail_plain(
+            'Neue Kontaktanfrage',
+            'Über die Website ist eine neue Kontaktanfrage eingegangen.',
+            $adminFields,
+            $message,
+            'Du kannst direkt auf diese E-Mail antworten, um mit der anfragenden Person Kontakt aufzunehmen.'
+        ),
+        'html' => contact_mail_html(
+            'Kontaktformular · neue Anfrage',
+            'Neue Kontaktanfrage',
+            'Über die Website ist eine neue Kontaktanfrage eingegangen.',
+            $adminFields,
+            $message,
+            'Du kannst direkt auf diese E-Mail antworten, um mit der anfragenden Person Kontakt aufzunehmen.'
+        ),
     ]);
-    header('Location: /nachricht-erfolgreich-zugestellt/', true, 303);
 } catch (Throwable $e) {
-    error_log('Kontaktformular SMTP: ' . $e->getMessage());
+    error_log('Kontaktformular SMTP (Tennisschule): ' . $e->getMessage());
     header('Location: /kontakt/?status=error', true, 303);
+    exit;
 }
+
+// Automatische Eingangsbestätigung: nicht mit der Anfrage verwechseln.
+// Ein Problem mit der Bestätigung darf keine zweite Anfrage auslösen.
+try {
+    $confirmationFields = ['Anliegen' => $topic];
+    $intro = 'Hallo ' . $senderName . ', vielen Dank für deine Nachricht! Wir haben deine Anfrage erhalten und melden uns so bald wie möglich bei dir.';
+    $note = 'Dies ist eine automatische Eingangsbestätigung. Wenn du noch Fragen hast, kannst du einfach auf diese E-Mail antworten.';
+    smtp_send([
+        'to' => $email,
+        'subject' => 'Deine Nachricht ist angekommen | Tennisschule Alex Braun',
+        'reply_to' => $ownerEmail,
+        'auto_response' => true,
+        'body' => contact_mail_plain(
+            'Vielen Dank für deine Nachricht!',
+            $intro,
+            $confirmationFields,
+            $message,
+            $note
+        ),
+        'html' => contact_mail_html(
+            'Eingangsbestätigung',
+            'Vielen Dank für deine Nachricht!',
+            $intro,
+            $confirmationFields,
+            $message,
+            $note
+        ),
+    ]);
+} catch (Throwable $e) {
+    // Die Anfrage an die Tennisschule wurde bereits erfolgreich verschickt.
+    error_log('Kontaktformular SMTP (Eingangsbestätigung): ' . $e->getMessage());
+}
+header('Location: /nachricht-erfolgreich-zugestellt/', true, 303);
 exit;

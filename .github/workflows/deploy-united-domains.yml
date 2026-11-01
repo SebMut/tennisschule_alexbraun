@@ -35,6 +35,9 @@ jobs:
       - name: Buchungszeiträume pro Button testen
         run: php tests/booking-windows.php
 
+      - name: Branding und Escaping der Kontakt-E-Mails testen
+        run: php tests/contact-email.php
+
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
@@ -192,6 +195,7 @@ jobs:
           get angebote/index.php -o "$RUNNER_TEMP/live-popup-backup/angebote-index.php"
           get api/content-validation.php -o "$RUNNER_TEMP/live-popup-backup/content-validation.php"
           get api/contact.php -o "$RUNNER_TEMP/live-popup-backup/contact.php"
+          get api/smtp.php -o "$RUNNER_TEMP/live-popup-backup/smtp.php"
           get admin/admin.css -o "$RUNNER_TEMP/live-popup-backup/admin-css.css"
           bye
           LFTP
@@ -231,12 +235,18 @@ jobs:
           put assets/media/smartwerk-footer-logo.png -o assets/media/smartwerk-footer-logo.png
           put angebote/index.php -o angebote/index.php
           put api/content-validation.php -o api/content-validation.php
+          put api/smtp.php -o api/smtp.php
+          put api/contact-mail-templates.php -o api/contact-mail-templates.php
           put api/contact.php -o api/contact.php
           get api/contact.php -o "$RUNNER_TEMP/live-contact-verify.php"
+          get api/smtp.php -o "$RUNNER_TEMP/live-smtp-verify.php"
+          get api/contact-mail-templates.php -o "$RUNNER_TEMP/live-template-verify.php"
           put admin/admin.css -o admin/admin.css
           bye
           LFTP
-          cmp -s api/contact.php "$RUNNER_TEMP/live-contact-verify.php" || { echo "::error::Die Kontaktformular-Datei auf dem Live-Server stimmt nicht mit dem Quellcode überein."; exit 1; }
+          cmp -s api/contact.php "$RUNNER_TEMP/live-contact-verify.php" || { echo "::error::Kontaktformular nicht korrekt veröffentlicht."; exit 1; }
+          cmp -s api/smtp.php "$RUNNER_TEMP/live-smtp-verify.php" || { echo "::error::SMTP-Code nicht korrekt veröffentlicht."; exit 1; }
+          cmp -s api/contact-mail-templates.php "$RUNNER_TEMP/live-template-verify.php" || { echo "::error::E-Mail-Design nicht korrekt veröffentlicht."; exit 1; }
 
       - name: Live-Popup und Trainingsbuttons – Website prüfen
         if: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') }}
