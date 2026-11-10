@@ -214,7 +214,7 @@ function site_footer(): void {
       echo '<a data-track="mobile_cta_contact" class="mobile-sticky-secondary" href="'.h($mobile['secondary_url']??'/kontakt/').'">'.h($mobile['secondary_label']??'Kontakt').'</a>';
       echo '</nav>';
     }
-    echo '<script src="/assets/site.js?v=20261030-trainbtn"></script>';
+    echo '<script src="/assets/site.js?v=20261110-popup-schedule"></script>';
 }
 
 function page_head(string $title,string $description='',bool $mapbox=false): void {
