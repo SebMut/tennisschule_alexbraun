@@ -1,0 +1,51 @@
+name: SFTP-Verbindung unabhängig prüfen (ohne Upload)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/check-sftp-auth.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: SFTP-Client installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+      - name: Webspace-Anmeldung mit OpenSSH prüfen (nur lesen)
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          SSHPASS: ${{ secrets.UD_SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "$UD_SFTP_HOST" ] || [ -z "$UD_SFTP_USER" ] || [ -z "$SSHPASS" ]; then
+            echo "::error::Mindestens eines der drei SFTP-Secrets fehlt oder ist leer."
+            exit 1
+          fi
+          echo "Alle SFTP-Secrets sind vorhanden."
+          set +e
+          printf 'pwd\n' | timeout 30 sshpass -e sftp -q -P 22 \
+            -oBatchMode=no -oPreferredAuthentications=password \
+            -oPubkeyAuthentication=no -oStrictHostKeyChecking=accept-new \
+            -oNumberOfPasswordPrompts=1 -oConnectTimeout=12 \
+            -oUser="$UD_SFTP_USER" "$UD_SFTP_HOST" \
+            > "$RUNNER_TEMP/sftp-output.txt" 2> "$RUNNER_TEMP/sftp-error.txt"
+          code="$?"
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "SFTP-Zugang erfolgreich. OpenSSH kann sich mit den vorhandenen Secrets anmelden."
+          elif grep -qiE 'Permission denied|Authentication failed' "$RUNNER_TEMP/sftp-error.txt"; then
+            echo "::error::Der Server hat die Anmeldung auch mit OpenSSH zurückgewiesen (Authentifizierung)."
+            exit 1
+          elif grep -qiE 'Connection timed out|Connection refused|Could not resolve|No route to host' "$RUNNER_TEMP/sftp-error.txt"; then
+            echo "::error::Server nicht erreichbar oder Verbindungsproblem."
+            exit 1
+          else
+            echo "::error::Verbindung mit OpenSSH nicht erfolgreich (Exit-Code $code). Keine Zugangsdaten ausgegeben."
+            exit 1
+          fi
