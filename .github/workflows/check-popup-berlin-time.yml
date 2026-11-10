@@ -27,8 +27,9 @@ jobs:
           : "${UD_SFTP_USER:?Missing user}"
           : "${UD_SFTP_PASSWORD:?Missing password}"
           umask 077
-          local_file="$(mktemp)"
-          trap 'rm -f "$local_file"' EXIT
+          local_dir="$(mktemp -d)"
+          local_file="$local_dir/site.json"
+          trap 'rm -rf "$local_dir"' EXIT
           lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
           set sftp:auto-confirm yes
           set cmd:fail-exit yes
