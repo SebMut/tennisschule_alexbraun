@@ -191,6 +191,9 @@ jobs:
           set net:max-retries 2
           set net:timeout 20
           cd "$LIVE_REMOTE_PATH"
+          set cmd:fail-exit no
+          get .htaccess -o "$RUNNER_TEMP/live-popup-backup/htaccess-before"
+          set cmd:fail-exit yes
           get index.php -o "$RUNNER_TEMP/live-popup-backup/index.php"
           get admin/index.php -o "$RUNNER_TEMP/live-popup-backup/admin-index.php"
           get admin/admin.js -o "$RUNNER_TEMP/live-popup-backup/admin-admin.js"
@@ -238,6 +241,7 @@ jobs:
           set net:max-retries 2
           set net:timeout 20
           cd "$LIVE_REMOTE_PATH"
+          put .htaccess -o .htaccess
           put index.php -o index.php
           put admin/index.php -o admin/index.php
           put admin/admin.js -o admin/admin.js
@@ -285,6 +289,21 @@ jobs:
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/?popup-check=${{ github.run_id }}" -o "$admin_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" -o "$offers_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/nachricht-erfolgreich-zugestellt/?landing-check=${{ github.run_id }}" -o "$success_page"
+          # Check real HTTP responses, without following redirects (status 308 preserves POST requests).
+          for url in "http://tennisschule-alexbraun.de/" "http://www.tennisschule-alexbraun.de/" "https://tennisschule-alexbraun.de/"; do
+            headers="$(mktemp)"
+            code="$(curl -sS --max-time 20 -D "$headers" -o /dev/null -w '%{http_code}' "$url")"
+            if [ "$code" != "308" ]; then
+              echo "::error::HTTPS-Weiterleitung fehlt: $url (Status $code)"; exit 1
+            fi
+            grep -Fqi 'location: https://www.tennisschule-alexbraun.de/' "$headers" || { echo "::error::Weiterleitungsziel falsch: $url"; exit 1; }
+            rm -f "$headers"
+          done
+          headers="$(mktemp)"
+          code="$(curl -sS --max-time 20 -D "$headers" -o /dev/null -w '%{http_code}' 'http://tennisschule-alexbraun.de/kontakt/?ssl-check=1')"
+          test "$code" = "308"
+          grep -Fqi 'location: https://www.tennisschule-alexbraun.de/kontakt/?ssl-check=1' "$headers"
+          rm -f "$headers"
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
           grep -Fq 'admin.js?v=20261110-popup-schedule' "$admin_page"
           grep -Fq 'site.js?v=20261110-popup-schedule' "$offers_page"

@@ -19,6 +19,15 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Force encrypted canonical host for the public domain.
+  # Leave test.tennisschule-alexbraun.de and other hostnames untouched.
+  # HTTP 308 also preserves POST requests (e.g. contact and login forms).
+  RewriteCond %{HTTP_HOST} ^(www\.)?tennisschule-alexbraun\.de$ [NC]
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\.tennisschule-alexbraun\.de$ [NC]
+  RewriteRule ^ https://www.tennisschule-alexbraun.de%{REQUEST_URI} [R=308,L,NE]
+
   RewriteRule ^storage(?:/|$) - [F,L]
 </IfModule>
 
