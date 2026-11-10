@@ -1,0 +1,34 @@
+name: Diagnose öffentliche HTTPS-Verbindungen
+
+on:
+  push:
+    paths:
+      - ".github/workflows/diagnose-public-https.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: HTTPS, Zertifikat und Domain-Weiterleitungen prüfen
+        shell: bash
+        run: |
+          set -u
+          for domain in tennisschule-alexbraun.de www.tennisschule-alexbraun.de; do
+            echo "=== DNS ${domain} ==="
+            getent ahostsv4 "$domain" | head -2 || true
+            echo
+          done
+          for url in http://tennisschule-alexbraun.de/ https://tennisschule-alexbraun.de/ http://www.tennisschule-alexbraun.de/ https://www.tennisschule-alexbraun.de/; do
+            echo "=== $url ==="
+            curl -sSIL --max-time 20 -o /tmp/http-head -w 'HTTP=%{http_code} effective=%{url_effective} ssl_verify=%{ssl_verify_result} redirects=%{num_redirects}\n' "$url" || true
+            grep -iE '^(HTTP/|location:|strict-transport-security:)' /tmp/http-head | sed -E 's/^/  /' | head -18 || true
+          done
+          for domain in tennisschule-alexbraun.de www.tennisschule-alexbraun.de; do
+            echo "=== Certificate for $domain ==="
+            timeout 12 bash -c "echo | openssl s_client -connect '$domain:443' -servername '$domain' -verify_return_error 2>&1" | grep -Ei 'subject=|issuer=|Verify return code:|verify error|certificate verify failed' | head -8 || true
+          done
