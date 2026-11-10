@@ -83,7 +83,17 @@ site_header('home');
   ],JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE)?></script>
 </div></section>
 
-<?php if(!empty($home['popup_enabled'])):
+<?php if(popup_should_render($home)):
+  [$popupStartMs, $popupEndMs] = popup_schedule_milliseconds($home);
+  // Ein neues Bild oder ein neuer Zeitraum ist eine neue Kampagne und
+  // soll nicht von der 24-h-Sperre des vorherigen Popups betroffen sein.
+  $popupCampaignKey = substr(hash('sha256', json_encode([
+      $home['popup_image'] ?? '',
+      $home['popup_link'] ?? '',
+      $home['popup_mode'] ?? '',
+      $home['popup_start_at'] ?? '',
+      $home['popup_end_at'] ?? '',
+  ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)), 0, 20);
   $popupMode = ($home['popup_mode'] ?? 'image') === 'html' ? 'html' : 'image';
   $popupLink = trim((string)($home['popup_link'] ?? '/angebote/'));
   if (!preg_match('~^(?:/(?!/)|https?://)~i', $popupLink)) $popupLink = '/angebote/';
@@ -92,7 +102,10 @@ site_header('home');
 ?>
 <div class="wp-popup-overlay" id="winterPopup" aria-hidden="true"
  data-delay-seconds="<?=h((string)($home['popup_delay_seconds']??1))?>"
- data-close-delay-seconds="<?=h((string)($home['popup_close_delay_seconds']??0))?>">
+ data-close-delay-seconds="<?=h((string)($home['popup_close_delay_seconds']??0))?>"
+ data-start-ms="<?=h((string)$popupStartMs)?>"
+ data-end-ms="<?=h((string)$popupEndMs)?>"
+ data-campaign-key="<?=h($popupCampaignKey)?>">
   <div class="wp-popup <?= $popupMode==='image' ? 'wp-popup-image-mode' : 'wp-popup-html' ?>"
        role="dialog" aria-modal="true" <?= $popupMode==='image' ? 'aria-label="Aktuelle Information der Tennisschule"' : 'aria-labelledby="popupTitle"' ?>>
     <button class="wp-popup-close" type="button" aria-label="Popup schließen">&times;</button>

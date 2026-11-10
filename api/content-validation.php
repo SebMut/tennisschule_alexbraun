@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once dirname(__DIR__) . '/_inc/popup-schedule.php';
 
 function content_revision_from_bytes(string $bytes): string {
     return hash('sha256', $bytes);
@@ -103,10 +104,17 @@ function normalize_site_content(array $data, array $current = []): array {
     }
     unset($data['locations']['map_consent_text'], $data['locations']['map_consent_button']);
 
+    // Fehlende Felder bei älteren Popup-Inhalten ergänzen, ohne bereits
+    // gepflegte Zeitfenster zu überschreiben.
+    if(!isset($data['home'])||!is_array($data['home']))$data['home']=[];
+    foreach(['popup_start_at','popup_end_at'] as $field){
+        $data['home'][$field]=trim((string)($data['home'][$field]??$current['home'][$field]??''));
+    }
+
     return $data;
 }
 
-function validation_offer_state(array $offer): string {
+function validation_offer_state(array $offer, ?DateTimeImmutable $now=null): string {
     if (isset($offer['buttons']) && is_array($offer['buttons'])) {
         $upcoming = false;
         foreach ($offer['buttons'] as $button) {
@@ -116,14 +124,14 @@ function validation_offer_state(array $offer): string {
             foreach (['registration_start','registration_end'] as $key) {
                 if (array_key_exists($key,$button)) $single[$key]=(string)$button[$key];
             }
-            $state = validation_offer_state($single);
+            $state = validation_offer_state($single, $now);
             if ($state === 'open') return 'open';
             if ($state === 'upcoming') $upcoming = true;
         }
         return $upcoming ? 'upcoming' : 'closed';
     }
     $tz = new DateTimeZone('Europe/Berlin');
-    $now = new DateTimeImmutable('now', $tz);
+    $now = ($now ?? new DateTimeImmutable('now', $tz))->setTimezone($tz);
     $startRaw = trim((string)($offer['registration_start'] ?? ''));
     $endRaw = trim((string)($offer['registration_end'] ?? ''));
     $start = preg_match('/^\d{4}-\d{2}-\d{2}$/', $startRaw)
@@ -147,6 +155,26 @@ function validate_site_content(array $data): array {
 
     if (trim((string)($data['site']['hero_image'] ?? '')) === '') {
         $add('error','allgemein','hero_image_missing','Hero-Bild fehlt.','site.hero_image');
+    }
+
+    $popupStartRaw=trim((string)($data['home']['popup_start_at']??''));
+    $popupEndRaw=trim((string)($data['home']['popup_end_at']??''));
+    if($popupStartRaw!==''||$popupEndRaw!==''){
+        if($popupStartRaw===''){
+            $add('error','popup','popup_start_missing','Popup: Startdatum und Uhrzeit fehlen.','home.popup_start_at');
+        }elseif(!popup_parse_datetime($popupStartRaw)){
+            $add('error','popup','popup_start_invalid','Popup: Startdatum oder Uhrzeit sind ungültig.','home.popup_start_at');
+        }
+        if($popupEndRaw===''){
+            $add('error','popup','popup_end_missing','Popup: Enddatum und Uhrzeit fehlen.','home.popup_end_at');
+        }elseif(!popup_parse_datetime($popupEndRaw)){
+            $add('error','popup','popup_end_invalid','Popup: Enddatum oder Uhrzeit sind ungültig.','home.popup_end_at');
+        }
+        $popupStart=popup_parse_datetime($popupStartRaw);
+        $popupEnd=popup_parse_datetime($popupEndRaw);
+        if($popupStart&&$popupEnd&&$popupEnd<$popupStart){
+            $add('error','popup','popup_date_order','Popup: Das Enddatum muss nach oder auf dem Startdatum liegen.','home.popup_end_at');
+        }
     }
 
     $offersById = [];
@@ -275,9 +303,14 @@ function validate_site_content(array $data): array {
             }
         }
 
-        if (is_array($matchedOffer)) {
+        if (is_array($matchedOffer) && in_array(popup_schedule_state($data['home']), ['always','active','upcoming'], true)) {
             $title = trim((string)($matchedOffer['title'] ?? 'Angebot'));
-            $state = validation_offer_state($matchedOffer);
+            // Bei zukünftigen Kampagnen die Buchbarkeit zum geplanten Start,
+            // nicht zum heutigen Zeitpunkt prüfen.
+            $referenceTime=popup_schedule_state($data['home'])==='upcoming'
+                ? popup_parse_datetime($popupStartRaw)
+                : null;
+            $state = validation_offer_state($matchedOffer,$referenceTime);
             if (str_contains($popupText,'geöffnet') && $state !== 'open') {
                 $add('error','home','popup_offer_mismatch','Popup sagt „Anmeldung geöffnet“, '.$title.' ist laut Datumsfenster aber nicht geöffnet.','home.popup_text');
             }

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once dirname(__DIR__) . '/staging-access.php';
+require_once __DIR__ . '/popup-schedule.php';
 staging_access_require(false);
 
 function site_data(): array {

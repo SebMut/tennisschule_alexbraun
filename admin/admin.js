@@ -12,7 +12,7 @@
   const sectionMeta={
     allgemein:['Allgemein','Grundlegende Website-Einstellungen, Navigation, Hero und Footer.'],
     home:['Home','Startseite, Vertrauensbereiche, Angebote-Teaser, Trainerteaser und Bilder.'],
-    popup:['Popup','Popup-Bild, Klickziel und Sichtbarkeit verwalten.'],
+    popup:['Popup','Popup-Bild, Klickziel und automatische Laufzeit verwalten.'],
     angebote:['Angebote','Trainingsangebote, Status, Preise, Anmeldungen, FAQ und Galerie.'],
     trainerteam:['Trainerteam','Trainer verwalten, hinzufügen, löschen und Detailinformationen bearbeiten.'],
     standorte:['Standorte','Vereine, Standorttexte, Links, Logos, Karten und Routen bearbeiten.'],
@@ -69,6 +69,9 @@
   function dateField(label,path,value,note=''){
     return `<label>${esc(label)}<input type="date" data-path="${esc(path)}" value="${esc(value??'')}">${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
   }
+  function dateTimeField(label,path,value,note=''){
+    return `<label>${esc(label)}<input type="datetime-local" step="60" data-path="${esc(path)}" value="${esc(value??'')}">${note?`<span class="field-note">${esc(note)}</span>`:''}</label>`;
+  }
   function checkboxField(label,path,value,note=''){
     return `<label class="field-inline"><input type="checkbox" data-bool-path="${esc(path)}" ${value?'checked':''}><span>${esc(label)}${note?`<span class="field-note">${esc(note)}</span>`:''}</span></label>`;
   }
@@ -93,6 +96,28 @@
     if(now<start)return {label:'Bald verfügbar · ab '+formatAdminDateOnly(startValue),kind:'upcoming',start};
     if(now>end)return {label:'Anmeldung geschlossen',kind:'closed'};
     return {label:'Anmeldung geöffnet',kind:'open'};
+  }
+  function popupAdminStatus(home){
+    if(!home.popup_enabled)return {label:'Deaktiviert',kind:'off'};
+    const start=String(home.popup_start_at||'').trim(),end=String(home.popup_end_at||'').trim();
+    if(!start&&!end)return {label:'Aktiv · ohne Zeitbegrenzung',kind:'open'};
+    if(!start||!end)return {label:'Zeitraum unvollständig',kind:'closed'};
+    const re=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+    if(!re.test(start)||!re.test(end)||end<start)return {label:'Zeitraum ungültig',kind:'closed'};
+    const now=new Intl.DateTimeFormat('sv-SE',{
+      timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).format(new Date()).replace(' ','T');
+    if(now<start)return {label:'Geplant · startet automatisch',kind:'upcoming'};
+    if(now>end)return {label:'Zeitraum abgelaufen',kind:'closed'};
+    return {label:'Aktiv · im Zeitfenster',kind:'open'};
+  }
+  function updatePopupAdminStatus(){
+    const badge=editor.querySelector('[data-popup-admin-status]');
+    if(!badge||!data)return;
+    const state=popupAdminStatus(data.home||{});
+    badge.textContent=state.label;
+    badge.className='popup-admin-status '+state.kind;
   }
   function offerAdminStatus(offer){
     const buttons=offerBookingButtons(offer);
@@ -226,9 +251,17 @@
 
     <section class="cms-section" data-admin-section="popup" hidden>
       <h2>Popup verwalten</h2>
-      <p class="field-note">Nach der ersten Anzeige wird das Popup pro Browser und Gerät 24 Stunden nicht erneut angezeigt.</p>
+      <p class="field-note">Nach der ersten Anzeige wird das Popup pro Browser und Gerät 24 Stunden nicht erneut angezeigt. Ein neuer Zeitraum zählt als neue Popup-Kampagne.</p>
+      <div class="cms-card">
+        <div class="item-head"><strong>Zeitgesteuerte Sichtbarkeit</strong><span class="popup-admin-status ${esc(popupAdminStatus(h).kind)}" data-popup-admin-status>${esc(popupAdminStatus(h).label)}</span></div>
+        ${checkboxField('Popup aktiv','home.popup_enabled',h.popup_enabled,'Hauptschalter: Nur eingeschaltet wird das Popup im gewählten Zeitraum automatisch angezeigt.')}
+        <div class="grid2">
+          ${dateTimeField('Popup startet am','home.popup_start_at',h.popup_start_at,'Datum und Uhrzeit in deutscher Ortszeit (Europe/Berlin).')}
+          ${dateTimeField('Popup endet am','home.popup_end_at',h.popup_end_at,'Die eingestellte Endminute ist noch eingeschlossen.')}
+        </div>
+        <p class="field-note">Start und Ende müssen zusammen ausgefüllt werden. Ohne beide Angaben bleibt ein eingeschaltetes Popup wie bisher dauerhaft aktiv. Es wird zur Startzeit automatisch eingeblendet und nach der Endzeit nicht mehr angezeigt.</p>
+      </div>
       <div class="cms-card"><strong>Bild und Verlinkung</strong>
-        ${checkboxField('Popup aktiv','home.popup_enabled',h.popup_enabled,'Erst aktivieren, wenn Bild und Ziel-Link stimmen.')}
         ${imageField('Popup-Bild','home.popup_image',h.popup_image,true)}
         ${textField('Ziel-Link beim Klick auf das Bild','home.popup_link',h.popup_link,false,'Interner Pfad wie /angebote/ oder vollständiger https://-Link.')}
         ${textField('Bildbeschreibung (Alternativtext)','home.popup_alt',h.popup_alt)}
@@ -504,6 +537,7 @@
       const onUpdate=()=>{
         const path=el.dataset.path;
         setPath(data,path,el.value);
+        if(path==='home.popup_start_at'||path==='home.popup_end_at')updatePopupAdminStatus();
         if(el.type==='date'){
           const match=path.match(/^offers\.items\.(\d+)\.buttons\.(\d+)\.registration_(?:start|end)$/);
           if(match){
@@ -528,11 +562,12 @@
           }
         }
       };
-      el.addEventListener(el.type==='date'?'change':'input',onUpdate);
+      el.addEventListener(el.type==='date'||el.type==='datetime-local'?'change':'input',onUpdate);
     });
     editor.querySelectorAll('[data-number-path]').forEach(el=>el.addEventListener('input',()=>setPath(data,el.dataset.numberPath,Number(el.value))));
     editor.querySelectorAll('[data-bool-path]').forEach(el=>el.addEventListener('change',()=>{
       setPath(data,el.dataset.boolPath,el.checked);
+      if(el.dataset.boolPath==='home.popup_enabled')updatePopupAdminStatus();
       if(el.dataset.boolPath.startsWith('offers.items.')&&el.dataset.boolPath.endsWith('.featured')){
         render();
         showTab('angebote');

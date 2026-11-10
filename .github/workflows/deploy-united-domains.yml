@@ -41,6 +41,9 @@ jobs:
       - name: Seitentitel und Shop-Link testen
         run: php tests/page-hero.php
 
+      - name: Popup-Zeitfenster und Datumsvalidierung testen
+        run: php tests/popup-schedule.php
+
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
@@ -238,7 +241,9 @@ jobs:
           put index.php -o index.php
           put admin/index.php -o admin/index.php
           put admin/admin.js -o admin/admin.js
+          put _inc/popup-schedule.php -o _inc/popup-schedule.php
           put _inc/site.php -o _inc/site.php
+          get _inc/popup-schedule.php -o "$RUNNER_TEMP/live-popup-schedule-verify.php"
           put assets/site.js -o assets/site.js
           put assets/style.css -o assets/style.css
           put assets/trainings-anmeldung.css -o assets/trainings-anmeldung.css
@@ -265,6 +270,7 @@ jobs:
           put admin/admin.css -o admin/admin.css
           bye
           LFTP
+          cmp -s _inc/popup-schedule.php "$RUNNER_TEMP/live-popup-schedule-verify.php" || { echo "::error::Popup-Zeitplanmodul fehlt auf Live."; exit 1; }
           cmp -s api/contact.php "$RUNNER_TEMP/live-contact-verify.php" || { echo "::error::Kontaktformular nicht korrekt veröffentlicht."; exit 1; }
           cmp -s api/smtp.php "$RUNNER_TEMP/live-smtp-verify.php" || { echo "::error::SMTP-Code nicht korrekt veröffentlicht."; exit 1; }
           cmp -s api/contact-mail-templates.php "$RUNNER_TEMP/live-template-verify.php" || { echo "::error::E-Mail-Design nicht korrekt veröffentlicht."; exit 1; }
@@ -280,7 +286,12 @@ jobs:
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/angebote/?booking-check=${{ github.run_id }}" -o "$offers_page"
           curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/nachricht-erfolgreich-zugestellt/?landing-check=${{ github.run_id }}" -o "$success_page"
           grep -Fq 'data-admin-tab="popup"' "$admin_page"
-          grep -Fq 'admin.js?v=20261030-button-reorder' "$admin_page"
+          grep -Fq 'admin.js?v=20261110-popup-schedule' "$admin_page"
+          admin_js_file="$(mktemp)"
+          curl -fsSL -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/admin/admin.js?v=${{ github.run_id }}" -o "$admin_js_file"
+          grep -Fq 'home.popup_start_at' "$admin_js_file"
+          grep -Fq 'home.popup_end_at' "$admin_js_file"
+          rm -f "$admin_js_file"
           grep -Fq 'data-booking-mode' "$offers_page"
           grep -Fq 'trainings-anmeldung.css?v=20261101-booking-availability' "$offers_page"
           css_file="$(mktemp)"
