@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   # Staging-Uploads dürfen gezielte Live-Updates nicht blockieren.
-  group: ${{ contains(github.event.head_commit.message, '[deploy-live-popup]') && 'united-domains-live' || 'united-domains-staging' }}
+  group: ${{ (contains(github.event.head_commit.message, '[deploy-live-popup]') || contains(github.event.head_commit.message, '[deploy-live-turnstile]')) && 'united-domains-live' || 'united-domains-staging' }}
   cancel-in-progress: true
 
 jobs:
@@ -93,7 +93,7 @@ jobs:
           '
 
       - name: Auf United-Domains-Testwebspace übertragen
-        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') && !contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
         env:
           UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
           UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
@@ -122,7 +122,7 @@ jobs:
           LFTP
 
       - name: Testdomain technisch prüfen
-        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') }}
+        if: ${{ !contains(github.event.head_commit.message, '[deploy-live-popup]') && !contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
         continue-on-error: true
         env:
           TS_ADMIN_PASSWORD: ${{ secrets.TS_ADMIN_PASSWORD }}
@@ -377,3 +377,64 @@ jobs:
 # Manual staging password redeploy 2026-10-21
 
 # Manual redeploy trigger 2026-10-21-2
+
+      - name: Turnstile Live – bestehende Dateien sichern
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/turnstile-live-backup"
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          cd tennisschulealexbraun
+          get kontakt/index.php -o "$RUNNER_TEMP/turnstile-live-backup/kontakt-index.php"
+          get api/contact.php -o "$RUNNER_TEMP/turnstile-live-backup/api-contact.php"
+          get api/bootstrap.php -o "$RUNNER_TEMP/turnstile-live-backup/api-bootstrap.php"
+          bye
+          LFTP
+
+      - name: Turnstile Live – Backup speichern
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: turnstile-live-before-${{ github.run_id }}
+          path: ${{ runner.temp }}/turnstile-live-backup/
+          retention-days: 14
+
+      - name: Turnstile Live – nur drei PHP-Dateien übertragen und vergleichen
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
+        env:
+          UD_SFTP_HOST: ${{ secrets.UD_SFTP_HOST }}
+          UD_SFTP_USER: ${{ secrets.UD_SFTP_USER }}
+          UD_SFTP_PASSWORD: ${{ secrets.UD_SFTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          lftp -u "$UD_SFTP_USER","$UD_SFTP_PASSWORD" "sftp://$UD_SFTP_HOST" <<LFTP
+          set sftp:auto-confirm yes
+          set cmd:fail-exit yes
+          cd tennisschulealexbraun
+          put kontakt/index.php -o kontakt/index.php
+          put api/contact.php -o api/contact.php
+          put api/bootstrap.php -o api/bootstrap.php
+          get kontakt/index.php -o "$RUNNER_TEMP/turnstile-live-form.php"
+          get api/contact.php -o "$RUNNER_TEMP/turnstile-live-contact.php"
+          get api/bootstrap.php -o "$RUNNER_TEMP/turnstile-live-bootstrap.php"
+          bye
+          LFTP
+          cmp kontakt/index.php "$RUNNER_TEMP/turnstile-live-form.php"
+          cmp api/contact.php "$RUNNER_TEMP/turnstile-live-contact.php"
+          cmp api/bootstrap.php "$RUNNER_TEMP/turnstile-live-bootstrap.php"
+
+      - name: Turnstile Live – öffentliche Einbindung prüfen
+        if: ${{ contains(github.event.head_commit.message, '[deploy-live-turnstile]') }}
+        run: |
+          set -euo pipefail
+          page="$(mktemp)"
+          curl -fsSL --retry 3 -H "Cache-Control: no-cache" "https://www.tennisschule-alexbraun.de/kontakt/?turnstile-check=${{ github.run_id }}" -o "$page"
+          grep -Fq 'class="cf-turnstile"' "$page"
+          grep -Fq 'challenges.cloudflare.com/turnstile/v0/api.js' "$page"
+          rm -f "$page"
