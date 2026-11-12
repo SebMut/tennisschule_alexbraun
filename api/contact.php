@@ -22,6 +22,43 @@ if (trim((string)($_POST['website'] ?? '')) !== '') {
     exit;
 }
 
+// Turnstile wird erst aktiviert, wenn beide Schlüssel sicher konfiguriert sind.
+$turnstile = app_config()['turnstile'] ?? [];
+$turnstileSiteKey = (string)($turnstile['site_key'] ?? '');
+$turnstileSecret = (string)($turnstile['secret_key'] ?? '');
+if ($turnstileSiteKey !== '' || $turnstileSecret !== '') {
+    if ($turnstileSiteKey === '' || $turnstileSecret === '') {
+        error_log('Kontaktformular: Turnstile-Konfiguration unvollständig');
+        header('Location: /kontakt/?status=error', true, 303);
+        exit;
+    }
+    $responseToken = (string)($_POST['cf-turnstile-response'] ?? '');
+    if ($responseToken === '' || strlen($responseToken) > 2048) {
+        header('Location: /kontakt/?status=error', true, 303);
+        exit;
+    }
+    $verifyBody = http_build_query([
+        'secret' => $turnstileSecret,
+        'response' => $responseToken,
+        'remoteip' => client_ip(),
+    ]);
+    $context = stream_context_create(['http' => [
+        'method' => 'POST',
+        'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+        'content' => $verifyBody,
+        'timeout' => 6,
+        'ignore_errors' => true,
+    ]]);
+    $verifyJson = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context);
+    $verify = is_string($verifyJson) ? json_decode($verifyJson, true) : null;
+    $host = strtolower((string)($verify['hostname'] ?? ''));
+    if (!is_array($verify) || ($verify['success'] ?? false) !== true
+        || !in_array($host, ['tennisschule-alexbraun.de', 'www.tennisschule-alexbraun.de'], true)) {
+        header('Location: /kontakt/?status=error', true, 303);
+        exit;
+    }
+}
+
 $name = trim((string)($_POST['name'] ?? ''));
 $topic = trim((string)($_POST['topic'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
