@@ -44,6 +44,40 @@ jobs:
       - name: Popup-Zeitfenster und Datumsvalidierung testen
         run: php tests/popup-schedule.php
 
+      - name: Turnstile – fehlendes Token wird serverseitig abgelehnt
+        env:
+          TS_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+          TS_TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+        run: |
+          set -euo pipefail
+          # Isolierter lokaler PHP-Server; keine Anfrage an PROD und kein SMTP-Versand.
+          php -S 127.0.0.1:18765 -t . > /tmp/turnstile-test-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in 1 2 3 4 5; do
+            if curl -fsS -o /dev/null http://127.0.0.1:18765/kontakt/; then break; fi
+            sleep 1
+          done
+          cookie="$(mktemp)"
+          page="$(mktemp)"
+          headers="$(mktemp)"
+          curl -fsS -c "$cookie" -b "$cookie" http://127.0.0.1:18765/kontakt/ -o "$page"
+          grep -Fq 'class="cf-turnstile"' "$page"
+          token="$(sed -n 's/.*name="contact_token" value="\([^"]*\)".*/\1/p' "$page" | head -n 1)"
+          test -n "$token"
+          sleep 3
+          code="$(curl -sS -D "$headers" -o /dev/null -w '%{http_code}' -b "$cookie" \
+            --data-urlencode "contact_token=$token" \
+            --data-urlencode 'name=Sicherheitstest' \
+            --data-urlencode 'email=security-test@example.invalid' \
+            --data-urlencode 'topic=Sonstiges' \
+            --data-urlencode 'message=Token fehlt absichtlich' \
+            http://127.0.0.1:18765/api/contact.php)"
+          test "$code" = "303"
+          grep -Fqi 'location: /kontakt/?status=error' "$headers"
+          echo "PASS: Gueltige Sitzung und Formulardaten, aber kein Turnstile-Token => abgelehnt."
+          rm -f "$cookie" "$page" "$headers"
+
       - name: SFTP-Werkzeug installieren
         run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
