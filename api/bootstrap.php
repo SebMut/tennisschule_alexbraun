@@ -15,6 +15,10 @@ function app_config(): array {
             'repo' => getenv('TS_GITHUB_REPO') ?: 'tennisschule_alexbraun',
             'branch' => getenv('TS_GITHUB_BRANCH') ?: 'main',
         ],
+        'turnstile' => [
+            'site_key' => getenv('TS_TURNSTILE_SITE_KEY') ?: '',
+            'secret_key' => getenv('TS_TURNSTILE_SECRET_KEY') ?: '',
+        ],
         'smtp' => [
             'host' => getenv('TS_SMTP_HOST') ?: 'smtps.udag.de',
             'port' => (int)(getenv('TS_SMTP_PORT') ?: 587),
