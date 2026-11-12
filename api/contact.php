@@ -8,6 +8,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+$submittedToken = (string)($_POST['contact_token'] ?? '');
+$sessionToken = (string)($_SESSION['contact_token'] ?? '');
+$loadedAt = (int)($_SESSION['contact_form_loaded_at'] ?? 0);
+if ($sessionToken === '' || !hash_equals($sessionToken, $submittedToken)
+    || $loadedAt === 0 || time() - $loadedAt < 3 || time() - $loadedAt > 7200) {
+    header('Location: /kontakt/?status=error', true, 303);
+    exit;
+}
 if (trim((string)($_POST['website'] ?? '')) !== '') {
     header('Location: /nachricht-erfolgreich-zugestellt/', true, 303);
     exit;
@@ -30,6 +39,20 @@ if (!$valid) {
     exit;
 }
 
+// Zusätzlich zur 30-Sekunden-Sperre maximal fünf Versuche pro Stunde und IP.
+$hourFile = storage_dir() . '/contact-hour-' . hash('sha256', client_ip()) . '.json';
+$now = time();
+$hourState = is_file($hourFile) ? json_decode((string)@file_get_contents($hourFile), true) : null;
+if (!is_array($hourState) || ($now - (int)($hourState['start'] ?? 0)) >= 3600) {
+    $hourState = ['start' => $now, 'count' => 0];
+}
+if ((int)$hourState['count'] >= 5) {
+    header('Location: /kontakt/?status=error', true, 303);
+    exit;
+}
+$hourState['count']++;
+@file_put_contents($hourFile, json_encode($hourState), LOCK_EX);
+
 $rateFile = storage_dir() . '/contact-' . hash('sha256', client_ip()) . '.txt';
 $last = is_file($rateFile) ? (int)trim((string)file_get_contents($rateFile)) : 0;
 if ($last > 0 && (time() - $last) < 30) {
@@ -37,6 +60,10 @@ if ($last > 0 && (time() - $last) < 30) {
     exit;
 }
 @file_put_contents($rateFile, (string)time(), LOCK_EX);
+
+// Ein gültiges Formular darf nur einmal verwendet werden.
+unset($_SESSION['contact_token'], $_SESSION['contact_form_loaded_at']);
+session_write_close();
 
 $clean = static fn(string $v): string => trim(str_replace(["\r","\n"], ' ', $v));
 $senderName = $clean($name);
