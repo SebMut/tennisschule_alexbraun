@@ -16,6 +16,12 @@ return [
         'token' => 'HIER_MAPBOX_PUBLIC_TOKEN',
     ],
 
+    // Cloudflare Turnstile: echte Schlüssel nur in config.local.php auf dem Webspace.
+    'turnstile' => [
+        'site_key' => '',
+        'secret_key' => '',
+    ],
+
     'smtp' => [
         'host' => 'smtps.udag.de',
         'port' => 587,
