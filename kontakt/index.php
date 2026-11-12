@@ -1,5 +1,8 @@
 <?php
 require dirname(__DIR__) . '/_inc/site.php';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (empty($_SESSION['contact_token'])) $_SESSION['contact_token'] = bin2hex(random_bytes(24));
+$_SESSION['contact_form_loaded_at'] = time();
 $d=site_data(); $c=$d['contact']??[]; $labels=$c['labels']??[];
 page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['status']??'';
 ?><main><?php site_hero(); ?><section class="contact-section"><div class="container"><div class="contact-card">
@@ -8,6 +11,7 @@ page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['s
 <?php if($status==='sent'): ?><div class="form-notice success"><?=h($c['success_message']??'')?></div><?php endif; ?>
 <?php if($status==='error'): ?><div class="form-notice error"><?=h($c['error_message']??'')?></div><?php endif; ?>
 <form action="/api/contact.php" method="post" accept-charset="UTF-8" data-track-form="contact">
+<input type="hidden" name="contact_token" value="<?=h($_SESSION['contact_token'])?>">
 <div class="form-grid">
 <div class="full"><label for="name"><?=h($labels['name']??'Vorname & Nachname *')?></label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
 <div class="full"><label for="email"><?=h($labels['email']??'Email *')?></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="190"></div>
