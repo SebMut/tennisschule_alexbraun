@@ -3,6 +3,7 @@ require dirname(__DIR__) . '/_inc/site.php';
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 if (empty($_SESSION['contact_token'])) $_SESSION['contact_token'] = bin2hex(random_bytes(24));
 $_SESSION['contact_form_loaded_at'] = time();
+$turnstileSiteKey = (string)(getenv('TS_TURNSTILE_SITE_KEY') ?: (is_file(dirname(__DIR__) . '/config.local.php') ? ((require dirname(__DIR__) . '/config.local.php')['turnstile']['site_key'] ?? '') : ''));
 $d=site_data(); $c=$d['contact']??[]; $labels=$c['labels']??[];
 page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['status']??'';
 ?><main><?php site_hero(); ?><section class="contact-section"><div class="container"><div class="contact-card">
@@ -19,5 +20,10 @@ page_head($c['page_title']??'Kontakt'); site_header('kontakt'); $status=$_GET['s
 <div><label for="topic"><?=h($labels['topic']??'Anliegen *')?></label><select id="topic" name="topic" required><option value="">Bitte auswählen</option><?php foreach(($c['topics']??[]) as $topic): ?><option value="<?=h($topic)?>"><?=h($topic)?></option><?php endforeach; ?></select></div>
 <div class="full"><label for="message"><?=h($labels['message']??'Nachricht *')?></label><textarea id="message" name="message" required maxlength="5000"></textarea></div>
 <div class="honeypot" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+<?php if ($turnstileSiteKey !== ''): ?>
+<div class="full"><div class="cf-turnstile" data-sitekey="<?=h($turnstileSiteKey)?>"></div></div>
+<?php endif; ?>
 <div class="full"><button class="contact-submit" data-track="contact_submit" type="submit"><?=h($labels['submit']??'Senden')?></button></div>
-</div></form></div></div></div></section></main><?php site_footer(); ?></body></html>
+</div></form></div></div></div></section></main>
+<?php if ($turnstileSiteKey !== ''): ?><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><?php endif; ?>
+<?php site_footer(); ?></body></html>
