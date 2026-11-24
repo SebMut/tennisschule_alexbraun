@@ -186,16 +186,6 @@
                         "registration_end": "2027-03-31",
                         "unavailable_title": "",
                         "unavailable_message": ""
-                    },
-                    {
-                        "id": "winter",
-                        "label": "Anmeldung Wintertraining",
-                        "url": "",
-                        "mode": "modal",
-                        "registration_start": "2026-10-02",
-                        "registration_end": "2026-10-29",
-                        "unavailable_title": "",
-                        "unavailable_message": ""
                     }
                 ]
             },
